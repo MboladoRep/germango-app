@@ -2,8 +2,8 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Germango Pro 6.0 - Ultimate Edition</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Germango Pro 7.0 - Mobile Ready</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <style>
@@ -19,16 +19,14 @@
             --text-dim: #AFAFAF;
             --bonus-gold: #FFC800;
         }
-        * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; user-select: none; }
-        body { background-color: var(--bg-dark); color: var(--text-main); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg-dark); color: var(--text-main); height: 100vh; height: 100dvh; display: flex; flex-direction: column; overflow: hidden; }
         
         /* Header */
         header { display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; border-bottom: 2px solid var(--border-color); background: var(--bg-dark); z-index: 100; flex-shrink: 0; }
-        .logo { font-weight: 800; font-size: 1.4rem; color: var(--primary-green); cursor: pointer; display: flex; align-items: center; gap: 5px; transition: transform 0.2s; }
-        .logo:hover { transform: scale(1.05); }
-        .stats { display: flex; gap: 15px; }
-        .stat-box { display: flex; align-items: center; gap: 5px; font-weight: 700; background: var(--card-dark); padding: 5px 12px; border-radius: 8px; cursor: pointer; transition: background 0.2s; }
-        .stat-box:hover { background: var(--border-color); }
+        .logo { font-weight: 800; font-size: 1.2rem; color: var(--primary-green); cursor: pointer; display: flex; align-items: center; gap: 5px; }
+        .stats { display: flex; gap: 10px; }
+        .stat-box { display: flex; align-items: center; gap: 4px; font-weight: 700; background: var(--card-dark); padding: 4px 10px; border-radius: 8px; cursor: pointer; font-size: 0.9rem; }
         .stat-box.buyable { border: 1px solid var(--bonus-gold); }
 
         /* Main Layout */
@@ -40,121 +38,117 @@
         /* Map Screen */
         .map-wrapper { position: relative; width: 100%; padding: 20px 0 50px; display: flex; flex-direction: column; align-items: center; }
         
-        /* ZigZag Layout */
-        .unit-container { display: flex; flex-direction: column; align-items: center; width: 100%; margin-bottom: 30px; position: relative; }
-        .unit-header { width: 100%; padding: 15px; margin-bottom: 15px; background: linear-gradient(90deg, rgba(88,204,2,0.1) 0%, transparent 100%); border-left: 5px solid var(--primary-green); border-radius: 0 10px 10px 0; }
-        .unit-title { font-weight: 800; font-size: 1.2rem; color: var(--primary-green); }
-        .unit-sub { font-size: 0.9rem; color: var(--text-dim); margin-top: 4px; }
+        /* Map Nodes - Default Mobile (Vertical Line) */
+        .unit-container { display: flex; flex-direction: column; align-items: center; width: 100%; margin-bottom: 30px; }
+        .unit-header { width: 100%; padding: 12px; margin-bottom: 15px; background: linear-gradient(90deg, rgba(88,204,2,0.1) 0%, transparent 100%); border-left: 5px solid var(--primary-green); border-radius: 0 10px 10px 0; }
+        .unit-title { font-weight: 800; font-size: 1rem; color: var(--primary-green); }
+        .unit-sub { font-size: 0.8rem; color: var(--text-dim); margin-top: 2px; }
         
         .lessons-row { display: flex; flex-direction: column; align-items: center; width: 100%; position: relative; }
         
-        .lesson-node { width: 85px; height: 85px; border-radius: 50%; background: var(--card-dark); border: 4px solid var(--text-dim); display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 800; font-size: 1.2rem; cursor: pointer; transition: all 0.2s; position: relative; z-index: 2; gap: 2px; }
+        .lesson-node { width: 70px; height: 70px; border-radius: 50%; background: var(--card-dark); border: 3px solid var(--text-dim); display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 800; font-size: 1rem; cursor: pointer; transition: all 0.2s; position: relative; z-index: 2; gap: 2px; }
+        
+        /* Path line connecting nodes */
+        .lesson-node::after { content: ''; position: absolute; top: 100%; width: 3px; height: 25px; background: var(--border-color); z-index: 1; }
+        .lessons-row > div:last-child .lesson-node::after { display: none; }
+        .lesson-node.completed::after { background: var(--primary-green); }
+        
         .lesson-node:hover:not(.locked) { transform: scale(1.1); border-color: var(--secondary-blue); }
         .lesson-node.completed { border-color: var(--primary-green); color: var(--primary-green); background: rgba(88, 204, 2, 0.1); }
         .lesson-node.locked { opacity: 0.4; cursor: not-allowed; }
-        .lesson-node.current { border-color: var(--secondary-blue); box-shadow: 0 0 20px rgba(28, 176, 246, 0.4); animation: bounce 2s infinite; }
-        .lesson-node .icon { font-size: 1.8rem; }
-        .lesson-node .lvl { font-size: 0.8rem; opacity: 0.7; }
+        .lesson-node.current { border-color: var(--secondary-blue); box-shadow: 0 0 15px rgba(28, 176, 246, 0.4); animation: bounce 2s infinite; }
+        .lesson-node .icon { font-size: 1.5rem; }
+        .lesson-node .lvl { font-size: 0.6rem; opacity: 0.7; }
 
-        @keyframes bounce { 0%, 20%, 50%, 80%, 100% {transform: translateY(0);} 40% {transform: translateY(-10px);} 60% {transform: translateY(-5px);} }
+        @keyframes bounce { 0%, 20%, 50%, 80%, 100% {transform: translateY(0);} 40% {transform: translateY(-8px);} 60% {transform: translateY(-4px);} }
 
-        /* Zigzag positioning */
-        .node-wrapper { width: 100%; display: flex; margin: 10px 0; position: relative; }
-        .node-wrapper.left { justify-content: flex-start; padding-left: 10%; }
-        .node-wrapper.center { justify-content: center; }
-        .node-wrapper.right { justify-content: flex-end; padding-right: 10%; }
-        
-        /* Connecting lines */
-        .path-connector { position: absolute; width: 4px; background: var(--border-color); z-index: 1; }
-        .path-connector.done { background: var(--primary-green); }
-        
+        /* Zigzag for Desktop */
+        @media (min-width: 600px) {
+            .lesson-node { width: 85px; height: 85px; font-size: 1.2rem; }
+            .lesson-node .icon { font-size: 1.8rem; }
+            .lessons-row { flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 30px 0; position: relative; padding: 10px 0; }
+            .lesson-node::after { display: none; } /* Hide simple vertical line */
+            
+            /* Simulating zigzag with simple logic: odd units left, even units right aligned? 
+               Let's just do a nice vertical alternating layout for simplicity and robust responsiveness. */
+            .node-wrapper { width: 100%; display: flex; margin: 5px 0; }
+            .node-wrapper.center { justify-content: center; }
+        }
+
         /* Global Progress */
-        .global-progress-container { width: 100%; margin-bottom: 30px; background: var(--card-dark); padding: 15px; border-radius: 15px; border: 1px solid var(--border-color); }
-        .gp-header { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.9rem; color: var(--text-dim); }
-        .gp-bar { width: 100%; height: 8px; background: var(--border-color); border-radius: 4px; overflow: hidden; }
+        .global-progress-container { width: 100%; margin-bottom: 30px; background: var(--card-dark); padding: 12px; border-radius: 12px; border: 1px solid var(--border-color); }
+        .gp-header { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 0.8rem; color: var(--text-dim); }
+        .gp-bar { width: 100%; height: 6px; background: var(--border-color); border-radius: 3px; overflow: hidden; }
         .gp-fill { height: 100%; background: linear-gradient(90deg, var(--primary-green), var(--bonus-gold)); width: 0%; transition: width 0.5s; }
 
         /* Lesson Screen */
-        .progress-bar { width: 100%; height: 10px; background: var(--border-color); border-radius: 5px; margin-bottom: 30px; display: flex; gap: 2px; overflow: hidden; }
-        .progress-segment { flex: 1; background: transparent; transition: background 0.3s; border-radius: 5px; }
+        .progress-bar { width: 100%; height: 8px; background: var(--border-color); border-radius: 4px; margin-bottom: 20px; display: flex; gap: 2px; overflow: hidden; }
+        .progress-segment { flex: 1; background: transparent; transition: background 0.3s; border-radius: 4px; }
         .progress-segment.done { background: var(--primary-green); }
-        .progress-segment.current { background: var(--text-dim); }
+        .progress-segment.current { background: var(--text-dim); animation: pulse-segment 1s infinite; }
+        @keyframes pulse-segment { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
+
+        .lesson-content { flex: 1; display: flex; flex-direction: column; width: 100%; justify-content: center; overflow-y: auto; padding-bottom: 10px; }
         
-        .lesson-content { flex: 1; display: flex; flex-direction: column; width: 100%; justify-content: center; }
-        
-        .prompt-text { text-align: center; font-size: 1.1rem; color: var(--text-dim); margin-bottom: 15px; }
-        .main-text { text-align: center; font-size: 2rem; font-weight: 700; margin-bottom: 30px; display: flex; align-items: center; justify-content: center; gap: 12px; }
-        .main-text .emoji { font-size: 2.5rem; }
+        .prompt-text { text-align: center; font-size: 1rem; color: var(--text-dim); margin-bottom: 10px; }
+        .main-text { text-align: center; font-size: 1.6rem; font-weight: 700; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .main-text .emoji { font-size: 2rem; }
 
         /* Inputs */
-        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .opt-btn { background: var(--card-dark); border: 2px solid var(--border-color); color: var(--text-main); padding: 15px; border-radius: 12px; font-size: 1rem; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; position: relative; overflow: hidden; }
-        .opt-btn:hover { border-color: var(--text-dim); background: rgba(255,255,255,0.05); }
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .opt-btn { background: var(--card-dark); border: 2px solid var(--border-color); color: var(--text-main); padding: 12px; border-radius: 12px; font-size: 0.95rem; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; position: relative; overflow: hidden; }
+        .opt-btn:active { transform: scale(0.98); }
         .opt-btn.selected { border-color: var(--secondary-blue); background: rgba(28, 176, 246, 0.2); color: var(--secondary-blue); }
         .opt-btn.correct { border-color: var(--primary-green); background: rgba(88, 204, 2, 0.2); color: var(--primary-green); }
         .opt-btn.wrong { border-color: var(--error-red); background: rgba(255, 75, 75, 0.2); color: var(--error-red); }
-        .opt-btn .key-hint { position: absolute; top: 5px; right: 8px; font-size: 0.7rem; opacity: 0.5; }
 
-        .sentence-area { min-height: 80px; border: 2px dashed var(--border-color); border-radius: 12px; padding: 15px; display: flex; flex-wrap: wrap; gap: 8px; align-content: center; justify-content: center; margin-bottom: 20px; }
-        .token { background: #fff; color: #333; padding: 8px 14px; border-radius: 8px; font-weight: 700; cursor: pointer; box-shadow: 0 2px 0 #aaa; transition: transform 0.1s; }
+        .sentence-area { min-height: 60px; border: 2px dashed var(--border-color); border-radius: 12px; padding: 10px; display: flex; flex-wrap: wrap; gap: 6px; align-content: center; justify-content: center; margin-bottom: 15px; }
+        .token { background: #fff; color: #333; padding: 6px 12px; border-radius: 6px; font-weight: 700; font-size: 0.9rem; cursor: pointer; box-shadow: 0 2px 0 #aaa; transition: transform 0.1s; }
         .token:active { transform: translateY(2px); box-shadow: 0 0 0 #aaa; }
         .token.placed { opacity: 0.3; pointer-events: none; }
         .token.in-sentence { background: #f0f0f0; }
-        .bank { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 20px; }
+        .bank { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 15px; }
 
-        .match-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; }
-        .match-card { background: var(--card-dark); border: 2px solid var(--border-color); padding: 20px; border-radius: 12px; text-align: center; cursor: pointer; font-weight: 600; min-height: 80px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .match-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
+        .match-card { background: var(--card-dark); border: 2px solid var(--border-color); padding: 15px; border-radius: 12px; text-align: center; cursor: pointer; font-weight: 600; min-height: 70px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; font-size: 0.95rem; }
         .match-card.selected { border-color: var(--secondary-blue); background: rgba(28, 176, 246, 0.2); transform: scale(1.02); }
         .match-card.matched { border-color: var(--primary-green); background: rgba(88, 204, 2, 0.2); color: var(--primary-green); pointer-events: none; opacity: 0.6; transform: scale(0.95); }
 
-        .audio-prompt-btn { background: var(--secondary-blue); border: none; border-radius: 50%; width: 80px; height: 80px; font-size: 2.5rem; cursor: pointer; margin: 0 auto 30px; display: block; color: white; box-shadow: 0 6px 0 #1899D6; transition: transform 0.1s; }
-        .audio-prompt-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #1899D6; }
+        .audio-prompt-btn { background: var(--secondary-blue); border: none; border-radius: 50%; width: 70px; height: 70px; font-size: 2rem; cursor: pointer; margin: 0 auto 20px; display: block; color: white; box-shadow: 0 4px 0 #1899D6; transition: transform 0.1s; }
+        .audio-prompt-btn:active { transform: translateY(4px); box-shadow: 0 0 0 #1899D6; }
 
-        .speak-container { display: flex; flex-direction: column; align-items: center; width: 100%; gap: 15px; }
-        .speak-btn { width: 100%; background: var(--secondary-blue); color: white; border: none; border-bottom: 4px solid #1899D6; padding: 20px; font-size: 1.2rem; font-weight: 700; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.2s; }
-        .speak-btn:active { transform: translateY(2px); border-bottom-width: 2px; }
+        .speak-btn { width: 100%; background: var(--secondary-blue); color: white; border: none; border-bottom: 4px solid #1899D6; padding: 15px; font-size: 1rem; font-weight: 700; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
         .speak-btn.listening { background: var(--error-red); border-bottom-color: #D43939; animation: pulse 1.5s infinite; }
         
-        .write-mode-btn { background: transparent; border: none; color: var(--text-dim); text-decoration: underline; font-size: 0.9rem; cursor: pointer; margin-top: 5px; padding: 5px; }
-        .text-input-fallback { width: 100%; background: var(--card-dark); border: 2px solid var(--border-color); border-radius: 12px; padding: 15px; color: var(--text-main); font-size: 1.2rem; text-align: center; outline: none; }
-        .text-input-fallback:focus { border-color: var(--secondary-blue); }
-        .mic-feedback { text-align: center; margin-top: 10px; font-size: 1rem; height: 20px; color: var(--text-dim); }
-
+        .write-mode-btn { background: transparent; border: none; color: var(--text-dim); text-decoration: underline; font-size: 0.8rem; cursor: pointer; margin-top: 5px; }
+        .text-input-fallback { width: 100%; background: var(--card-dark); border: 2px solid var(--border-color); border-radius: 12px; padding: 12px; color: var(--text-main); font-size: 1rem; text-align: center; outline: none; }
+        
         /* Footer & Feedback */
-        .footer-bar { margin-top: auto; width: 100%; padding-top: 20px; }
-        .feedback-msg { min-height: 50px; border-radius: 10px; display: none; align-items: center; justify-content: center; font-weight: 700; margin-bottom: 10px; padding: 10px; flex-direction: column; }
+        .footer-bar { margin-top: auto; width: 100%; padding-top: 15px; flex-shrink: 0; }
+        .feedback-msg { min-height: 50px; border-radius: 10px; display: none; align-items: center; justify-content: center; font-weight: 700; margin-bottom: 10px; padding: 10px; flex-direction: column; font-size: 0.95rem; }
         .feedback-msg.show { display: flex; }
         .feedback-msg.correct { background: rgba(88, 204, 2, 0.2); color: var(--primary-green); border: 2px solid var(--primary-green); }
         .feedback-msg.wrong { background: rgba(255, 75, 75, 0.2); color: var(--error-red); border: 2px solid var(--error-red); }
         
-        .btn-main { width: 100%; padding: 16px; border: none; border-bottom: 4px solid #2A3E45; border-radius: 12px; font-size: 1rem; font-weight: 700; text-transform: uppercase; cursor: pointer; background: #3D545C; color: #AFAFAF; pointer-events: none; transition: all 0.1s; }
+        .btn-main { width: 100%; padding: 14px; border: none; border-bottom: 4px solid #2A3E45; border-radius: 12px; font-size: 0.9rem; font-weight: 700; text-transform: uppercase; cursor: pointer; background: #3D545C; color: #AFAFAF; pointer-events: none; transition: all 0.1s; }
         .btn-main.active { background: var(--primary-green); border-bottom-color: var(--primary-green-dark); color: white; pointer-events: all; }
         .btn-main.retry { background: var(--error-red); border-bottom-color: #D43939; color: white; pointer-events: all; }
         .btn-main.continue { background: var(--secondary-blue); border-bottom-color: #1899D6; color: white; pointer-events: all; }
 
-        /* Overlays & Animations */
+        /* Overlays */
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.97); display: none; justify-content: center; align-items: center; z-index: 2000; flex-direction: column; text-align: center; padding: 20px; }
         .overlay.active { display: flex; }
-        .overlay-icon { font-size: 5rem; margin-bottom: 20px; }
-        .shop-items { display: flex; gap: 20px; flex-direction: column; margin-top: 20px; }
-        .shop-item { background: var(--card-dark); padding: 20px; border-radius: 15px; border: 2px solid var(--border-color); cursor: pointer; transition: all 0.2s; width: 200px; }
-        .shop-item:hover { border-color: var(--secondary-blue); transform: translateY(-5px); }
-
-        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
-        .shake { animation: shake 0.3s; }
-        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 75, 75, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(255, 75, 75, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 75, 75, 0); } }
+        .overlay-icon { font-size: 4rem; margin-bottom: 15px; }
         
         .confetti { position: fixed; width: 10px; height: 10px; animation: fall 3s linear forwards; pointer-events: none; z-index: 3000; }
         @keyframes fall { to { transform: translateY(100vh) rotate(720deg); } }
         
-        .loader { border: 5px solid var(--border-color); border-top: 5px solid var(--primary-green); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin: auto; }
+        .loader { border: 4px solid var(--border-color); border-top: 4px solid var(--primary-green); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* Responsive */
-        @media (max-width: 500px) {
-            .lesson-node { width: 70px; height: 70px; font-size: 1rem; }
-            .main-text { font-size: 1.5rem; }
-        }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 75, 75, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(255, 75, 75, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 75, 75, 0); } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+        .shake { animation: shake 0.3s; }
     </style>
 </head>
 <body>
@@ -171,9 +165,7 @@
     <main id="app">
         <!-- MAP -->
         <div id="screen-map" class="screen active">
-            <div class="map-wrapper" id="map-container">
-                <div class="loader"></div>
-            </div>
+            <div class="map-wrapper" id="map-container"><div class="loader"></div></div>
         </div>
 
         <!-- LESSON -->
@@ -183,7 +175,7 @@
             <div class="footer-bar">
                 <div class="feedback-msg" id="feedback-msg">
                     <span id="msg-text"></span>
-                    <span id="msg-sub" style="font-size:0.9rem; margin-top:5px; opacity:0.8"></span>
+                    <span id="msg-sub" style="font-size:0.8rem; margin-top:4px; opacity:0.8"></span>
                 </div>
                 <button class="btn-main" id="btn-action" onclick="handleAction()">COMPROBAR</button>
             </div>
@@ -192,38 +184,34 @@
         <!-- RESULT -->
         <div id="screen-result" class="screen" style="justify-content: center; text-align: center;">
             <div class="overlay-icon">🎉</div>
-            <h1 style="font-size: 2rem; margin-bottom: 10px;">¡Lección completada!</h1>
-            <p style="color: var(--text-dim); margin-bottom: 30px;">+20 XP 💎</p>
+            <h1 style="font-size: 1.8rem; margin-bottom: 10px;">¡Lección completada!</h1>
+            <p style="color: var(--text-dim); margin-bottom: 20px;">+20 XP 💎</p>
             <button class="btn-main active" onclick="exitToMap()">CONTINUAR</button>
         </div>
         
         <!-- GAME OVER -->
         <div id="overlay-gameover" class="overlay">
             <div class="overlay-icon">💔</div>
-            <h2 style="margin-bottom:10px">Lección fallida</h2>
-            <p style="color: var(--text-dim); margin-bottom: 30px;">Te has quedado sin vidas.</p>
-            <button class="btn-main active" onclick="buyLivesFromFail()">Comprar Vidas (50💎)</button>
+            <h2 style="margin-bottom:10px; font-size:1.5rem">Lección fallida</h2>
+            <p style="color: var(--text-dim); margin-bottom: 20px; font-size:0.9rem">Te has quedado sin vidas.</p>
+            <button class="btn-main active" onclick="shopPurchase('hearts'); DOM.overlayGameover.classList.remove('active'); startLesson(currentLessonData);">Comprar Vidas (50💎)</button>
             <button class="btn-main" style="margin-top:10px; background:#333; border-bottom-color:#222; color:#aaa; pointer-events:all;" onclick="exitToMap()">VOLVER</button>
         </div>
-
+        
         <!-- SHOP -->
         <div id="overlay-shop" class="overlay">
             <h2 style="margin-bottom:10px">Tienda</h2>
-            <p style="color: var(--text-dim); margin-bottom: 20px;">Mejora tu experiencia</p>
-            <div class="shop-items">
-                <div class="shop-item" onclick="shopPurchase('hearts')">
-                    <div style="font-size: 2rem;">❤️</div>
-                    <div style="font-weight:700; margin-top:10px;">Recargar Vidas</div>
-                    <div style="color: var(--bonus-gold); margin-top:5px;">50 💎</div>
-                </div>
+            <div style="background:var(--card-dark); padding:20px; border-radius:15px; margin-top:20px; cursor:pointer;" onclick="shopPurchase('hearts')">
+                <div style="font-size: 2rem;">❤️</div>
+                <div style="font-weight:700; margin-top:10px;">Recargar Vidas</div>
+                <div style="color: var(--bonus-gold); margin-top:5px;">50 💎</div>
             </div>
             <button class="btn-main" style="margin-top:30px; background:#333; border-bottom-color:#222; color:#aaa; pointer-events:all;" onclick="closeShop()">Cerrar</button>
         </div>
     </main>
 
     <script>
-        // --- CONFIGURACIÓN SUPABASE (OPCIONAL) ---
-        // Deja las claves vacías si solo quieres usar la base de datos local integrada
+        // --- SUPABASE (OPCIONAL) ---
         const SUPABASE_URL = 'https://eofolsrnycdiioobpihq.supabase.co'; 
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVvZm9sc3JueWNkaWlvb2JwaWhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzMTE1NDgsImV4cCI6MjA4ODg4NzU0OH0.rIma6h2uA3vmUj-NxtYODKdwS9AZHk646awFiQsCFbA';
         let _supabase;
@@ -231,126 +219,151 @@
             try { _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY); } catch(e) { console.log("Supabase init failed, using local data."); }
         }
 
-        // --- BASE DE DATOS LOCAL (FALLBACK EXTENSO) ---
+        // --- BASE DE DATOS LOCAL EXTENDIDA ---
         const LOCAL_DB = {
             units: [
                 {
-                    id: 'u1', title: 'Unidad 1: Fundamentos', subtitle: 'Lo esencial para empezar', order_index: 0,
+                    id: 'u1', title: 'Unidad 1: Fundamentos', subtitle: 'Lo esencial', order_index: 0,
                     lessons: [
-                        {
-                            id: 'l1-1', icon: '👋', order_index: 0,
-                            questions: [
-                                { type: 'choice', prompt: '¿Cómo se saluda?', text: 'Hola', options: ['Hallo', 'Tschüss', 'Danke', 'Bitte'], correct: 'Hallo', emoji: '👋' },
-                                { type: 'choice', prompt: '¿Qué significa "Guten Morgen"?', text: 'Buenos días', options: ['Buenas noches', 'Buenos días', 'Buenas tardes', 'Adiós'], correct: 'Buenos días', emoji: '☀️' },
-                                { type: 'audio', prompt: 'Escucha y selecciona', audioText: 'Tschüss', options: ['Hola', 'Adiós', 'Gracias', 'Por favor'], correct: 'Adiós', emoji: '👂' },
-                                { type: 'speak', prompt: 'Di esto en alemán:', text: 'Hallo', meaning: 'Hola', emoji: '🗣️' },
-                                { type: 'match', prompt: 'Relaciona los saludos', pairs: [['Hallo', 'Hola'], ['Tschüss', 'Adiós'], ['Guten Tag', 'Buen día']] }
-                            ]
-                        },
-                        {
-                            id: 'l1-2', icon: '👨‍👩‍👧', order_index: 1,
-                            questions: [
-                                { type: 'choice', prompt: 'Padre', text: 'Vater', options: ['Mutter', 'Vater', 'Bruder', 'Schwester'], correct: 'Vater', emoji: '👨' },
-                                { type: 'choice', prompt: 'Madre', text: 'Mutter', options: ['Vater', 'Tochter', 'Mutter', 'Sohn'], correct: 'Mutter', emoji: '👩' },
-                                { type: 'wordbank', prompt: 'El padre y la madre', text: 'Vater und Mutter', words: ['Mutter', 'Vater', 'und', 'der'], correct: ['Vater', 'und', 'Mutter'] },
-                                { type: 'match', prompt: 'Familia', pairs: [['Bruder', 'Hermano'], ['Schwester', 'Hermana'], ['Kind', 'Niño/a']] },
-                                { type: 'speak', prompt: 'Di: Mi familia', text: 'Meine Familie', emoji: '👨‍👩‍👧‍👦' }
-                            ]
-                        },
-                        {
-                            id: 'l1-3', icon: '🍕', order_index: 2,
-                            questions: [
-                                { type: 'choice', prompt: 'Agua', text: 'Wasser', options: ['Brot', 'Wasser', 'Apfel', 'Milch'], correct: 'Wasser', emoji: '💧' },
-                                { type: 'audio', prompt: '¿Qué es?', audioText: 'Der Apfel', options: ['La manzana', 'El pan', 'La leche', 'El agua'], correct: 'La manzana', emoji: '🍎' },
-                                { type: 'choice', prompt: 'Pan', text: 'Brot', options: ['Wasser', 'Brot', 'Käse', 'Fleisch'], correct: 'Brot', emoji: '🍞' },
-                                { type: 'wordbank', prompt: 'Yo como pan', text: 'Ich esse Brot', words: ['Brot', 'Ich', 'esse', 'trinke'], correct: ['Ich', 'esse', 'Brot'] },
-                                { type: 'match', prompt: 'Comida', pairs: [['Apfel', 'Manzana'], ['Brot', 'Pan'], ['Wasser', 'Agua']] }
-                            ]
-                        }
+                        { id: 'l1-1', icon: '👋', order_index: 0, questions: [
+                            { type: 'choice', prompt: 'Saludo básico', text: 'Hola', options: ['Hallo', 'Tschüss', 'Danke', 'Bitte'], correct: 'Hallo', emoji: '👋' },
+                            { type: 'choice', prompt: '¿Qué significa "Guten Morgen"?', text: 'Buenos días', options: ['Buenas noches', 'Buenos días', 'Buenas tardes', 'Adiós'], correct: 'Buenos días', emoji: '☀️' },
+                            { type: 'audio', prompt: 'Escucha', audioText: 'Tschüss', options: ['Hola', 'Adiós', 'Gracias', 'Por favor'], correct: 'Adiós', emoji: '👂' },
+                            { type: 'speak', prompt: 'Di esto en alemán:', text: 'Hallo', meaning: 'Hola', emoji: '🗣️' },
+                            { type: 'match', prompt: 'Saludos', pairs: [['Hallo', 'Hola'], ['Tschüss', 'Adiós'], ['Guten Tag', 'Buen día']] }
+                        ]},
+                        { id: 'l1-2', icon: '👨‍👩‍👧', order_index: 1, questions: [
+                            { type: 'choice', prompt: 'Padre', text: 'Vater', options: ['Mutter', 'Vater', 'Bruder', 'Schwester'], correct: 'Vater', emoji: '👨' },
+                            { type: 'choice', prompt: 'Madre', text: 'Mutter', options: ['Vater', 'Tochter', 'Mutter', 'Sohn'], correct: 'Mutter', emoji: '👩' },
+                            { type: 'wordbank', prompt: 'El padre y la madre', text: 'Vater und Mutter', words: ['Mutter', 'Vater', 'und', 'der'], correct: ['Vater', 'und', 'Mutter'] },
+                            { type: 'match', prompt: 'Familia', pairs: [['Bruder', 'Hermano'], ['Schwester', 'Hermana'], ['Kind', 'Niño/a']] },
+                            { type: 'speak', prompt: 'Di: Mi familia', text: 'Meine Familie', emoji: '👨‍👩‍👧‍👦' }
+                        ]},
+                        { id: 'l1-3', icon: '🍕', order_index: 2, questions: [
+                            { type: 'choice', prompt: 'Agua', text: 'Wasser', options: ['Brot', 'Wasser', 'Apfel', 'Milch'], correct: 'Wasser', emoji: '💧' },
+                            { type: 'audio', prompt: '¿Qué es?', audioText: 'Der Apfel', options: ['La manzana', 'El pan', 'La leche', 'El agua'], correct: 'La manzana', emoji: '🍎' },
+                            { type: 'choice', prompt: 'Pan', text: 'Brot', options: ['Wasser', 'Brot', 'Käse', 'Fleisch'], correct: 'Brot', emoji: '🍞' },
+                            { type: 'wordbank', prompt: 'Yo como pan', text: 'Ich esse Brot', words: ['Brot', 'Ich', 'esse', 'trinke'], correct: ['Ich', 'esse', 'Brot'] },
+                            { type: 'match', prompt: 'Comida', pairs: [['Apfel', 'Manzana'], ['Brot', 'Pan'], ['Wasser', 'Agua']] }
+                        ]}
                     ]
                 },
                 {
-                    id: 'u2', title: 'Unidad 2: Frases Útiles', subtitle: 'Interacciones básicas', order_index: 1,
+                    id: 'u2', title: 'Unidad 2: Frases Útiles', subtitle: 'Interacciones', order_index: 1,
                     lessons: [
-                        {
-                            id: 'l2-1', icon: '🛂', order_index: 0,
-                            questions: [
-                                { type: 'choice', prompt: '¿De dónde eres?', text: 'Woher kommst du?', options: ['Wer bist du?', 'Woher kommst du?', 'Wie alt bist du?', 'Wo wohnst du?'], correct: 'Woher kommst du?', emoji: '🌍' },
-                                { type: 'choice', prompt: 'Soy de España', text: 'Ich komme aus Spanien', options: ['Ich komme aus Deutschland', 'Ich bin Spanier', 'Ich komme aus Spanien', 'Ich lebe in Spanien'], correct: 'Ich komme aus Spanien', emoji: '🇪🇸' },
-                                { type: 'speak', prompt: 'Di: Yo soy de Alemania', text: 'Ich komme aus Deutschland', emoji: '🇩🇪' },
-                                { type: 'wordbank', prompt: 'Vivo en Berlín', text: 'Ich wohne in Berlin', words: ['wohne', 'Berlin', 'Ich', 'in'], correct: ['Ich', 'wohne', 'in', 'Berlin'] },
-                                { type: 'match', prompt: 'Origen', pairs: [['Woher', 'De dónde'], ['Kommst du', 'Vienes'], ['Aus', 'De/Desde']] }
-                            ]
-                        },
-                        {
-                            id: 'l2-2', icon: '☕', order_index: 1,
-                            questions: [
-                                { type: 'choice', prompt: 'Un café, por favor', text: 'Einen Kaffee, bitte', options: ['Einen Tee, bitte', 'Einen Kaffee, bitte', 'Ein Wasser, bitte', 'Zwei Kaffee'], correct: 'Einen Kaffee, bitte', emoji: '☕' },
-                                { type: 'audio', prompt: 'Elige la traducción', audioText: 'Ich möchte ein Bier', options: ['Quiero un vino', 'Quiero una cerveza', 'Quiero un agua', 'Tengo una cerveza'], correct: 'Quiero una cerveza', emoji: '🍺' },
-                                { type: 'speak', prompt: 'Di: La cuenta, por favor', text: 'Die Rechnung, bitte', emoji: '🧾' },
-                                { type: 'choice', prompt: 'Gracias', text: 'Danke', options: ['Bitte', 'Danke', 'Entschuldigung', 'Tschüss'], correct: 'Danke', emoji: '🙏' },
-                                { type: 'match', prompt: 'Restaurante', pairs: [['Der Tisch', 'La mesa'], ['Der Stuhl', 'La silla'], ['Die Speisekarte', 'El menú']] }
-                            ]
-                        },
-                        {
-                            id: 'l2-3', icon: '🚕', order_index: 2,
-                            questions: [
-                                { type: 'choice', prompt: '¿Dónde está la estación?', text: 'Wo ist der Bahnhof?', options: ['Wo ist der Bahnhof?', 'Wo ist der Flughafen?', 'Wo ist die Bank?', 'Wo ist das Hotel?'], correct: 'Wo ist der Bahnhof?', emoji: '🚉' },
-                                { type: 'choice', prompt: 'Izquierda / Derecha', text: 'Links / Rechts', options: ['Geradeaus', 'Links / Rechts', 'Hier', 'Dort'], correct: 'Links / Rechts', emoji: '↔️' },
-                                { type: 'wordbank', prompt: 'Todo recto', text: 'Immer geradeaus', words: ['geradeaus', 'Immer', 'gehen', 'links'], correct: ['Immer', 'geradeaus'] },
-                                { type: 'speak', prompt: 'Di: A la izquierda', text: 'Nach links', emoji: '🚗' },
-                                { type: 'match', prompt: 'Direcciones', pairs: [['Links', 'Izquierda'], ['Rechts', 'Derecha'], ['Geradeaus', 'Recto']] }
-                            ]
-                        }
+                        { id: 'l2-1', icon: '🛂', order_index: 0, questions: [
+                            { type: 'choice', prompt: '¿De dónde eres?', text: 'Woher kommst du?', options: ['Wer bist du?', 'Woher kommst du?', 'Wie alt bist du?', 'Wo wohnst du?'], correct: 'Woher kommst du?', emoji: '🌍' },
+                            { type: 'choice', prompt: 'Soy de España', text: 'Ich komme aus Spanien', options: ['Ich komme aus Deutschland', 'Ich bin Spanier', 'Ich komme aus Spanien', 'Ich lebe in Spanien'], correct: 'Ich komme aus Spanien', emoji: '🇪🇸' },
+                            { type: 'speak', prompt: 'Di: Yo soy de Alemania', text: 'Ich komme aus Deutschland', emoji: '🇩🇪' },
+                            { type: 'wordbank', prompt: 'Vivo en Berlín', text: 'Ich wohne in Berlin', words: ['wohne', 'Berlin', 'Ich', 'in'], correct: ['Ich', 'wohne', 'in', 'Berlin'] },
+                            { type: 'match', prompt: 'Origen', pairs: [['Woher', 'De dónde'], ['Kommst du', 'Vienes'], ['Aus', 'De/Desde']] }
+                        ]},
+                        { id: 'l2-2', icon: '☕', order_index: 1, questions: [
+                            { type: 'choice', prompt: 'Un café, por favor', text: 'Einen Kaffee, bitte', options: ['Einen Tee, bitte', 'Einen Kaffee, bitte', 'Ein Wasser, bitte', 'Zwei Kaffee'], correct: 'Einen Kaffee, bitte', emoji: '☕' },
+                            { type: 'audio', prompt: 'Elige la traducción', audioText: 'Ich möchte ein Bier', options: ['Quiero un vino', 'Quiero una cerveza', 'Quiero un agua', 'Tengo una cerveza'], correct: 'Quiero una cerveza', emoji: '🍺' },
+                            { type: 'speak', prompt: 'Di: La cuenta, por favor', text: 'Die Rechnung, bitte', emoji: '🧾' },
+                            { type: 'choice', prompt: 'Gracias', text: 'Danke', options: ['Bitte', 'Danke', 'Entschuldigung', 'Tschüss'], correct: 'Danke', emoji: '🙏' },
+                            { type: 'match', prompt: 'Restaurante', pairs: [['Der Tisch', 'La mesa'], ['Der Stuhl', 'La silla'], ['Die Speisekarte', 'El menú']] }
+                        ]},
+                        { id: 'l2-3', icon: '🚕', order_index: 2, questions: [
+                            { type: 'choice', prompt: '¿Dónde está la estación?', text: 'Wo ist der Bahnhof?', options: ['Wo ist der Flughafen?', 'Wo ist der Bahnhof?', 'Wo ist die Bank?', 'Wo ist das Hotel?'], correct: 'Wo ist der Bahnhof?', emoji: '🚉' },
+                            { type: 'choice', prompt: 'Izquierda / Derecha', text: 'Links / Rechts', options: ['Geradeaus', 'Links / Rechts', 'Hier', 'Dort'], correct: 'Links / Rechts', emoji: '↔️' },
+                            { type: 'wordbank', prompt: 'Todo recto', text: 'Immer geradeaus', words: ['geradeaus', 'Immer', 'gehen', 'links'], correct: ['Immer', 'geradeaus'] },
+                            { type: 'speak', prompt: 'Di: A la izquierda', text: 'Nach links', emoji: '🚗' },
+                            { type: 'match', prompt: 'Direcciones', pairs: [['Links', 'Izquierda'], ['Rechts', 'Derecha'], ['Geradeaus', 'Recto']] }
+                        ]}
                     ]
                 },
                 {
-                    id: 'u3', title: 'Unidad 3: Números y Tiempo', subtitle: 'Contar y tiempo', order_index: 2,
+                    id: 'u3', title: 'Unidad 3: Números y Tiempo', subtitle: 'Matemáticas y calendario', order_index: 2,
                     lessons: [
-                        {
-                            id: 'l3-1', icon: '🔢', order_index: 0,
-                            questions: [
-                                { type: 'choice', prompt: 'Uno, Dos, Tres', text: 'Eins, Zwei, Drei', options: ['Ein, Zwei, Drei', 'Eins, Zwei, Drei', 'Eins, Zwo, Drei', 'Uno, Due, Tre'], correct: 'Eins, Zwei, Drei', emoji: '1️⃣' },
-                                { type: 'match', prompt: 'Números 1-5', pairs: [['Eins', '1'], ['Zwei', '2'], ['Drei', '3'], ['Vier', '4'], ['Fünf', '5']] },
-                                { type: 'choice', prompt: 'Diez', text: 'Zehn', options: ['Neun', 'Zehn', 'Elf', 'Zwölf'], correct: 'Zehn', emoji: '🔟' },
-                                { type: 'audio', prompt: 'Escucha el número', audioText: 'Sieben', options: ['5', '6', '7', '8'], correct: '7', emoji: '👂' },
-                                { type: 'speak', prompt: 'Di: Mi número de teléfono', text: 'Meine Telefonnummer', emoji: '📱' }
-                            ]
-                        },
-                        {
-                            id: 'l3-2', icon: '📅', order_index: 1,
-                            questions: [
-                                { type: 'choice', prompt: 'Hoy / Mañana', text: 'Heute / Morgen', options: ['Gestern / Morgen', 'Heute / Morgen', 'Heute / Gestern', 'Morgen / Abend'], correct: 'Heute / Morgen', emoji: '📆' },
-                                { type: 'match', prompt: 'Días de la semana', pairs: [['Montag', 'Lunes'], ['Dienstag', 'Martes'], ['Mittwoch', 'Miércoles']] },
-                                { type: 'wordbank', prompt: 'Mañana es martes', text: 'Morgen ist Dienstag', words: ['Morgen', 'Dienstag', 'ist', 'Heute'], correct: ['Morgen', 'ist', 'Dienstag'] },
-                                { type: 'choice', prompt: 'Ayer', text: 'Gestern', options: ['Heute', 'Morgen', 'Gestern', 'Jetzt'], correct: 'Gestern', emoji: '⬅️' },
-                                { type: 'speak', prompt: 'Di: El fin de semana', text: 'Das Wochenende', emoji: '🎉' }
-                            ]
-                        },
-                        {
-                            id: 'l3-3', icon: '⏰', order_index: 2,
-                            questions: [
-                                { type: 'choice', prompt: '¿Qué hora es? (14:00)', text: 'Es ist zwei Uhr', options: ['Es ist ein Uhr', 'Es ist zwei Uhr', 'Es ist drei Uhr', 'Es ist vierzehn Uhr'], correct: 'Es ist zwei Uhr', emoji: '🕑' },
-                                { type: 'wordbank', prompt: 'Media hora', text: 'Eine halbe Stunde', words: ['Stunde', 'halbe', 'Eine', 'Zeit'], correct: ['Eine', 'halbe', 'Stunde'] },
-                                { type: 'match', prompt: 'Tiempo', pairs: [['Die Stunde', 'La hora'], ['Die Minute', 'El minuto'], ['Die Sekunde', 'El segundo']] },
-                                { type: 'audio', prompt: 'Escucha', audioText: 'Der Wecker klingelt', options: ['El reloj corre', 'La alarma suena', 'Es temprano', 'Es tarde'], correct: 'La alarma suena', emoji: '⏰' },
-                                { type: 'speak', prompt: 'Di: Es muy tarde', text: 'Es ist sehr spät', emoji: '🌙' }
-                            ]
-                        }
+                        { id: 'l3-1', icon: '🔢', order_index: 0, questions: [
+                            { type: 'match', prompt: 'Números 1-5', pairs: [['Eins', '1'], ['Zwei', '2'], ['Drei', '3'], ['Vier', '4'], ['Fünf', '5']] },
+                            { type: 'choice', prompt: 'Diez', text: 'Zehn', options: ['Neun', 'Zehn', 'Elf', 'Zwölf'], correct: 'Zehn', emoji: '🔟' },
+                            { type: 'audio', prompt: 'Escucha el número', audioText: 'Sieben', options: ['5', '6', '7', '8'], correct: '7', emoji: '👂' },
+                            { type: 'speak', prompt: 'Di: Mi número de teléfono', text: 'Meine Telefonnummer', emoji: '📱' },
+                            { type: 'choice', prompt: '¿Cuánto cuesta?', text: 'Wie viel kostet das?', options: ['Wie viel kostet das?', 'Was ist das?', 'Wo ist das?', 'Haben Sie das?'], correct: 'Wie viel kostet das?', emoji: '💶' }
+                        ]},
+                        { id: 'l3-2', icon: '📅', order_index: 1, questions: [
+                            { type: 'match', prompt: 'Días de la semana', pairs: [['Montag', 'Lunes'], ['Dienstag', 'Martes'], ['Mittwoch', 'Miércoles'], ['Sonntag', 'Domingo']] },
+                            { type: 'wordbank', prompt: 'Mañana es martes', text: 'Morgen ist Dienstag', words: ['Morgen', 'Dienstag', 'ist', 'Heute'], correct: ['Morgen', 'ist', 'Dienstag'] },
+                            { type: 'choice', prompt: 'Ayer', text: 'Gestern', options: ['Heute', 'Morgen', 'Gestern', 'Jetzt'], correct: 'Gestern', emoji: '⬅️' },
+                            { type: 'speak', prompt: 'Di: El fin de semana', text: 'Das Wochenende', emoji: '🎉' },
+                            { type: 'choice', prompt: 'Semana', text: 'Woche', options: ['Tag', 'Monat', 'Jahr', 'Woche'], correct: 'Woche', emoji: '🗓️' }
+                        ]},
+                        { id: 'l3-3', icon: '⏰', order_index: 2, questions: [
+                            { type: 'choice', prompt: '¿Qué hora es? (14:00)', text: 'Es ist zwei Uhr', options: ['Es ist ein Uhr', 'Es ist zwei Uhr', 'Es ist drei Uhr', 'Es ist vierzehn Uhr'], correct: 'Es ist zwei Uhr', emoji: '🕑' },
+                            { type: 'wordbank', prompt: 'Media hora', text: 'Eine halbe Stunde', words: ['Stunde', 'halbe', 'Eine', 'Zeit'], correct: ['Eine', 'halbe', 'Stunde'] },
+                            { type: 'match', prompt: 'Tiempo', pairs: [['Die Stunde', 'La hora'], ['Die Minute', 'El minuto'], ['Die Sekunde', 'El segundo']] },
+                            { type: 'audio', prompt: 'Escucha', audioText: 'Der Wecker klingelt', options: ['El reloj corre', 'La alarma suena', 'Es temprano', 'Es tarde'], correct: 'La alarma suena', emoji: '⏰' },
+                            { type: 'speak', prompt: 'Di: Es muy tarde', text: 'Es ist sehr spät', emoji: '🌙' }
+                        ]}
+                    ]
+                },
+                // NUEVAS UNIDADES
+                {
+                    id: 'u4', title: 'Unidad 4: Animales', subtitle: 'El reino animal', order_index: 3,
+                    lessons: [
+                        { id: 'l4-1', icon: '🐕', order_index: 0, questions: [
+                            { type: 'choice', prompt: 'Perro', text: 'Hund', options: ['Katze', 'Hund', 'Maus', 'Vogel'], correct: 'Hund', emoji: '🐕' },
+                            { type: 'choice', prompt: 'Gato', text: 'Katze', options: ['Hund', 'Pferd', 'Katze', 'Fisch'], correct: 'Katze', emoji: '🐱' },
+                            { type: 'match', prompt: 'Mascotas', pairs: [['Der Hund', 'El perro'], ['Die Katze', 'El gato'], ['Der Fisch', 'El pez']] },
+                            { type: 'speak', prompt: 'Di: Tengo un perro', text: 'Ich habe einen Hund', emoji: '🐶' },
+                            { type: 'audio', prompt: 'Escucha', audioText: 'Die Katze schläft', options: ['El perro duerme', 'El gato duerme', 'El gato come', 'El perro corre'], correct: 'El gato duerme', emoji: '👂' }
+                        ]},
+                        { id: 'l4-2', icon: '🦁', order_index: 1, questions: [
+                            { type: 'choice', prompt: 'Caballo', text: 'Pferd', options: ['Kuh', 'Schwein', 'Pferd', 'Schaf'], correct: 'Pferd', emoji: '🐴' },
+                            { type: 'choice', prompt: 'Vaca', text: 'Kuh', options: ['Pferd', 'Kuh', 'Ziege', 'Huhn'], correct: 'Kuh', emoji: '🐄' },
+                            { type: 'match', prompt: 'Granja', pairs: [['Das Pferd', 'El caballo'], ['Die Kuh', 'La vaca'], ['Das Schwein', 'El cerdo']] },
+                            { type: 'wordbank', prompt: 'Las vacas comen hierba', text: 'Kühe fressen Gras', words: ['Gras', 'Kühe', 'fressen', 'essen'], correct: ['Kühe', 'fressen', 'Gras'] },
+                            { type: 'speak', prompt: 'Di: Me gustan los animales', text: 'Ich mag Tiere', emoji: '🦁' }
+                        ]},
+                        { id: 'l4-3', icon: '🐦', order_index: 2, questions: [
+                            { type: 'choice', prompt: 'Pájaro', text: 'Vogel', options: ['Vogel', 'Insekt', 'Fisch', 'Schlange'], correct: 'Vogel', emoji: '🐦' },
+                            { type: 'choice', prompt: 'Abeja', text: 'Biene', options: ['Fliege', 'Biene', 'Wespe', 'Ameise'], correct: 'Biene', emoji: '🐝' },
+                            { type: 'audio', prompt: '¿Qué es?', audioText: 'Der Vogel singt', options: ['El pájaro canta', 'El pájaro vuela', 'La abeja zumba', 'El perro ladra'], correct: 'El pájaro canta', emoji: '🎵' },
+                            { type: 'match', prompt: 'Naturaleza', pairs: [['Der Baum', 'El árbol'], ['Die Blume', 'La flor'], ['Der Wald', 'El bosque']] },
+                            { type: 'speak', prompt: 'Di: El pájaro vuela', text: 'Der Vogel fliegt', emoji: '🦅' }
+                        ]}
+                    ]
+                },
+                {
+                    id: 'u5', title: 'Unidad 5: Colores y Ropa', subtitle: 'Estilo y apariencia', order_index: 4,
+                    lessons: [
+                        { id: 'l5-1', icon: '🎨', order_index: 0, questions: [
+                            { type: 'match', prompt: 'Colores básicos', pairs: [['Rot', 'Rojo'], ['Blau', 'Azul'], ['Gelb', 'Amarillo'], ['Grün', 'Verde']] },
+                            { type: 'choice', prompt: 'Negro', text: 'Schwarz', options: ['Weiß', 'Grau', 'Schwarz', 'Braun'], correct: 'Schwarz', emoji: '⬛' },
+                            { type: 'choice', prompt: 'Blanco', text: 'Weiß', options: ['Schwarz', 'Weiß', 'Rot', 'Blau'], correct: 'Weiß', emoji: '⬜' },
+                            { type: 'audio', prompt: 'Color', audioText: 'Das Auto ist rot', options: ['El auto es azul', 'El auto es rojo', 'El auto es negro', 'El auto es blanco'], correct: 'El auto es rojo', emoji: '🚗' },
+                            { type: 'speak', prompt: 'Di: Me gusta el verde', text: 'Ich mag Grün', emoji: '💚' }
+                        ]},
+                        { id: 'l5-2', icon: '👕', order_index: 1, questions: [
+                            { type: 'choice', prompt: 'Camisa', text: 'Hemd', options: ['Hose', 'Hemd', 'Jacke', 'Schuhe'], correct: 'Hemd', emoji: '👕' },
+                            { type: 'choice', prompt: 'Pantalones', text: 'Hose', options: ['Hemd', 'Rock', 'Hose', 'Kleid'], correct: 'Hose', emoji: '👖' },
+                            { type: 'match', prompt: 'Ropa', pairs: [['Die Hose', 'El pantalón'], ['Das Hemd', 'La camisa'], ['Der Schuh', 'El zapato']] },
+                            { type: 'wordbank', prompt: 'La camisa es blanca', text: 'Das Hemd ist weiß', words: ['Hemd', 'ist', 'Das', 'weiß'], correct: ['Das', 'Hemd', 'ist', 'weiß'] },
+                            { type: 'speak', prompt: 'Di: Compro un vestido', text: 'Ich kaufe ein Kleid', emoji: '👗' }
+                        ]},
+                        { id: 'l5-3', icon: '🧥', order_index: 2, questions: [
+                            { type: 'choice', prompt: 'Chaqueta', text: 'Jacke', options: ['Mantel', 'Jacke', 'Pullover', 'Anzug'], correct: 'Jacke', emoji: '🧥' },
+                            { type: 'choice', prompt: 'Suéter', text: 'Pullover', options: ['Jacke', 'Pullover', 'T-Shirt', 'Bluse'], correct: 'Pullover', emoji: '🧶' },
+                            { type: 'audio', prompt: 'Escucha', audioText: 'Die Schuhe sind neu', options: ['Los zapatos son viejos', 'Los zapatos son nuevos', 'La chaqueta es nueva', 'El sombrero es nuevo'], correct: 'Los zapatos son nuevos', emoji: '👟' },
+                            { type: 'match', prompt: 'Accesorios', pairs: [['Der Hut', 'El sombrero'], ['Die Brille', 'Las gafas'], ['Die Uhr', 'El reloj']] },
+                            { type: 'speak', prompt: 'Di: Hace frío, necesito una chaqueta', text: 'Es ist kalt, ich brauche eine Jacke', emoji: '🥶' }
+                        ]}
                     ]
                 }
             ]
         };
 
-        // --- STATE ---
+        // --- STATE & DOM ---
         let state = { hearts: 5, gems: 500, streak: 0, completed: [], currentQ: 0, answers: [], selected: null, checking: false };
         let currentLessonData = null;
         let recognition = null;
         let matchState = { first: null, second: null, lock: false, solved: [] };
         let DB = { units: [] }; 
-        let audioCtx = null; // Contexto de audio
+        let audioCtx = null; 
 
-        // --- DOM ELEMENTS ---
         const DOM = {
             hearts: document.getElementById('s-hearts'),
             gems: document.getElementById('s-gems'),
@@ -367,7 +380,7 @@
             overlayShop: document.getElementById('overlay-shop')
         };
 
-        // --- SOUND ENGINE (Sin archivos externos) ---
+        // --- SOUND ENGINE ---
         function initAudio() { if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
         function playSound(type) {
             initAudio();
@@ -396,9 +409,9 @@
             } else if (type === 'win') {
                 osc.type = 'sine';
                 const now = audioCtx.currentTime;
-                osc.frequency.setValueAtTime(523.25, now); // C5
-                osc.frequency.setValueAtTime(659.25, now + 0.1); // E5
-                osc.frequency.setValueAtTime(783.99, now + 0.2); // G5
+                osc.frequency.setValueAtTime(523.25, now); 
+                osc.frequency.setValueAtTime(659.25, now + 0.1); 
+                osc.frequency.setValueAtTime(783.99, now + 0.2); 
                 gainNode.gain.setValueAtTime(0.1, now);
                 gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
                 osc.start();
@@ -406,21 +419,18 @@
             }
         }
 
-        // --- STORAGE ---
-        const save = () => { try { localStorage.setItem('germango_ultimate', JSON.stringify(state)); } catch (e) {} };
-        const loadLocal = () => { try { const d = localStorage.getItem('germango_ultimate'); if (d) { const p = JSON.parse(d); state.hearts = p.hearts ?? 5; state.gems = p.gems ?? 500; state.streak = p.streak ?? 0; state.completed = p.completed ?? []; } } catch (e) {} updateUI(); };
+        // --- STORAGE & DATA ---
+        const save = () => { try { localStorage.setItem('germango_v7', JSON.stringify(state)); } catch (e) {} };
+        const loadLocal = () => { try { const d = localStorage.getItem('germango_v7'); if (d) { const p = JSON.parse(d); state.hearts = p.hearts ?? 5; state.gems = p.gems ?? 500; state.streak = p.streak ?? 0; state.completed = p.completed ?? []; } } catch (e) {} updateUI(); };
 
-        // --- DATA FETCHING ---
         async function fetchCourseData() {
             let loaded = false;
-            // Intentar Supabase si está configurado
             if (_supabase) {
                 try {
-                    const { data: units, error: errU } = await _supabase.from('units').select('*').order('order_index');
+                    const { data: units } = await _supabase.from('units').select('*').order('order_index');
                     if (units && units.length > 0) {
                         const { data: lessons } = await _supabase.from('lessons').select('*').order('order_index');
                         const { data: questions } = await _supabase.from('questions').select('*').order('order_index');
-                        
                         DB.units = units.map(u => ({
                             ...u,
                             lessons: lessons.filter(l => l.unit_id === u.id).map(l => ({
@@ -430,18 +440,13 @@
                         }));
                         loaded = true;
                     }
-                } catch (e) { console.warn("Fallo Supabase, usando datos locales.", e); }
+                } catch (e) { console.warn("Supabase error, fallback local", e); }
             }
-            
-            // Fallback a datos locales
-            if (!loaded) {
-                DB = JSON.parse(JSON.stringify(LOCAL_DB)); // Deep copy
-            }
-            
+            if (!loaded) DB = JSON.parse(JSON.stringify(LOCAL_DB));
             renderMap();
         }
 
-        // --- UI UPDATES ---
+        // --- UI ---
         const updateUI = () => {
             DOM.hearts.innerText = state.hearts;
             DOM.gems.innerText = state.gems;
@@ -456,16 +461,15 @@
         
         const openShop = () => { DOM.overlayShop.classList.add('active'); };
         const closeShop = () => { DOM.overlayShop.classList.remove('active'); };
-        const buyLivesFromFail = () => { shopPurchase('hearts'); DOM.overlayGameover.classList.remove('active'); startLesson(currentLessonData); };
         
         const shopPurchase = (item) => {
             if (item === 'hearts') {
                 if (state.gems >= 50) { state.gems -= 50; state.hearts = 5; playSound('correct'); save(); updateUI(); closeShop(); }
-                else { alert("No tienes suficientes gemas!"); playSound('wrong'); }
+                else { alert("Gemas insuficientes"); playSound('wrong'); }
             }
         };
 
-        // --- MAP RENDERER (ZigZag) ---
+        // --- MAP RENDERER (Mobile Friendly) ---
         const renderMap = () => {
             if(DB.units.length === 0) return; 
             DOM.mapContainer.innerHTML = ''; 
@@ -473,7 +477,6 @@
             let totalLessons = DB.units.reduce((acc, u) => acc + u.lessons.length, 0);
             const progressPercent = totalLessons > 0 ? (state.completed.length / totalLessons) * 100 : 0;
 
-            // Global Progress
             let gpHtml = `
                 <div class="global-progress-container">
                     <div class="gp-header"><span>Progreso Global</span><span>${Math.round(progressPercent)}%</span></div>
@@ -482,38 +485,38 @@
             `;
             DOM.mapContainer.innerHTML += gpHtml;
 
-            const allLessonsFlat = DB.units.flatMap(u => u.lessons);
+            // Flatten lessons for logic
+            const allLessonsFlat = DB.units.flatMap(u => u.lessons.map(l => ({...l, unitId: u.id})));
 
             DB.units.forEach((unit) => {
                 const unitDiv = document.createElement('div');
                 unitDiv.className = 'unit-container';
                 
-                // Unit Header
                 const header = document.createElement('div');
                 header.className = 'unit-header';
                 header.innerHTML = `<div class="unit-title">${unit.title}</div><div class="unit-sub">${unit.subtitle}</div>`;
                 unitDiv.appendChild(header);
 
-                // Lessons
                 const lessonsRow = document.createElement('div');
                 lessonsRow.className = 'lessons-row';
                 
                 unit.lessons.forEach((les, lIndex) => {
                     const wrapper = document.createElement('div');
-                    // ZigZag logic: index 0 -> left, 1 -> center, 2 -> right, repeat
-                    const positions = ['left', 'center', 'right'];
-                    wrapper.className = `node-wrapper ${positions[lIndex % 3]}`;
+                    wrapper.className = 'node-wrapper center'; // Always centered for better mobile support
 
                     const node = document.createElement('div');
                     node.className = 'lesson-node';
                     
+                    // Logic to find index in flat array for unlocking
                     const currentIndex = allLessonsFlat.findIndex(l => l.id === les.id);
                     const prevId = currentIndex > 0 ? allLessonsFlat[currentIndex-1].id : null;
-                    const prevDone = prevId ? state.completed.includes(prevId) : true; 
+                    
+                    // First lesson is unlocked if nothing done, OR if previous lesson in ANY unit is done
+                    const prevDone = prevId ? state.completed.includes(prevId) : (currentIndex === 0); 
                     const isDone = state.completed.includes(les.id);
                     
                     if (isDone) { node.classList.add('completed'); node.innerHTML = `<span class="icon">✓</span>`; }
-                    else if (prevDone) { node.classList.add('current'); node.innerHTML = `<span class="icon">${les.icon || '📚'}</span><span class="lvl">Nivel ${lIndex+1}</span>`; }
+                    else if (prevDone) { node.classList.add('current'); node.innerHTML = `<span class="icon">${les.icon || '📚'}</span>`; }
                     else { node.classList.add('locked'); node.innerHTML = `<span class="icon">🔒</span>`; }
                     
                     if (!node.classList.contains('locked')) node.onclick = () => startLesson(les);
@@ -527,7 +530,7 @@
             });
         };
 
-        // --- LÓGICA DE LECCIONES ---
+        // --- LESSON LOGIC ---
         const startLesson = (les) => {
             currentLessonData = les;
             state.currentQ = 0; state.checking = false; state.selected = null; state.answers = [];
@@ -571,15 +574,13 @@
                 
                 html += `<div class="options-grid">`;
                 const shuffledOptions = [...q.options].sort(() => Math.random() - 0.5);
-                shuffledOptions.forEach((o, i) => {
-                    // Add key hints
-                    html += `<button class="opt-btn" data-key="${i+1}" onclick="selectChoice(this, '${o.replace(/'/g, "\\'")}')"><span class="key-hint">${i+1}</span>${o}</button>`;
+                shuffledOptions.forEach((o) => {
+                    html += `<button class="opt-btn" onclick="selectChoice(this, '${o.replace(/'/g, "\\'")}')">${o}</button>`;
                 });
                 html += `</div>`;
             } 
             else if (q.type === 'speak') {
-                html += `
-                <div class="main-text">${emojiHtml} ${q.text}</div>
+                html += `<div class="main-text">${emojiHtml} ${q.text}</div>
                 <div class="speak-container" id="speak-ui">
                     <button class="speak-btn" id="mic-btn" onclick="triggerSpeech()">🎤 Toca para hablar</button>
                     <button class="write-mode-btn" onclick="switchToTyping()">No puedo usar el micrófono</button>
@@ -707,7 +708,7 @@
         
         // Speech
         const triggerSpeech = () => { 
-            if (!recognition) { alert("Tu navegador no soporta reconocimiento de voz."); switchToTyping(); return; } 
+            if (!recognition) { alert("Navegador no soportado."); switchToTyping(); return; } 
             
             const micBtn = document.getElementById('mic-btn'); 
             const resultDiv = document.getElementById('mic-result'); 
@@ -723,8 +724,7 @@
             }; 
             
             recognition.onerror = (event) => { 
-                console.error("Speech Error:", event.error);
-                resultDiv.innerText = "No se escuchó bien. Intenta escribir."; 
+                resultDiv.innerText = "Error. Intenta escribir."; 
                 resetMicBtn(); 
             }; 
             
@@ -745,7 +745,7 @@
             const container = document.getElementById('speak-ui'); 
             if (!container) return; 
             container.innerHTML = `
-                <input type="text" class="text-input-fallback" id="write-input" placeholder="Escribe lo que escuchas..." oninput="checkTypingResult()">
+                <input type="text" class="text-input-fallback" id="write-input" placeholder="Escribe aquí..." oninput="checkTypingResult()">
                 <button class="write-mode-btn" style="margin-top:10px; color:var(--secondary-blue);" onclick="speak(currentLessonData.questions[state.currentQ].text)">🔊 Repetir audio</button>
             `; 
             document.getElementById('write-input').focus(); 
@@ -873,7 +873,7 @@
                 u.lang='de-DE'; 
                 u.rate = 0.9; 
                 window.speechSynthesis.speak(u); 
-            } catch(e) { console.error("TTS Error", e); } 
+            } catch(e) {} 
         }
 
         function createConfetti() { 
@@ -884,18 +884,6 @@
             document.body.appendChild(c); 
             setTimeout(()=>c.remove(), 3000); 
         }
-
-        // Keyboard Support
-        document.addEventListener('keydown', (e) => { 
-            const key = parseInt(e.key);
-            if (!isNaN(key) && key >= 1 && key <= 4) {
-                const btns = document.querySelectorAll('.opt-btn');
-                if (btns[key-1]) btns[key-1].click();
-            }
-            else if (e.key === 'Enter') { 
-                if (DOM.btnAction.classList.contains('active') || DOM.btnAction.innerText === 'CONTINUAR') DOM.btnAction.click(); 
-            } 
-        });
 
         // INIT
         loadLocal(); 
