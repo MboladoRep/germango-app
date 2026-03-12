@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Germango Pro 7.0 - Mobile Ready</title>
+    <title>Germango Pro 7.1 - Fixed Edition</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <style>
@@ -38,7 +38,6 @@
         /* Map Screen */
         .map-wrapper { position: relative; width: 100%; padding: 20px 0 50px; display: flex; flex-direction: column; align-items: center; }
         
-        /* Map Nodes - Default Mobile (Vertical Line) */
         .unit-container { display: flex; flex-direction: column; align-items: center; width: 100%; margin-bottom: 30px; }
         .unit-header { width: 100%; padding: 12px; margin-bottom: 15px; background: linear-gradient(90deg, rgba(88,204,2,0.1) 0%, transparent 100%); border-left: 5px solid var(--primary-green); border-radius: 0 10px 10px 0; }
         .unit-title { font-weight: 800; font-size: 1rem; color: var(--primary-green); }
@@ -46,12 +45,14 @@
         
         .lessons-row { display: flex; flex-direction: column; align-items: center; width: 100%; position: relative; }
         
-        .lesson-node { width: 70px; height: 70px; border-radius: 50%; background: var(--card-dark); border: 3px solid var(--text-dim); display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 800; font-size: 1rem; cursor: pointer; transition: all 0.2s; position: relative; z-index: 2; gap: 2px; }
+        .lesson-node { width: 70px; height: 70px; border-radius: 50%; background: var(--card-dark); border: 3px solid var(--text-dim); display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 800; font-size: 1rem; cursor: pointer; transition: all 0.2s; position: relative; z-index: 2; gap: 2px; margin: 5px 0; }
         
         /* Path line connecting nodes */
-        .lesson-node::after { content: ''; position: absolute; top: 100%; width: 3px; height: 25px; background: var(--border-color); z-index: 1; }
-        .lessons-row > div:last-child .lesson-node::after { display: none; }
-        .lesson-node.completed::after { background: var(--primary-green); }
+        .lesson-node::before { content: ''; position: absolute; bottom: 100%; width: 3px; height: 20px; background: var(--border-color); z-index: 1; }
+        /* Hide line for the very first node of the entire app or first of unit */
+        .lesson-node.first-node::before { display: none; }
+        
+        .lesson-node.completed::before { background: var(--primary-green); }
         
         .lesson-node:hover:not(.locked) { transform: scale(1.1); border-color: var(--secondary-blue); }
         .lesson-node.completed { border-color: var(--primary-green); color: var(--primary-green); background: rgba(88, 204, 2, 0.1); }
@@ -61,19 +62,6 @@
         .lesson-node .lvl { font-size: 0.6rem; opacity: 0.7; }
 
         @keyframes bounce { 0%, 20%, 50%, 80%, 100% {transform: translateY(0);} 40% {transform: translateY(-8px);} 60% {transform: translateY(-4px);} }
-
-        /* Zigzag for Desktop */
-        @media (min-width: 600px) {
-            .lesson-node { width: 85px; height: 85px; font-size: 1.2rem; }
-            .lesson-node .icon { font-size: 1.8rem; }
-            .lessons-row { flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 30px 0; position: relative; padding: 10px 0; }
-            .lesson-node::after { display: none; } /* Hide simple vertical line */
-            
-            /* Simulating zigzag with simple logic: odd units left, even units right aligned? 
-               Let's just do a nice vertical alternating layout for simplicity and robust responsiveness. */
-            .node-wrapper { width: 100%; display: flex; margin: 5px 0; }
-            .node-wrapper.center { justify-content: center; }
-        }
 
         /* Global Progress */
         .global-progress-container { width: 100%; margin-bottom: 30px; background: var(--card-dark); padding: 12px; border-radius: 12px; border: 1px solid var(--border-color); }
@@ -194,7 +182,7 @@
             <div class="overlay-icon">💔</div>
             <h2 style="margin-bottom:10px; font-size:1.5rem">Lección fallida</h2>
             <p style="color: var(--text-dim); margin-bottom: 20px; font-size:0.9rem">Te has quedado sin vidas.</p>
-            <button class="btn-main active" onclick="shopPurchase('hearts'); DOM.overlayGameover.classList.remove('active'); startLesson(currentLessonData);">Comprar Vidas (50💎)</button>
+            <button class="btn-main active" onclick="buyLivesRetry()">Comprar Vidas (50💎)</button>
             <button class="btn-main" style="margin-top:10px; background:#333; border-bottom-color:#222; color:#aaa; pointer-events:all;" onclick="exitToMap()">VOLVER</button>
         </div>
         
@@ -219,7 +207,7 @@
             try { _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY); } catch(e) { console.log("Supabase init failed, using local data."); }
         }
 
-        // --- BASE DE DATOS LOCAL EXTENDIDA ---
+        // --- BASE DE DATOS LOCAL EXTENDIDA (VERIFICADA) ---
         const LOCAL_DB = {
             units: [
                 {
@@ -300,7 +288,6 @@
                         ]}
                     ]
                 },
-                // NUEVAS UNIDADES
                 {
                     id: 'u4', title: 'Unidad 4: Animales', subtitle: 'El reino animal', order_index: 3,
                     lessons: [
@@ -420,8 +407,20 @@
         }
 
         // --- STORAGE & DATA ---
-        const save = () => { try { localStorage.setItem('germango_v7', JSON.stringify(state)); } catch (e) {} };
-        const loadLocal = () => { try { const d = localStorage.getItem('germango_v7'); if (d) { const p = JSON.parse(d); state.hearts = p.hearts ?? 5; state.gems = p.gems ?? 500; state.streak = p.streak ?? 0; state.completed = p.completed ?? []; } } catch (e) {} updateUI(); };
+        const save = () => { try { localStorage.setItem('germango_v71', JSON.stringify(state)); } catch (e) {} };
+        const loadLocal = () => { 
+            try { 
+                const d = localStorage.getItem('germango_v71'); 
+                if (d) { 
+                    const p = JSON.parse(d); 
+                    state.hearts = p.hearts ?? 5; 
+                    state.gems = p.gems ?? 500; 
+                    state.streak = p.streak ?? 0; 
+                    state.completed = p.completed ?? []; 
+                } 
+            } catch (e) {} 
+            updateUI(); 
+        };
 
         async function fetchCourseData() {
             let loaded = false;
@@ -462,6 +461,19 @@
         const openShop = () => { DOM.overlayShop.classList.add('active'); };
         const closeShop = () => { DOM.overlayShop.classList.remove('active'); };
         
+        const buyLivesRetry = () => {
+            if(state.gems >= 50) {
+                state.gems -= 50;
+                state.hearts = 5;
+                save();
+                updateUI();
+                DOM.overlayGameover.classList.remove('active');
+                startLesson(currentLessonData);
+            } else {
+                alert("No tienes suficientes gemas.");
+            }
+        };
+
         const shopPurchase = (item) => {
             if (item === 'hearts') {
                 if (state.gems >= 50) { state.gems -= 50; state.hearts = 5; playSound('correct'); save(); updateUI(); closeShop(); }
@@ -469,14 +481,18 @@
             }
         };
 
-        // --- MAP RENDERER (Mobile Friendly) ---
+        // --- MAP RENDERER (Fixed Logic) ---
         const renderMap = () => {
             if(DB.units.length === 0) return; 
             DOM.mapContainer.innerHTML = ''; 
             
-            let totalLessons = DB.units.reduce((acc, u) => acc + u.lessons.length, 0);
+            // Flatten ALL lessons into a single array to manage global progress easily
+            const allLessons = DB.units.flatMap(u => u.lessons.map(l => ({...l, unitTitle: u.title})));
+
+            let totalLessons = allLessons.length;
             const progressPercent = totalLessons > 0 ? (state.completed.length / totalLessons) * 100 : 0;
 
+            // Global Progress
             let gpHtml = `
                 <div class="global-progress-container">
                     <div class="gp-header"><span>Progreso Global</span><span>${Math.round(progressPercent)}%</span></div>
@@ -485,8 +501,7 @@
             `;
             DOM.mapContainer.innerHTML += gpHtml;
 
-            // Flatten lessons for logic
-            const allLessonsFlat = DB.units.flatMap(u => u.lessons.map(l => ({...l, unitId: u.id})));
+            let globalIndex = 0; // Track absolute position in the game
 
             DB.units.forEach((unit) => {
                 const unitDiv = document.createElement('div');
@@ -500,29 +515,37 @@
                 const lessonsRow = document.createElement('div');
                 lessonsRow.className = 'lessons-row';
                 
-                unit.lessons.forEach((les, lIndex) => {
-                    const wrapper = document.createElement('div');
-                    wrapper.className = 'node-wrapper center'; // Always centered for better mobile support
-
+                unit.lessons.forEach((les) => {
                     const node = document.createElement('div');
                     node.className = 'lesson-node';
                     
-                    // Logic to find index in flat array for unlocking
-                    const currentIndex = allLessonsFlat.findIndex(l => l.id === les.id);
-                    const prevId = currentIndex > 0 ? allLessonsFlat[currentIndex-1].id : null;
-                    
-                    // First lesson is unlocked if nothing done, OR if previous lesson in ANY unit is done
-                    const prevDone = prevId ? state.completed.includes(prevId) : (currentIndex === 0); 
+                    // Determine if it's the very first node of the game to hide the top line
+                    if (globalIndex === 0) node.classList.add('first-node');
+
+                    // LOCK LOGIC FIXED:
+                    // A lesson is unlocked if:
+                    // 1. It is the very first lesson (index 0)
+                    // 2. The previous lesson (index - 1) exists in the completed array
                     const isDone = state.completed.includes(les.id);
-                    
-                    if (isDone) { node.classList.add('completed'); node.innerHTML = `<span class="icon">✓</span>`; }
-                    else if (prevDone) { node.classList.add('current'); node.innerHTML = `<span class="icon">${les.icon || '📚'}</span>`; }
-                    else { node.classList.add('locked'); node.innerHTML = `<span class="icon">🔒</span>`; }
+                    const prevLesson = globalIndex > 0 ? allLessons[globalIndex - 1] : null;
+                    const prevDone = prevLesson ? state.completed.includes(prevLesson.id) : false;
+                    const isUnlocked = (globalIndex === 0) || prevDone;
+
+                    if (isDone) { 
+                        node.classList.add('completed'); 
+                        node.innerHTML = `<span class="icon">✓</span>`; 
+                    } else if (isUnlocked) { 
+                        node.classList.add('current'); 
+                        node.innerHTML = `<span class="icon">${les.icon || '📚'}</span>`; 
+                    } else { 
+                        node.classList.add('locked'); 
+                        node.innerHTML = `<span class="icon">🔒</span>`; 
+                    }
                     
                     if (!node.classList.contains('locked')) node.onclick = () => startLesson(les);
                     
-                    wrapper.appendChild(node);
-                    lessonsRow.appendChild(wrapper);
+                    lessonsRow.appendChild(node);
+                    globalIndex++;
                 });
                 
                 unitDiv.appendChild(lessonsRow);
@@ -856,7 +879,8 @@
                 state.completed.push(currentLessonData.id); 
                 state.gems += 20; 
                 state.streak++; 
-                save(); updateUI(); 
+                save(); // Save immediately before showing result screen
+                updateUI(); 
             } 
             for(let i=0; i<50; i++) createConfetti(); 
             showScreen('screen-result'); 
