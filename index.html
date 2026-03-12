@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Germango Pro 9.1 - Ultimate Edition</title>
+    <title>Germango Pro 9.2 - Ultimate Edition</title>
     
     <!-- FAVICON GENERADO POR CÓDIGO (Búho SVG) -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦉</text></svg>">
@@ -310,7 +310,6 @@
             const item = getRandomItem(category);
             
             let wrongOptions = category.filter(i => i.de !== item.de);
-            // Si la categoría es pequeña, usamos otras categorías para no repetir opciones
             if (wrongOptions.length < 3) wrongOptions = Object.values(VOCAB).flat();
             const distractors = getRandom(wrongOptions, 3).map(i => i.es);
             const options = [item.es, ...distractors].sort(() => 0.5 - Math.random());
@@ -363,7 +362,6 @@
             }
         }
 
-        // Definición de la estructura del curso (10 Unidades)
         const COURSE_STRUCTURE = [
             { id: 'u1', title: 'Fundamentos', subtitle: 'Saludos y Familia', lessons: ['greetings', 'family', 'greetings'] },
             { id: 'u2', title: 'Comida y Bebida', subtitle: 'En el restaurante', lessons: ['food', 'food', 'verbs'] },
@@ -440,10 +438,10 @@
         }
 
         // --- STORAGE & DATA INIT ---
-        const save = () => { try { localStorage.setItem('germango_v91', JSON.stringify(state)); } catch (e) {} };
+        const save = () => { try { localStorage.setItem('germango_v92', JSON.stringify(state)); } catch (e) {} };
         const loadLocal = () => { 
             try { 
-                const d = localStorage.getItem('germango_v91'); 
+                const d = localStorage.getItem('germango_v92'); 
                 if (d) { 
                     const p = JSON.parse(d); 
                     state.hearts = p.hearts ?? 5; 
@@ -455,7 +453,6 @@
             updateUI(); 
         };
 
-        // Construir el mapa del curso
         function buildCourseMap() {
             return COURSE_STRUCTURE.map((u, uIndex) => {
                 return {
@@ -630,14 +627,12 @@
             else if (q.type === 'speak') {
                 html += `<div class="main-text">${emojiHtml} ${q.text}</div>
                 <div class="speak-container" id="speak-ui">
-                    <!-- NUEVO BOTÓN DE ESCUCHAR -->
                     <button class="listen-again-btn" onclick="speak('${q.text}')"><span>🔊</span> Escuchar de nuevo</button>
-                    
                     <button class="speak-btn" id="mic-btn" onclick="triggerSpeech()">🎤 Toca para hablar</button>
                     <button class="write-mode-btn" onclick="switchToTyping()">No puedo usar el micrófono</button>
                     <div class="mic-feedback" id="mic-result"></div>
                 </div>`;
-                setTimeout(() => speak(q.text), 300); // Auto-play inicial
+                setTimeout(() => speak(q.text), 300);
             }
             else if (q.type === 'wordbank') {
                 html += `<div class="main-text">${emojiHtml} ${q.text}</div>
@@ -848,7 +843,17 @@
                 if (isCorrect) {
                     playSound('correct');
                     txt.innerText = "¡Excelente!";
-                    sub.innerText = (q.type === 'speak' && q.meaning) ? `${q.text} = ${q.meaning}` : "";
+                    
+                    // LÓGICA DE FEEDBACK MEJORADA
+                    let feedbackSub = "";
+                    if (q.type === 'speak' && q.meaning) {
+                        feedbackSub = `${q.text} = ${q.meaning}`;
+                    } else if (q.type === 'audio') {
+                        // Mostramos Alemán y Español
+                        feedbackSub = `${q.audioText} = ${q.correct}`;
+                    }
+                    sub.innerText = feedbackSub;
+                    
                     DOM.feedbackMsg.className = "feedback-msg show correct";
                     DOM.btnAction.innerText = "CONTINUAR"; 
                     DOM.btnAction.className = "btn-main continue";
