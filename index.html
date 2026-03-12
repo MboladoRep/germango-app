@@ -3,12 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Germango Pro 5.0.1 - Supabase Edition</title>
-    <!-- Importamos Supabase Client desde CDN -->
+    <title>Germango Pro 5.0.2 - Supabase Stable</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <style>
-        /* ... (El CSS es el mismo que la versión anterior, no hace falta cambiarlo) ... */
         :root {
             --primary-green: #58CC02;
             --primary-green-dark: #46A302;
@@ -23,81 +21,108 @@
         }
         * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; user-select: none; }
         body { background-color: var(--bg-dark); color: var(--text-main); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        
+        /* Header */
         header { display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; border-bottom: 2px solid var(--border-color); background: var(--bg-dark); z-index: 100; flex-shrink: 0; }
         .logo { font-weight: 800; font-size: 1.4rem; color: var(--primary-green); cursor: pointer; display: flex; align-items: center; gap: 5px; }
         .stats { display: flex; gap: 15px; }
         .stat-box { display: flex; align-items: center; gap: 5px; font-weight: 700; background: var(--card-dark); padding: 5px 12px; border-radius: 8px; }
+
+        /* Main Layout */
         main { flex: 1; overflow-y: auto; display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 700px; margin: 0 auto; padding: 20px; }
         .screen { display: none; width: 100%; height: 100%; flex-direction: column; animation: fadeIn 0.3s; }
         .screen.active { display: flex; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Map Screen */
         .map-wrapper { position: relative; width: 100%; padding: 20px 0 50px; display: flex; flex-direction: column; align-items: center; }
         .global-progress-container { width: 100%; margin-bottom: 30px; background: var(--card-dark); padding: 15px; border-radius: 15px; border: 1px solid var(--border-color); }
         .gp-header { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.9rem; color: var(--text-dim); }
         .gp-bar { width: 100%; height: 8px; background: var(--border-color); border-radius: 4px; overflow: hidden; }
         .gp-fill { height: 100%; background: var(--bonus-gold); width: 0%; transition: width 0.5s; }
+        
         .unit-header { width: 100%; padding: 15px; margin-bottom: 15px; background: linear-gradient(90deg, rgba(88,204,2,0.1) 0%, transparent 100%); border-left: 5px solid var(--primary-green); border-radius: 0 10px 10px 0; }
         .unit-title { font-weight: 800; font-size: 1.2rem; color: var(--primary-green); }
         .unit-sub { font-size: 0.9rem; color: var(--text-dim); margin-top: 4px; }
+        
         .path-line { width: 4px; height: 30px; background: var(--border-color); border-radius: 2px; margin: 5px 0; }
         .path-line.done { background: var(--primary-green); }
+        
         .lesson-node { width: 85px; height: 85px; border-radius: 50%; background: var(--card-dark); border: 4px solid var(--text-dim); display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 800; font-size: 1.2rem; cursor: pointer; transition: all 0.2s; position: relative; z-index: 2; gap: 2px; }
         .lesson-node:hover:not(.locked) { transform: scale(1.1); border-color: var(--secondary-blue); }
         .lesson-node.completed { border-color: var(--primary-green); color: var(--primary-green); background: rgba(88, 204, 2, 0.1); }
         .lesson-node.locked { opacity: 0.4; cursor: not-allowed; }
         .lesson-node.current { border-color: var(--secondary-blue); box-shadow: 0 0 20px rgba(28, 176, 246, 0.4); }
         .lesson-node .icon { font-size: 1.8rem; }
+
+        /* Lesson Screen */
         .progress-bar { width: 100%; height: 10px; background: var(--border-color); border-radius: 5px; margin-bottom: 30px; }
         .progress-fill { height: 100%; background: var(--primary-green); width: 0%; transition: width 0.3s; border-radius: 5px; }
         .lesson-content { flex: 1; display: flex; flex-direction: column; width: 100%; justify-content: center; }
+        
         .prompt-text { text-align: center; font-size: 1.1rem; color: var(--text-dim); margin-bottom: 15px; }
         .main-text { text-align: center; font-size: 2rem; font-weight: 700; margin-bottom: 30px; display: flex; align-items: center; justify-content: center; gap: 12px; }
         .main-text .emoji { font-size: 2.5rem; }
+
+        /* Inputs */
         .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .opt-btn { background: var(--card-dark); border: 2px solid var(--border-color); color: var(--text-main); padding: 15px; border-radius: 12px; font-size: 1rem; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .opt-btn:hover { border-color: var(--text-dim); }
         .opt-btn.selected { border-color: var(--secondary-blue); background: rgba(28, 176, 246, 0.2); color: var(--secondary-blue); }
         .opt-btn.correct { border-color: var(--primary-green); background: rgba(88, 204, 2, 0.2); color: var(--primary-green); }
         .opt-btn.wrong { border-color: var(--error-red); background: rgba(255, 75, 75, 0.2); color: var(--error-red); }
+
         .sentence-area { min-height: 80px; border: 2px dashed var(--border-color); border-radius: 12px; padding: 15px; display: flex; flex-wrap: wrap; gap: 8px; align-content: center; justify-content: center; margin-bottom: 20px; }
         .token { background: #fff; color: #333; padding: 8px 14px; border-radius: 8px; font-weight: 700; cursor: pointer; box-shadow: 0 2px 0 #aaa; transition: opacity 0.2s; }
         .token.placed { opacity: 0.3; pointer-events: none; }
         .token.in-sentence { background: #f0f0f0; }
         .bank { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 20px; }
+
         .match-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; }
         .match-card { background: var(--card-dark); border: 2px solid var(--border-color); padding: 20px; border-radius: 12px; text-align: center; cursor: pointer; font-weight: 600; min-height: 80px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
         .match-card.selected { border-color: var(--secondary-blue); background: rgba(28, 176, 246, 0.2); }
         .match-card.matched { border-color: var(--primary-green); background: rgba(88, 204, 2, 0.2); color: var(--primary-green); pointer-events: none; opacity: 0.6; }
+
         .audio-prompt-btn { background: var(--secondary-blue); border: none; border-radius: 50%; width: 80px; height: 80px; font-size: 2.5rem; cursor: pointer; margin: 0 auto 30px; display: block; color: white; box-shadow: 0 6px 0 #1899D6; transition: transform 0.1s; }
         .audio-prompt-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #1899D6; }
+
         .speak-container { display: flex; flex-direction: column; align-items: center; width: 100%; gap: 15px; }
         .speak-btn { width: 100%; background: var(--secondary-blue); color: white; border: none; border-bottom: 4px solid #1899D6; padding: 20px; font-size: 1.2rem; font-weight: 700; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.2s; }
         .speak-btn:active { transform: translateY(2px); border-bottom-width: 2px; }
         .speak-btn.listening { background: var(--error-red); border-bottom-color: #D43939; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 75, 75, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(255, 75, 75, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 75, 75, 0); } }
+        
         .write-mode-btn { background: transparent; border: none; color: var(--text-dim); text-decoration: underline; font-size: 0.9rem; cursor: pointer; margin-top: 5px; padding: 5px; }
         .text-input-fallback { width: 100%; background: var(--card-dark); border: 2px solid var(--border-color); border-radius: 12px; padding: 15px; color: var(--text-main); font-size: 1.2rem; text-align: center; outline: none; }
         .text-input-fallback:focus { border-color: var(--secondary-blue); }
         .mic-feedback { text-align: center; margin-top: 10px; font-size: 1rem; height: 20px; color: var(--text-dim); }
+
+        /* Footer & Feedback */
         .footer-bar { margin-top: auto; width: 100%; padding-top: 20px; }
-        .feedback-msg { min-height: 50px; border-radius: 10px; display: none; align-items: center; justify-content: center; font-weight: 700; margin-bottom: 10px; padding: 10px; }
-        .feedback-msg.show { display: flex; flex-direction: column; }
+        .feedback-msg { min-height: 50px; border-radius: 10px; display: none; align-items: center; justify-content: center; font-weight: 700; margin-bottom: 10px; padding: 10px; flex-direction: column; }
+        .feedback-msg.show { display: flex; }
         .feedback-msg.correct { background: rgba(88, 204, 2, 0.2); color: var(--primary-green); border: 2px solid var(--primary-green); }
         .feedback-msg.wrong { background: rgba(255, 75, 75, 0.2); color: var(--error-red); border: 2px solid var(--error-red); }
-        .btn-main { width: 100%; padding: 16px; border: none; border-bottom: 4px solid #2A3E45; border-radius: 12px; font-size: 1rem; font-weight: 700; text-transform: uppercase; cursor: pointer; background: #3D545C; color: #AFAFAF; pointer-events: none; }
+        
+        .btn-main { width: 100%; padding: 16px; border: none; border-bottom: 4px solid #2A3E45; border-radius: 12px; font-size: 1rem; font-weight: 700; text-transform: uppercase; cursor: pointer; background: #3D545C; color: #AFAFAF; pointer-events: none; transition: all 0.1s; }
         .btn-main.active { background: var(--primary-green); border-bottom-color: var(--primary-green-dark); color: white; pointer-events: all; }
-        .btn-main.retry { background: var(--error-red); border-bottom-color: #D43939; pointer-events: all; }
-        .btn-main.continue { background: var(--secondary-blue); border-bottom-color: #1899D6; pointer-events: all; }
+        .btn-main.retry { background: var(--error-red); border-bottom-color: #D43939; color: white; pointer-events: all; }
+        .btn-main.continue { background: var(--secondary-blue); border-bottom-color: #1899D6; color: white; pointer-events: all; }
+
+        /* Overlays & Animations */
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.97); display: none; justify-content: center; align-items: center; z-index: 2000; flex-direction: column; text-align: center; padding: 20px; }
         .overlay.active { display: flex; }
         .overlay-icon { font-size: 5rem; margin-bottom: 20px; }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
         .shake { animation: shake 0.3s; }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 75, 75, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(255, 75, 75, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 75, 75, 0); } }
+        
         .confetti { position: fixed; width: 10px; height: 10px; animation: fall 3s linear forwards; pointer-events: none; }
         @keyframes fall { to { transform: translateY(100vh) rotate(720deg); } }
-        /* Loading Spinner */
+        
         .loader { border: 5px solid var(--border-color); border-top: 5px solid var(--primary-green); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin: auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        .error-msg { color: var(--error-red); text-align: center; padding: 20px; }
     </style>
 </head>
 <body>
@@ -115,7 +140,7 @@
         <!-- MAP -->
         <div id="screen-map" class="screen active">
             <div class="map-wrapper" id="map-container">
-                <div class="loader"></div> <!-- Loading indicator -->
+                <div class="loader"></div>
             </div>
         </div>
 
@@ -152,7 +177,8 @@
 
     <script>
         // --- CONFIGURACIÓN SUPABASE ---
-        // ¡IMPORTANTE! Reemplaza con tus claves reales de Supabase (Project Settings > API)
+        // NOTA: Nunca expongas la clave 'service_role' aquí. Usa la clave 'anon' pública.
+        // Asegúrate de tener Row Level Security (RLS) habilitado en tus tablas en Supabase.
         const SUPABASE_URL = 'https://eofolsrnycdiioobpihq.supabase.co'; 
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVvZm9sc3JueWNkaWlvb2JwaWhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzMTE1NDgsImV4cCI6MjA4ODg4NzU0OH0.rIma6h2uA3vmUj-NxtYODKdwS9AZHk646awFiQsCFbA';
         
@@ -163,11 +189,44 @@
         let currentLessonData = null;
         let recognition = null;
         let matchState = { first: null, second: null, lock: false, solved: [] };
-        let DB = { units: [] }; // Esta variable se llenará desde Supabase
+        let DB = { units: [] }; 
 
-        // --- STORAGE (Local para progreso del usuario) ---
-        const save = () => { try { localStorage.setItem('germango_supa', JSON.stringify({ hearts: state.hearts, gems: state.gems, streak: state.streak, completed: state.completed })); } catch (e) {} };
-        const loadLocal = () => { try { const d = localStorage.getItem('germango_supa'); if (d) { const p = JSON.parse(d); state.hearts = p.hearts || 5; state.gems = p.gems || 500; state.streak = p.streak || 0; state.completed = p.completed || []; } } catch (e) {} updateUI(); };
+        // --- DOM ELEMENTS (Cache para rendimiento) ---
+        const DOM = {
+            hearts: document.getElementById('s-hearts'),
+            gems: document.getElementById('s-gems'),
+            streak: document.getElementById('s-streak'),
+            mapContainer: document.getElementById('map-container'),
+            lessonContent: document.getElementById('lesson-content'),
+            progressFill: document.getElementById('progress-fill'),
+            feedbackMsg: document.getElementById('feedback-msg'),
+            msgText: document.getElementById('msg-text'),
+            msgSub: document.getElementById('msg-sub'),
+            btnAction: document.getElementById('btn-action'),
+            screenLesson: document.getElementById('screen-lesson'),
+            overlayGameover: document.getElementById('overlay-gameover')
+        };
+
+        // --- STORAGE ---
+        const save = () => { 
+            try { 
+                localStorage.setItem('germango_supa', JSON.stringify({ hearts: state.hearts, gems: state.gems, streak: state.streak, completed: state.completed })); 
+            } catch (e) { console.warn("LocalStorage no disponible"); } 
+        };
+        
+        const loadLocal = () => { 
+            try { 
+                const d = localStorage.getItem('germango_supa'); 
+                if (d) { 
+                    const p = JSON.parse(d); 
+                    state.hearts = p.hearts ?? 5; // Usamos ?? para default values
+                    state.gems = p.gems ?? 500; 
+                    state.streak = p.streak ?? 0; 
+                    state.completed = p.completed ?? []; 
+                } 
+            } catch (e) { console.warn("Error cargando progreso local"); } 
+            updateUI(); 
+        };
 
         // --- DATA FETCHING (SUPABASE) ---
         async function fetchCourseData() {
@@ -185,7 +244,6 @@
                 if(errQ) throw errQ;
 
                 // 4. Reconstruct Nested Structure
-                // Mapeamos para que la estructura sea igual que el JSON local
                 DB.units = units.map(u => {
                     return {
                         ...u,
@@ -193,7 +251,7 @@
                             return {
                                 ...l,
                                 questions: questions.filter(q => q.lesson_id === l.id).map(q => {
-                                    // Aplanamos 'content' dentro de la pregunta para compatibilidad
+                                    // Aplanamos 'content' y manejamos valores nulos
                                     return { ...q, ...q.content }; 
                                 })
                             }
@@ -201,20 +259,20 @@
                     };
                 });
                 
-                renderMap(); // Dibujar el mapa una vez cargados los datos
-                document.querySelector('.loader').style.display = 'none'; // Ocultar spinner
+                renderMap(); 
+                document.querySelector('.loader').style.display = 'none'; 
 
             } catch (error) {
                 console.error("Error cargando datos:", error);
-                document.querySelector('.map-wrapper').innerHTML = "<p style='color:red; text-align:center;'>Error conectando a la base de datos.<br>Revisa la consola y tus claves de Supabase.</p>";
+                DOM.mapContainer.innerHTML = `<p class="error-msg">Error conectando a la base de datos.<br>Revisa la consola (F12) y tus claves de Supabase.<br><small>${error.message}</small></p>`;
             }
         }
 
         // --- UI UPDATES ---
         const updateUI = () => {
-            document.getElementById('s-hearts').innerText = state.hearts;
-            document.getElementById('s-gems').innerText = state.gems;
-            document.getElementById('s-streak').innerText = state.streak;
+            DOM.hearts.innerText = state.hearts;
+            DOM.gems.innerText = state.gems;
+            DOM.streak.innerText = state.streak;
             if(DB.units.length > 0) renderMap();
         };
 
@@ -225,59 +283,77 @@
 
         // --- MAP RENDERER ---
         const renderMap = () => {
-            const container = document.getElementById('map-container');
-            // Limpiamos solo si ya hay datos
             if(DB.units.length === 0) return; 
-            
-            container.innerHTML = ''; // Limpiamos el loader o html anterior
+            DOM.mapContainer.innerHTML = ''; 
             
             let totalLessons = DB.units.reduce((acc, u) => acc + u.lessons.length, 0);
             const progressPercent = (state.completed.length / totalLessons) * 100;
 
-            let gpHtml = `
+            // Global Progress
+            const gpHtml = `
                 <div class="global-progress-container">
-                    <div class="gp-header"><span>Progreso</span><span>${Math.round(progressPercent)}%</span></div>
+                    <div class="gp-header"><span>Progreso Global</span><span>${Math.round(progressPercent)}%</span></div>
                     <div class="gp-bar"><div class="gp-fill" style="width: ${progressPercent}%"></div></div>
                 </div>
             `;
-            container.innerHTML += gpHtml;
+            DOM.mapContainer.innerHTML += gpHtml;
+
+            // Units & Lessons
+            const allLessonsFlat = DB.units.flatMap(u => u.lessons);
 
             DB.units.forEach((unit) => {
                 const header = document.createElement('div');
                 header.className = 'unit-header';
                 header.innerHTML = `<div class="unit-title">${unit.title}</div><div class="unit-sub">${unit.subtitle}</div>`;
-                container.appendChild(header);
+                DOM.mapContainer.appendChild(header);
 
                 unit.lessons.forEach((les, lIndex) => {
-                    if (lIndex > 0) { const line = document.createElement('div'); line.className = 'path-line' + (state.completed.includes(unit.lessons[lIndex-1].id) ? ' done' : ''); container.appendChild(line); }
+                    // Path line
+                    if (lIndex > 0) {
+                        const line = document.createElement('div');
+                        line.className = 'path-line' + (state.completed.includes(unit.lessons[lIndex-1].id) ? ' done' : '');
+                        DOM.mapContainer.appendChild(line);
+                    }
                     
-                    const node = document.createElement('div'); node.className = 'lesson-node';
+                    const node = document.createElement('div');
+                    node.className = 'lesson-node';
                     
-                    // Lógica de desbloqueo
-                    const allLessonsFlat = DB.units.flatMap(u => u.lessons);
+                    // Lógica de desbloqueo robusta
                     const currentIndex = allLessonsFlat.findIndex(l => l.id === les.id);
-                    const prevId = currentIndex > 0 ? allLessonsFlat[currentIndex-1].id : 0;
+                    const prevId = currentIndex > 0 ? allLessonsFlat[currentIndex-1].id : null;
                     
-                    const prevDone = state.completed.includes(prevId);
+                    const prevDone = prevId ? state.completed.includes(prevId) : true; // Si es el primero, prevDone es true
                     const isDone = state.completed.includes(les.id);
                     
-                    if (isDone) { node.classList.add('completed'); node.innerHTML = `<span class="icon">✓</span>`; }
-                    else if (currentIndex === 0 || prevDone) { node.classList.add('current'); node.innerHTML = `<span class="icon">${les.icon}</span>`; }
-                    else { node.classList.add('locked'); node.innerHTML = `<span class="icon">🔒</span>`; }
+                    if (isDone) {
+                        node.classList.add('completed');
+                        node.innerHTML = `<span class="icon">✓</span>`;
+                    } else if (prevDone) {
+                        node.classList.add('current');
+                        node.innerHTML = `<span class="icon">${les.icon || '📚'}</span>`; // Default icon si falta
+                    } else {
+                        node.classList.add('locked');
+                        node.innerHTML = `<span class="icon">🔒</span>`;
+                    }
                     
-                    if (!node.classList.contains('locked')) node.onclick = () => startLesson(les);
-                    container.appendChild(node);
+                    if (!node.classList.contains('locked')) {
+                        node.onclick = () => startLesson(les);
+                    }
+                    DOM.mapContainer.appendChild(node);
                 });
             });
         };
 
-        // --- LÓGICA DE LECCIONES (Sin cambios funcionales, solo adaptación menor) ---
+        // --- LÓGICA DE LECCIONES ---
         
         const startLesson = (les) => {
             currentLessonData = les;
-            state.currentQ = 0; state.checking = false; state.selected = null; state.answers = [];
+            state.currentQ = 0; 
+            state.checking = false; 
+            state.selected = null; 
+            state.answers = [];
             matchState = { first: null, second: null, lock: false, solved: [] };
-            document.getElementById('overlay-gameover').classList.remove('active');
+            DOM.overlayGameover.classList.remove('active');
             showScreen('screen-lesson');
             renderQ();
         };
@@ -289,33 +365,37 @@
 
         const renderQ = () => {
             const q = currentLessonData.questions[state.currentQ];
-            // Calculamos progreso
-            const progress = (state.currentQ / currentLessonData.questions.length) * 100;
-            document.getElementById('progress-fill').style.width = `${progress}%`;
-            document.getElementById('feedback-msg').className = 'feedback-msg';
-            const btn = document.getElementById('btn-action');
-            btn.className = 'btn-main'; btn.innerText = 'COMPROBAR';
+            if(!q) return finishLesson(); // Safety check
 
-            const c = document.getElementById('lesson-content');
+            const progress = (state.currentQ / currentLessonData.questions.length) * 100;
+            DOM.progressFill.style.width = `${progress}%`;
+            DOM.feedbackMsg.className = 'feedback-msg';
+            
+            DOM.btnAction.className = 'btn-main'; 
+            DOM.btnAction.innerText = 'COMPROBAR';
+            DOM.btnAction.classList.remove('active'); // Reset button state
+
+            const c = DOM.lessonContent;
+            // Usamos textContent para seguridad XSS donde es posible, o plantillas limpias
             let html = `<div class="prompt-text">${q.prompt}</div>`;
             const emojiHtml = q.emoji ? `<span class="emoji">${q.emoji}</span>` : '';
 
-            if (q.type === 'choice') {
-                html += `<div class="main-text">${emojiHtml} ${q.text}</div><div class="options-grid">`;
-                q.options.sort(() => Math.random() - 0.5).forEach(o => {
-                    html += `<button class="opt-btn" onclick="selectChoice(this, '${o}')">${o}</button>`;
+            if (q.type === 'choice' || q.type === 'audio') {
+                if (q.type === 'audio') {
+                    html += `<button class="audio-prompt-btn" onclick="speak('${q.audioText || q.text}')">🔊</button>`;
+                    setTimeout(() => speak(q.audioText || q.text), 300); // Auto-play con delay
+                } else {
+                    html += `<div class="main-text">${emojiHtml} ${q.text}</div>`;
+                }
+                
+                html += `<div class="options-grid">`;
+                // Barajamos opciones
+                const shuffledOptions = [...q.options].sort(() => Math.random() - 0.5);
+                shuffledOptions.forEach(o => {
+                    html += `<button class="opt-btn" onclick="selectChoice(this, '${o.replace(/'/g, "\\'")}')">${o}</button>`;
                 });
                 html += `</div>`;
             } 
-            else if (q.type === 'audio') {
-                html += `<button class="audio-prompt-btn" onclick="speak('${q.audioText || q.text}')">🔊</button>`;
-                html += `<div class="options-grid">`;
-                q.options.sort(() => Math.random() - 0.5).forEach(o => {
-                    html += `<button class="opt-btn" onclick="selectChoice(this, '${o}')">${o}</button>`;
-                });
-                html += `</div>`;
-                speak(q.audioText || q.text);
-            }
             else if (q.type === 'speak') {
                 html += `
                 <div class="main-text">${emojiHtml} ${q.text}</div>
@@ -324,12 +404,14 @@
                     <button class="write-mode-btn" onclick="switchToTyping()">No puedo usar el micrófono</button>
                     <div class="mic-feedback" id="mic-result"></div>
                 </div>`;
+                setTimeout(() => speak(q.text), 300);
             }
             else if (q.type === 'wordbank') {
                 html += `<div class="main-text">${emojiHtml} ${q.text}</div>
-                         <div class="sentence-area" id="sentence-area" onclick="clearWord()"></div>
+                         <div class="sentence-area" id="sentence-area" onclick="clearLastWord()"></div>
                          <div class="bank" id="bank-area">`;
-                q.words.sort(() => Math.random() - 0.5).forEach(w => {
+                const shuffledWords = [...q.words].sort(() => Math.random() - 0.5);
+                shuffledWords.forEach(w => {
                     html += `<div class="token" data-w="${w}" onclick="addWord(this)">${w}</div>`;
                 });
                 html += `</div>`;
@@ -347,86 +429,297 @@
 
             c.innerHTML = html;
             
-            if (q.type === 'speak') {
-                setTimeout(() => speak(q.text), 300);
-                if ('webkitSpeechRecognition' in window) {
-                    recognition = new webkitSpeechRecognition();
-                    recognition.lang = 'de-DE';
-                    recognition.continuous = false;
-                    recognition.interimResults = false;
-                }
+            // Init Speech Recognition if needed
+            if (q.type === 'speak' && 'webkitSpeechRecognition' in window) {
+                recognition = new webkitSpeechRecognition();
+                recognition.lang = 'de-DE';
+                recognition.continuous = false;
+                recognition.interimResults = false;
             }
         };
 
-        // --- INPUT HANDLERS (Igual que antes) ---
-        const selectChoice = (el, val) => { if (state.checking) return; document.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('selected')); el.classList.add('selected'); state.selected = val; document.getElementById('btn-action').classList.add('active'); };
-        const addWord = (el) => { if (state.checking || el.classList.contains('placed')) return; el.classList.add('placed'); state.answers.push(el.dataset.w); renderSentence(); };
-        const clearWord = () => { if (state.checking || state.answers.length === 0) return; const w = state.answers.pop(); const btn = document.querySelector(`.token[data-w="${w}"].placed`); if(btn) btn.classList.remove('placed'); renderSentence(); };
-        const renderSentence = () => { const area = document.getElementById('sentence-area'); area.innerHTML = ''; state.answers.forEach((w, i) => { const s = document.createElement('div'); s.className = 'token in-sentence'; s.innerText = w; s.onclick = (e) => { e.stopPropagation(); removeSpecificWord(i); }; area.appendChild(s); }); if (state.answers.length > 0) document.getElementById('btn-action').classList.add('active'); else document.getElementById('btn-action').classList.remove('active'); };
-        const removeSpecificWord = (index) => { const w = state.answers[index]; const btn = document.querySelector(`.token[data-w="${w}"].placed`); if(btn) btn.classList.remove('placed'); state.answers.splice(index, 1); renderSentence(); };
-        const selectMatch = (el, id) => { if (matchState.lock || el.classList.contains('matched') || state.checking) return; el.classList.add('selected'); if (!matchState.first) { matchState.first = el; } else { matchState.second = el; if (matchState.first.dataset.id === matchState.second.dataset.id && matchState.first !== matchState.second) { matchState.first.classList.add('matched'); matchState.second.classList.add('matched'); matchState.solved.push(id); matchState.first = null; matchState.second = null; matchState.lock = false; const total = currentLessonData.questions[state.currentQ].pairs.length; if (matchState.solved.length === total) { state.selected = "MATCH_COMPLETE"; handleAction(); } } else { matchState.lock = true; setTimeout(() => { if(matchState.first) matchState.first.classList.remove('selected'); if(matchState.second) matchState.second.classList.remove('selected'); matchState.first = null; matchState.second = null; matchState.lock = false; }, 600); } } };
+        // --- INPUT HANDLERS ---
+        
+        // Choice
+        const selectChoice = (el, val) => { 
+            if (state.checking) return; 
+            document.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('selected')); 
+            el.classList.add('selected'); 
+            state.selected = val; 
+            DOM.btnAction.classList.add('active'); 
+        };
+
+        // Word Bank
+        const addWord = (el) => { 
+            if (state.checking || el.classList.contains('placed')) return; 
+            el.classList.add('placed'); 
+            state.answers.push(el.dataset.w); 
+            renderSentence(); 
+        };
+        
+        // Función para eliminar la última palabra (click en área vacía)
+        const clearLastWord = () => {
+             if (state.checking || state.answers.length === 0) return; 
+             const w = state.answers.pop(); 
+             const btn = document.querySelector(`.token[data-w="${w}"].placed`); 
+             if(btn) btn.classList.remove('placed'); 
+             renderSentence();
+        };
+
+        // Función para eliminar palabra específica (click en la palabra)
+        const removeSpecificWord = (index) => { 
+            const w = state.answers[index]; 
+            const btn = document.querySelector(`.token[data-w="${w}"].placed`); 
+            if(btn) btn.classList.remove('placed'); 
+            state.answers.splice(index, 1); 
+            renderSentence(); 
+        };
+
+        const renderSentence = () => { 
+            const area = document.getElementById('sentence-area'); 
+            if(!area) return;
+            area.innerHTML = ''; 
+            state.answers.forEach((w, i) => { 
+                const s = document.createElement('div'); 
+                s.className = 'token in-sentence'; 
+                s.innerText = w; 
+                s.onclick = (e) => { e.stopPropagation(); removeSpecificWord(i); }; 
+                area.appendChild(s); 
+            }); 
+            
+            if (state.answers.length > 0) DOM.btnAction.classList.add('active'); 
+            else DOM.btnAction.classList.remove('active'); 
+        };
+
+        // Match
+        const selectMatch = (el, id) => { 
+            if (matchState.lock || el.classList.contains('matched') || state.checking) return; 
+            
+            el.classList.add('selected'); 
+
+            if (!matchState.first) { 
+                matchState.first = el; 
+            } else { 
+                matchState.second = el; 
+                
+                // Check match
+                if (matchState.first.dataset.id === matchState.second.dataset.id && matchState.first !== matchState.second) { 
+                    matchState.first.classList.add('matched'); 
+                    matchState.second.classList.add('matched'); 
+                    matchState.solved.push(id); 
+                    matchState.first = null; 
+                    matchState.second = null; 
+                    matchState.lock = false; 
+                    
+                    const total = currentLessonData.questions[state.currentQ].pairs.length; 
+                    if (matchState.solved.length === total) { 
+                        state.selected = "MATCH_COMPLETE"; 
+                        handleAction(); 
+                    } 
+                } else { 
+                    matchState.lock = true; 
+                    setTimeout(() => { 
+                        if(matchState.first) matchState.first.classList.remove('selected'); 
+                        if(matchState.second) matchState.second.classList.remove('selected'); 
+                        matchState.first = null; 
+                        matchState.second = null; 
+                        matchState.lock = false; 
+                    }, 600); 
+                } 
+            } 
+        };
         
         // Speech
-        const triggerSpeech = () => { if (!recognition) { alert("Navegador no soportado."); return; } const micBtn = document.getElementById('mic-btn'); const resultDiv = document.getElementById('mic-result'); micBtn.classList.add('listening'); micBtn.innerText = "🔴 Escuchando..."; resultDiv.innerText = ""; recognition.onresult = (event) => { const res = event.results[0][0].transcript.toLowerCase(); resultDiv.innerText = `Dijiste: "${res}"`; checkSpeechResult(res); }; recognition.onerror = (event) => { resultDiv.innerText = "Error. Intenta escribir."; resetMicBtn(); }; recognition.onend = () => resetMicBtn(); try { recognition.start(); } catch(e) { recognition.stop(); recognition.start(); } };
-        const resetMicBtn = () => { const micBtn = document.getElementById('mic-btn'); if(micBtn) { micBtn.classList.remove('listening'); micBtn.innerText = "🎤 Toca para hablar"; } };
-        const switchToTyping = () => { const container = document.getElementById('speak-ui'); if (!container) return; container.innerHTML = `<input type="text" class="text-input-fallback" id="write-input" placeholder="Escribe lo que escuchas..." oninput="checkTypingResult()"><button class="write-mode-btn" style="margin-top:10px; color:var(--secondary-blue);" onclick="speak(currentLessonData.questions[state.currentQ].text)">🔊 Repetir audio</button>`; document.getElementById('write-input').focus(); };
-        const checkTypingResult = () => { const input = document.getElementById('write-input').value.toLowerCase().trim(); if (input.length > 0) { state.selected = input; document.getElementById('btn-action').classList.add('active'); } else { document.getElementById('btn-action').classList.remove('active'); } };
-        const checkSpeechResult = (spokenText) => { const target = currentLessonData.questions[state.currentQ].text.toLowerCase(); const targetWords = target.split(" "); const spokenWords = spokenText.split(" "); let matchCount = 0; targetWords.forEach(tw => { if (spokenWords.includes(tw)) matchCount++; }); if (matchCount === targetWords.length || spokenText.includes(target)) { state.selected = spokenText; document.getElementById('btn-action').classList.add('active'); if (spokenText === target) handleAction(); } else { state.selected = spokenText; document.getElementById('btn-action').classList.add('active'); } };
+        const triggerSpeech = () => { 
+            if (!recognition) { alert("Tu navegador no soporta reconocimiento de voz."); switchToTyping(); return; } 
+            
+            const micBtn = document.getElementById('mic-btn'); 
+            const resultDiv = document.getElementById('mic-result'); 
+            
+            micBtn.classList.add('listening'); 
+            micBtn.innerText = "🔴 Escuchando..."; 
+            resultDiv.innerText = ""; 
+
+            recognition.onresult = (event) => { 
+                const res = event.results[0][0].transcript.toLowerCase(); 
+                resultDiv.innerText = `Dijiste: "${res}"`; 
+                checkSpeechResult(res); 
+            }; 
+            
+            recognition.onerror = (event) => { 
+                console.error("Speech Error:", event.error);
+                resultDiv.innerText = "No se escuchó bien. Intenta escribir."; 
+                resetMicBtn(); 
+            }; 
+            
+            recognition.onend = () => resetMicBtn(); 
+            
+            try { recognition.start(); } catch(e) { recognition.stop(); recognition.start(); } 
+        };
+
+        const resetMicBtn = () => { 
+            const micBtn = document.getElementById('mic-btn'); 
+            if(micBtn) { 
+                micBtn.classList.remove('listening'); 
+                micBtn.innerText = "🎤 Toca para hablar"; 
+            } 
+        };
+
+        const switchToTyping = () => { 
+            const container = document.getElementById('speak-ui'); 
+            if (!container) return; 
+            container.innerHTML = `
+                <input type="text" class="text-input-fallback" id="write-input" placeholder="Escribe lo que escuchas..." oninput="checkTypingResult()">
+                <button class="write-mode-btn" style="margin-top:10px; color:var(--secondary-blue);" onclick="speak(currentLessonData.questions[state.currentQ].text)">🔊 Repetir audio</button>
+            `; 
+            document.getElementById('write-input').focus(); 
+        };
+
+        const checkTypingResult = () => { 
+            const input = document.getElementById('write-input'); 
+            if(!input) return;
+            const val = input.value.toLowerCase().trim();
+            if (val.length > 0) { 
+                state.selected = val; 
+                DOM.btnAction.classList.add('active'); 
+            } else { 
+                DOM.btnAction.classList.remove('active'); 
+            } 
+        };
+
+        const checkSpeechResult = (spokenText) => { 
+            const target = currentLessonData.questions[state.currentQ].text.toLowerCase(); 
+            // Lógica flexible: coincide exacta o todas las palabras clave presentes
+            const targetWords = target.replace(/[^a-zA-Z0-9äöüß ]/g, "").split(" "); // Limpieza básica
+            const spokenWords = spokenText.replace(/[^a-zA-Z0-9äöüß ]/g, "").split(" ");
+            
+            let matchCount = 0;
+            targetWords.forEach(tw => { if (spokenWords.includes(tw)) matchCount++; });
+
+            // 80% de coincidencia o exacta
+            if (matchCount / targetWords.length >= 0.8 || spokenText.includes(target)) { 
+                state.selected = spokenText; 
+                DOM.btnAction.classList.add('active');
+                // Auto-comprobar si es muy preciso
+                if (spokenText === target) handleAction();
+            } else { 
+                state.selected = spokenText; 
+                DOM.btnAction.classList.add('active'); 
+            } 
+        };
 
         // --- FLOW CONTROL ---
         const handleAction = () => {
             const q = currentLessonData.questions[state.currentQ];
-            const feedback = document.getElementById('feedback-msg');
             const txt = document.getElementById('msg-text');
             const sub = document.getElementById('msg-sub');
-            const btn = document.getElementById('btn-action');
 
-            if (btn.innerText === 'COMPROBAR') {
-                if (!state.selected && state.answers.length === 0 && matchState.solved.length === 0) return;
+            if (DOM.btnAction.innerText === 'COMPROBAR') {
+                if (!state.selected && matchState.solved.length === 0) return; // Nada seleccionado
                 state.checking = true;
                 let isCorrect = false;
 
                 if (q.type === 'choice' || q.type === 'audio') isCorrect = state.selected === q.correct;
                 else if (q.type === 'match') isCorrect = matchState.solved.length === q.pairs.length;
                 else if (q.type === 'wordbank') isCorrect = JSON.stringify(state.answers) === JSON.stringify(q.correct);
-                else if (q.type === 'speak') { const said = state.selected.toLowerCase(); const target = q.text.toLowerCase(); const targetWords = target.split(" "); const allPresent = targetWords.every(w => said.includes(w)); if (said === target || allPresent) isCorrect = true; }
+                else if (q.type === 'speak') { 
+                    const said = (state.selected || "").toLowerCase(); 
+                    const target = q.text.toLowerCase(); 
+                    const targetWords = target.split(" "); 
+                    const allPresent = targetWords.every(w => said.includes(w)); // Mejora lógica speak
+                    if (said === target || allPresent) isCorrect = true; 
+                }
 
                 if (isCorrect) {
                     txt.innerText = "¡Excelente!";
-                    if (q.type === 'speak' && q.meaning) sub.innerText = `${q.text} = ${q.meaning}`; else sub.innerText = "";
-                    feedback.className = "feedback-msg show correct";
-                    btn.innerText = "CONTINUAR"; btn.className = "btn-main continue";
+                    sub.innerText = (q.type === 'speak' && q.meaning) ? `${q.text} = ${q.meaning}` : "";
+                    DOM.feedbackMsg.className = "feedback-msg show correct";
+                    DOM.btnAction.innerText = "CONTINUAR"; 
+                    DOM.btnAction.className = "btn-main continue";
                 } else {
                     txt.innerText = "Incorrecto";
-                    let cText = q.correct || q.text; if (q.type === 'wordbank') cText = q.correct.join(" "); if (q.type === 'audio') cText = q.correct;
+                    let cText = q.correct || q.text; 
+                    if (q.type === 'wordbank') cText = q.correct.join(" "); 
+                    if (q.type === 'audio') cText = q.correct;
                     sub.innerText = `Correcto: ${cText}`;
-                    feedback.className = "feedback-msg show wrong";
-                    document.getElementById('screen-lesson').classList.add('shake');
-                    setTimeout(() => document.getElementById('screen-lesson').classList.remove('shake'), 300);
+                    
+                    DOM.feedbackMsg.className = "feedback-msg show wrong";
+                    DOM.screenLesson.classList.add('shake');
+                    setTimeout(() => DOM.screenLesson.classList.remove('shake'), 300);
+                    
                     state.hearts--; updateUI(); save();
-                    btn.innerText = "CONTINUAR"; btn.className = "btn-main retry";
-                    if (q.type === 'choice' || q.type === 'audio') { document.querySelectorAll('.opt-btn').forEach(b => { if(b.innerText === q.correct) b.classList.add('correct'); if(b.classList.contains('selected')) b.classList.add('wrong'); }); }
+                    DOM.btnAction.innerText = "CONTINUAR"; 
+                    DOM.btnAction.className = "btn-main retry";
+                    
+                    // Mostrar respuesta correcta visualmente en choice/audio
+                    if (q.type === 'choice' || q.type === 'audio') { 
+                        document.querySelectorAll('.opt-btn').forEach(b => { 
+                            if(b.innerText === q.correct) b.classList.add('correct'); 
+                            if(b.classList.contains('selected')) b.classList.add('wrong'); 
+                        }); 
+                    }
                 }
             } else {
-                if (state.hearts <= 0) { document.getElementById('overlay-gameover').classList.add('active'); return; }
+                // Botón CONTINUAR
+                if (state.hearts <= 0) { 
+                    DOM.overlayGameover.classList.add('active'); 
+                    return; 
+                }
+                
                 state.currentQ++;
-                state.checking = false; state.selected = null; state.answers = [];
+                state.checking = false; 
+                state.selected = null; 
+                state.answers = [];
                 matchState = { first: null, second: null, lock: false, solved: [] };
-                if (state.currentQ >= currentLessonData.questions.length) finishLesson(); else renderQ();
+                
+                if (state.currentQ >= currentLessonData.questions.length) finishLesson(); 
+                else renderQ();
             }
         };
 
-        const finishLesson = () => { if (!state.completed.includes(currentLessonData.id)) { state.completed.push(currentLessonData.id); state.gems += 20; state.streak++; save(); updateUI(); } for(let i=0; i<50; i++) createConfetti(); showScreen('screen-result'); };
+        const finishLesson = () => { 
+            if (!state.completed.includes(currentLessonData.id)) { 
+                state.completed.push(currentLessonData.id); 
+                state.gems += 20; 
+                state.streak++; 
+                save(); updateUI(); 
+            } 
+            for(let i=0; i<50; i++) createConfetti(); 
+            showScreen('screen-result'); 
+        };
+        
         const exitToMap = () => { showScreen('screen-map'); };
 
         // --- UTILS ---
-        function speak(t) { if (!('speechSynthesis' in window)) return; try { window.speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(t); u.lang='de-DE'; u.rate = 0.9; window.speechSynthesis.speak(u); } catch(e) {} }
-        function createConfetti() { const c=document.createElement('div'); c.className='confetti'; c.style.left=Math.random()*100+'vw'; c.style.background=['#58CC02','#FFC800','#1CB0F6'][Math.floor(Math.random()*3)]; document.body.appendChild(c); setTimeout(()=>c.remove(), 3000); }
-        document.addEventListener('keydown', (e) => { if (e.key === 'Enter') { const btn = document.getElementById('btn-action'); if (btn.classList.contains('active')) btn.click(); } });
+        function speak(t) { 
+            if (!('speechSynthesis' in window)) return; 
+            try { 
+                window.speechSynthesis.cancel(); // Detener anteriores
+                const u = new SpeechSynthesisUtterance(t); 
+                u.lang='de-DE'; 
+                u.rate = 0.9; 
+                window.speechSynthesis.speak(u); 
+            } catch(e) { console.error("TTS Error", e); } 
+        }
+
+        function createConfetti() { 
+            const c=document.createElement('div'); 
+            c.className='confetti'; 
+            c.style.left=Math.random()*100+'vw'; 
+            c.style.background=['#58CC02','#FFC800','#1CB0F6'][Math.floor(Math.random()*3)]; 
+            document.body.appendChild(c); 
+            setTimeout(()=>c.remove(), 3000); 
+        }
+
+        document.addEventListener('keydown', (e) => { 
+            if (e.key === 'Enter') { 
+                if (DOM.btnAction.classList.contains('active') || DOM.btnAction.innerText === 'CONTINUAR') DOM.btnAction.click(); 
+            } 
+        });
 
         // INIT
-        loadLocal(); // Carga progreso del usuario
-        fetchCourseData(); // Descarga datos de Supabase
+        loadLocal(); 
+        fetchCourseData(); 
     </script>
 </body>
 </html>
