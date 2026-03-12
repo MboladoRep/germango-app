@@ -3,7 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Germango Pro 8.0 - Dynamic Engine</title>
+    <title>Germango Pro 9.0 - Ultimate Edition</title>
+    
+    <!-- FAVICON GENERADO POR CÓDIGO (Búho SVG) -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦉</text></svg>">
+    
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <style>
@@ -26,7 +30,8 @@
         header { display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; border-bottom: 2px solid var(--border-color); background: var(--bg-dark); z-index: 100; flex-shrink: 0; }
         .logo { font-weight: 800; font-size: 1.2rem; color: var(--primary-green); cursor: pointer; display: flex; align-items: center; gap: 5px; }
         .stats { display: flex; gap: 10px; }
-        .stat-box { display: flex; align-items: center; gap: 4px; font-weight: 700; background: var(--card-dark); padding: 4px 10px; border-radius: 8px; cursor: pointer; font-size: 0.9rem; }
+        .stat-box { display: flex; align-items: center; gap: 4px; font-weight: 700; background: var(--card-dark); padding: 4px 10px; border-radius: 8px; cursor: pointer; font-size: 0.9rem; transition: transform 0.1s; }
+        .stat-box:active { transform: scale(0.95); }
         .stat-box.buyable { border: 1px solid var(--bonus-gold); }
 
         /* Main Layout */
@@ -49,7 +54,6 @@
         
         .lesson-node::before { content: ''; position: absolute; bottom: 100%; width: 3px; height: 20px; background: var(--border-color); z-index: 1; }
         .lesson-node.first-node::before { display: none; }
-        
         .lesson-node.completed::before { background: var(--primary-green); }
         
         .lesson-node:hover:not(.locked) { transform: scale(1.1); border-color: var(--secondary-blue); }
@@ -191,28 +195,30 @@
             try { _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY); } catch(e) { console.log("Supabase init failed, using local engine."); }
         }
 
-        // --- MOTOR DE DATOS DINÁMICO (Núcleo del Juego) ---
+        // --- MOTOR DE DATOS DINÁMICO (BANCO MASIVO) ---
         
-        // Banco de Vocabulario Extensivo
         const VOCAB = {
             greetings: [
                 { de: 'Hallo', es: 'Hola', emoji: '👋' }, { de: 'Guten Morgen', es: 'Buenos días', emoji: '☀️' },
                 { de: 'Guten Tag', es: 'Buenas tardes', emoji: '🌤️' }, { de: 'Guten Abend', es: 'Buenas noches (saludo)', emoji: '🌙' },
-                { de: 'Tschüss', es: 'Adiós', emoji: '👋' }, { de: 'Auf Wiedersehen', es: 'Hasta luego (formal)', emoji: '🎩' },
-                { de: 'Danke', es: 'Gracias', emoji: '🙏' }, { de: 'Bitte', es: 'Por favor', emoji: '🙏' }
+                { de: 'Tschüss', es: 'Adiós (informal)', emoji: '👋' }, { de: 'Auf Wiedersehen', es: 'Adiós (formal)', emoji: '🎩' },
+                { de: 'Danke', es: 'Gracias', emoji: '🙏' }, { de: 'Bitte', es: 'Por favor', emoji: '🙏' },
+                { de: 'Entschuldigung', es: 'Disculpa', emoji: '🤷' }, { de: 'Wie geht es dir?', es: '¿Cómo estás?', emoji: '🤔' }
             ],
             family: [
                 { de: 'der Vater', es: 'El padre', emoji: '👨' }, { de: 'die Mutter', es: 'La madre', emoji: '👩' },
                 { de: 'der Bruder', es: 'El hermano', emoji: '👦' }, { de: 'die Schwester', es: 'La hermana', emoji: '👧' },
                 { de: 'der Sohn', es: 'El hijo', emoji: '👦' }, { de: 'die Tochter', es: 'La hija', emoji: '👧' },
-                { de: 'die Oma', es: 'La abuela', emoji: '👵' }, { de: 'der Opa', es: 'El abuelo', emoji: '👴' }
+                { de: 'die Oma', es: 'La abuela', emoji: '👵' }, { de: 'der Opa', es: 'El abuelo', emoji: '👴' },
+                { de: 'die Familie', es: 'La familia', emoji: '👨‍👩‍👧‍👦' }, { de: 'das Kind', es: 'El niño', emoji: '👶' }
             ],
             food: [
                 { de: 'der Apfel', es: 'La manzana', emoji: '🍎' }, { de: 'das Brot', es: 'El pan', emoji: '🍞' },
                 { de: 'das Wasser', es: 'El agua', emoji: '💧' }, { de: 'die Milch', es: 'La leche', emoji: '🥛' },
                 { de: 'der Käse', es: 'El queso', emoji: '🧀' }, { de: 'das Fleisch', es: 'La carne', emoji: '🥩' },
                 { de: 'der Fisch', es: 'El pescado', emoji: '🐟' }, { de: 'das Ei', es: 'El huevo', emoji: '🥚' },
-                { de: 'die Suppe', es: 'La sopa', emoji: '🍲' }, { de: 'der Salat', es: 'La ensalada', emoji: '🥗' }
+                { de: 'die Suppe', es: 'La sopa', emoji: '🍲' }, { de: 'der Salat', es: 'La ensalada', emoji: '🥗' },
+                { de: 'der Kuchen', es: 'El pastel', emoji: '🍰' }, { de: 'die Pizza', es: 'La pizza', emoji: '🍕' }
             ],
             animals: [
                 { de: 'der Hund', es: 'El perro', emoji: '🐕' }, { de: 'die Katze', es: 'El gato', emoji: '🐱' },
@@ -220,50 +226,87 @@
                 { de: 'das Pferd', es: 'El caballo', emoji: '🐴' }, { de: 'die Kuh', es: 'La vaca', emoji: '🐄' },
                 { de: 'das Schwein', es: 'El cerdo', emoji: '🐷' }, { de: 'das Schaf', es: 'La oveja', emoji: '🐑' },
                 { de: 'die Maus', es: 'El ratón', emoji: '🐭' }, { de: 'der Elefant', es: 'El elefante', emoji: '🐘' },
-                { de: 'der Löwe', es: 'El león', emoji: '🦁' }, { de: 'der Bär', es: 'El oso', emoji: '🐻' }
+                { de: 'der Löwe', es: 'El león', emoji: '🦁' }, { de: 'der Bär', es: 'El oso', emoji: '🐻' },
+                { de: 'der Wolf', es: 'El lobo', emoji: '🐺' }, { de: 'der Fuchs', es: 'El zorro', emoji: '🦊' }
             ],
             numbers: [
                 { de: 'eins', es: 'uno' }, { de: 'zwei', es: 'dos' }, { de: 'drei', es: 'tres' },
                 { de: 'vier', es: 'cuatro' }, { de: 'fünf', es: 'cinco' }, { de: 'sechs', es: 'seis' },
                 { de: 'sieben', es: 'siete' }, { de: 'acht', es: 'ocho' }, { de: 'neun', es: 'nueve' },
-                { de: 'zehn', es: 'diez' }, { de: 'elf', es: 'once' }, { de: 'zwölf', es: 'doce' }
+                { de: 'zehn', es: 'diez' }, { de: 'elf', es: 'once' }, { de: 'zwölf', es: 'doce' },
+                { de: 'zwanzig', es: 'veinte' }, { de: 'hundert', es: 'cien' }
             ],
             time: [
                 { de: 'der Montag', es: 'Lunes' }, { de: 'der Dienstag', es: 'Martes' },
                 { de: 'der Mittwoch', es: 'Miércoles' }, { de: 'der Donnerstag', es: 'Jueves' },
                 { de: 'der Freitag', es: 'Viernes' }, { de: 'der Samstag', es: 'Sábado' },
                 { de: 'der Sonntag', es: 'Domingo' }, { de: 'Heute', es: 'Hoy' },
-                { de: 'Morgen', es: 'Mañana' }, { de: 'Gestern', es: 'Ayer' }
+                { de: 'Morgen', es: 'Mañana' }, { de: 'Gestern', es: 'Ayer' },
+                { de: 'die Uhr', es: 'El reloj' }, { de: 'die Zeit', es: 'El tiempo' }
             ],
             colors: [
                 { de: 'rot', es: 'rojo', emoji: '🔴' }, { de: 'blau', es: 'azul', emoji: '🔵' },
                 { de: 'grün', es: 'verde', emoji: '🟢' }, { de: 'gelb', es: 'amarillo', emoji: '🟡' },
                 { de: 'schwarz', es: 'negro', emoji: '⬛' }, { de: 'weiß', es: 'blanco', emoji: '⬜' },
-                { de: 'orange', es: 'naranja', emoji: '🟠' }, { de: 'rosa', es: 'rosa', emoji: '💗' }
+                { de: 'orange', es: 'naranja', emoji: '🟠' }, { de: 'rosa', es: 'rosa', emoji: '💗' },
+                { de: 'braun', es: 'marrón', emoji: '🟤' }, { de: 'grau', es: 'gris', emoji: '🩶' }
             ],
             verbs: [
                 { de: 'essen', es: 'comer', emoji: '🍽️' }, { de: 'trinken', es: 'beber', emoji: '🍺' },
                 { de: 'gehen', es: 'ir/caminar', emoji: '🚶' }, { de: 'kommen', es: 'venir', emoji: '🤚' },
                 { de: 'schlafen', es: 'dormir', emoji: '😴' }, { de: 'lesen', es: 'leer', emoji: '📖' },
                 { de: 'schreiben', es: 'escribir', emoji: '✍️' }, { de: 'sprechen', es: 'hablar', emoji: '🗣️' },
-                { de: 'hören', es: 'escuchar', emoji: '👂' }, { de: 'sehen', es: 'ver', emoji: '👀' }
+                { de: 'hören', es: 'escuchar', emoji: '👂' }, { de: 'sehen', es: 'ver', emoji: '👀' },
+                { de: 'kaufen', es: 'comprar', emoji: '🛒' }, { de: 'verkaufen', es: 'vender', emoji: '🏷️' },
+                { de: 'laufen', es: 'correr', emoji: '🏃' }, { de: 'schwimmen', es: 'nadar', emoji: '🏊' }
+            ],
+            body: [
+                { de: 'der Kopf', es: 'La cabeza', emoji: '🗣️' }, { de: 'der Arm', es: 'El brazo', emoji: '💪' },
+                { de: 'das Bein', es: 'La pierna', emoji: '🦵' }, { de: 'die Hand', es: 'La mano', emoji: '✋' },
+                { de: 'der Fuß', es: 'El pie', emoji: '🦶' }, { de: 'das Auge', es: 'El ojo', emoji: '👁️' },
+                { de: 'die Nase', es: 'La nariz', emoji: '👃' }, { de: 'der Mund', es: 'La boca', emoji: '👄' },
+                { de: 'das Ohr', es: 'La oreja', emoji: '👂' }, { de: 'das Haar', es: 'El pelo', emoji: '💇' }
+            ],
+            house: [
+                { de: 'das Haus', es: 'La casa', emoji: '🏠' }, { de: 'die Tür', es: 'La puerta', emoji: '🚪' },
+                { de: 'das Fenster', es: 'La ventana', emoji: '🪟' }, { de: 'der Tisch', es: 'La mesa', emoji: '🪑' },
+                { de: 'der Stuhl', es: 'La silla', emoji: '🪑' }, { de: 'das Bett', es: 'La cama', emoji: '🛏️' },
+                { de: 'die Küche', es: 'La cocina', emoji: '🍳' }, { de: 'das Badezimmer', es: 'El baño', emoji: '🛁' },
+                { de: 'das Schlafzimmer', es: 'El dormitorio', emoji: '🛌' }, { de: 'der Garten', es: 'El jardín', emoji: '🌳' }
+            ],
+            weather: [
+                { de: 'die Sonne', es: 'El sol', emoji: '☀️' }, { de: 'der Regen', es: 'La lluvia', emoji: '🌧️' },
+                { de: 'der Schnee', es: 'La nieve', emoji: '❄️' }, { de: 'der Wind', es: 'El viento', emoji: '💨' },
+                { de: 'die Wolke', es: 'La nube', emoji: '☁️' }, { de: 'der Himmel', es: 'El cielo', emoji: '🌌' },
+                { de: 'kalt', es: 'frío', emoji: '🥶' }, { de: 'warm', es: 'cálido', emoji: '🌡️' },
+                { de: 'heiß', es: 'caluroso', emoji: '🥵' }, { de: 'das Wetter', es: 'El clima', emoji: '🌦️' }
+            ],
+            transport: [
+                { de: 'das Auto', es: 'El coche', emoji: '🚗' }, { de: 'der Zug', es: 'El tren', emoji: '🚆' },
+                { de: 'das Flugzeug', es: 'El avión', emoji: '✈️' }, { de: 'das Schiff', es: 'El barco', emoji: '🚢' },
+                { de: 'das Fahrrad', es: 'La bicicleta', emoji: '🚲' }, { de: 'der Bus', es: 'El autobús', emoji: '🚌' },
+                { de: 'die Straße', es: 'La calle', emoji: '🛣️' }, { de: 'die Brücke', es: 'El puente', emoji: '🌉' }
+            ],
+            professions: [
+                { de: 'der Arzt', es: 'El médico', emoji: '👨‍⚕️' }, { de: 'der Lehrer', es: 'El profesor', emoji: '👨‍🏫' },
+                { de: 'der Polizist', es: 'El policía', emoji: '👮' }, { de: 'der Koch', es: 'El cocinero', emoji: '👨‍🍳' },
+                { de: 'der Ingenieur', es: 'El ingeniero', emoji: '👷' }, { de: 'der Schüler', es: 'El estudiante', emoji: '👦' },
+                { de: 'der Fahrer', es: 'El conductor', emoji: '🚕' }, { de: 'der Musiker', es: 'El músico', emoji: '🎸' }
             ]
         };
 
-        // Función para obtener elementos aleatorios de un array
         const getRandom = (arr, n) => arr.sort(() => 0.5 - Math.random()).slice(0, n);
         const getRandomItem = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
-        // Generador de Preguntas
         function generateQuestion(type, categoryKey) {
             const category = VOCAB[categoryKey];
             if (!category) return null;
 
             const item = getRandomItem(category);
             
-            // Crear opciones incorrectas del MISMO tema para dificultad
             let wrongOptions = category.filter(i => i.de !== item.de);
-            if (wrongOptions.length < 3) wrongOptions = VOCAB.greetings.concat(VOCAB.food); // Fallback
+            // Si la categoría es pequeña, usamos otras categorías para no repetir opciones
+            if (wrongOptions.length < 3) wrongOptions = Object.values(VOCAB).flat();
             const distractors = getRandom(wrongOptions, 3).map(i => i.es);
             const options = [item.es, ...distractors].sort(() => 0.5 - Math.random());
 
@@ -287,7 +330,6 @@
                         emoji: '🔊'
                     };
                 case 'match':
-                    // Generar un minijuego de emparejar 4 pares aleatorios
                     const matchItems = getRandom(category, 4);
                     return {
                         type: 'match',
@@ -303,12 +345,10 @@
                         emoji: item.emoji || '🗣️'
                     };
                 case 'wordbank':
-                    // Generar frase simple si es posible, o solo palabras
-                    // Por ahora, secuencias de 3 palabras aleatorias
                     const words = getRandom(category, 3);
                     return {
                         type: 'wordbank',
-                        prompt: 'Ordena las palabras',
+                        prompt: 'Ordena las palabras (concepto)',
                         text: words.map(w => w.de).join(' + '),
                         words: words.map(w => w.de).sort(() => 0.5 - Math.random()),
                         correct: words.map(w => w.de)
@@ -318,37 +358,19 @@
             }
         }
 
-        // Constructor del Curso Dinámico
-        function buildDynamicCourse() {
-            const units = [
-                { id: 'u1', title: 'Unidad 1: Fundamentos', subtitle: 'Saludos y Familia', lessons: ['greetings', 'family', 'greetings'] },
-                { id: 'u2', title: 'Unidad 2: Comida y Bebida', subtitle: 'En el restaurante', lessons: ['food', 'food', 'verbs'] }, // Verbos comer/beber
-                { id: 'u3', title: 'Unidad 3: Números y Tiempo', subtitle: 'Calendario', lessons: ['numbers', 'time', 'time'] },
-                { id: 'u4', title: 'Unidad 4: Animales', subtitle: 'Naturaleza', lessons: ['animals', 'animals', 'animals'] },
-                { id: 'u5', title: 'Unidad 5: Acciones y Colores', subtitle: 'Descriptores', lessons: ['colors', 'verbs', 'verbs'] }
-            ];
-
-            return units.map((u, uIndex) => {
-                return {
-                    id: u.id,
-                    title: u.title,
-                    subtitle: u.subtitle,
-                    order_index: uIndex,
-                    lessons: u.lessons.map((catKey, lIndex) => {
-                        // Generar 5 preguntas aleatorias para esta lección
-                        const qTypes = ['choice', 'choice', 'match', 'audio', 'speak']; // Tipos variados
-                        const questions = qTypes.map(qType => generateQuestion(qType, catKey)).filter(q => q);
-                        
-                        return {
-                            id: `${u.id}-l${lIndex}`,
-                            icon: lIndex === 0 ? '📚' : (lIndex === 1 ? '🧠' : '🏆'), // Iconos dinámicos
-                            order_index: lIndex,
-                            questions: questions // ¡Preguntas nuevas cada vez!
-                        };
-                    })
-                };
-            });
-        }
+        // Definición de la estructura del curso (10 Unidades)
+        const COURSE_STRUCTURE = [
+            { id: 'u1', title: 'Fundamentos', subtitle: 'Saludos y Familia', lessons: ['greetings', 'family', 'greetings'] },
+            { id: 'u2', title: 'Comida y Bebida', subtitle: 'En el restaurante', lessons: ['food', 'food', 'verbs'] },
+            { id: 'u3', title: 'Números y Tiempo', subtitle: 'Calendario', lessons: ['numbers', 'time', 'time'] },
+            { id: 'u4', title: 'Animales', subtitle: 'Naturaleza', lessons: ['animals', 'animals', 'animals'] },
+            { id: 'u5', title: 'Acciones', subtitle: 'Verbos básicos', lessons: ['verbs', 'colors', 'verbs'] },
+            { id: 'u6', title: 'El Cuerpo', subtitle: 'Anatomía', lessons: ['body', 'body', 'verbs'] },
+            { id: 'u7', title: 'La Casa', subtitle: 'Hogar dulce hogar', lessons: ['house', 'house', 'house'] },
+            { id: 'u8', title: 'Clima y Naturaleza', subtitle: 'El tiempo', lessons: ['weather', 'weather', 'body'] }, // Body (sensaciones)
+            { id: 'u9', title: 'Transporte', subtitle: 'Movilidad', lessons: ['transport', 'transport', 'numbers'] },
+            { id: 'u10', title: 'Profesiones', subtitle: 'El trabajo', lessons: ['professions', 'professions', 'verbs'] }
+        ];
 
         // --- STATE & DOM ---
         let state = { hearts: 5, gems: 500, streak: 0, completed: [], currentQ: 0, answers: [], selected: null, checking: false };
@@ -413,10 +435,10 @@
         }
 
         // --- STORAGE & DATA INIT ---
-        const save = () => { try { localStorage.setItem('germango_v8', JSON.stringify(state)); } catch (e) {} };
+        const save = () => { try { localStorage.setItem('germango_v9', JSON.stringify(state)); } catch (e) {} };
         const loadLocal = () => { 
             try { 
-                const d = localStorage.getItem('germango_v8'); 
+                const d = localStorage.getItem('germango_v9'); 
                 if (d) { 
                     const p = JSON.parse(d); 
                     state.hearts = p.hearts ?? 5; 
@@ -428,11 +450,29 @@
             updateUI(); 
         };
 
+        // Construir el mapa del curso (solo metadatos, sin preguntas aún para ahorrar memoria)
+        function buildCourseMap() {
+            return COURSE_STRUCTURE.map((u, uIndex) => {
+                return {
+                    id: u.id,
+                    title: u.title,
+                    subtitle: u.subtitle,
+                    order_index: uIndex,
+                    lessons: u.lessons.map((catKey, lIndex) => {
+                        return {
+                            id: `${u.id}-l${lIndex}`,
+                            icon: lIndex === 0 ? '📘' : (lIndex === 1 ? '📗' : '📙'), // Iconos distintos
+                            order_index: lIndex,
+                            category: catKey, // Guardamos la categoría para generar preguntas después
+                            questions: [] // Se llenan al jugar
+                        };
+                    })
+                };
+            });
+        }
+
         async function fetchCourseData() {
-            // Usamos el generador dinámico SIEMPRE para garantizar contenido fresco
-            // Si se quisiera usar Supabase, se pondría la lógica aquí, pero para este caso
-            // el generador local es superior en variedad.
-            DB.units = buildDynamicCourse();
+            DB.units = buildCourseMap();
             renderMap();
         }
 
@@ -456,7 +496,7 @@
             if(state.gems >= 50) {
                 state.gems -= 50; state.hearts = 5; save(); updateUI();
                 DOM.overlayGameover.classList.remove('active');
-                startLesson(currentLessonData); // Reintentar regenera las preguntas gracias al motor
+                startLesson(currentLessonData); 
             } else { alert("No tienes suficientes gemas."); }
         };
 
@@ -513,7 +553,7 @@
                         node.innerHTML = `<span class="icon">✓</span>`; 
                     } else if (isUnlocked) { 
                         node.classList.add('current'); 
-                        node.innerHTML = `<span class="icon">${les.icon || '📚'}</span>`; 
+                        node.innerHTML = `<span class="icon">${les.icon}</span>`; 
                     } else { 
                         node.classList.add('locked'); 
                         node.innerHTML = `<span class="icon">🔒</span>`; 
@@ -531,22 +571,18 @@
         };
 
         // --- LESSON LOGIC ---
-        // Al iniciar una lección, si queremos que sea distinta a la última vez, 
-        // necesitamos regenerar las preguntas aquí, basándonos en el ID de la lección (que define el tema).
+        // GENERACIÓN BAJO DEMANDA: Genera preguntas solo cuando inicias la lección
         const startLesson = (les) => {
-            // Identificar el tema por el ID (u1-l0, u4-l1, etc.)
-            // En buildDynamicCourse, asignamos temas a indices específicos.
-            // Reconstruimos las preguntas al vuelo:
-            const unitIndex = parseInt(les.id.split('-')[0].replace('u', '')) - 1;
-            const lessonIndex = parseInt(les.id.split('l')[1]);
-            const unitConfig = buildDynamicCourse()[unitIndex]; // Obtiene la config actual
-            const categoryKey = unitConfig.lessons[lessonIndex].questions[0].category || Object.keys(VOCAB)[unitIndex]; // Simplificación
+            // Regenerar preguntas aleatorias para esta lección
+            const qTypes = ['choice', 'choice', 'match', 'audio', 'speak']; 
+            // Usamos la categoría guardada en el objeto lección
+            const category = les.category || 'greetings'; 
             
-            // Para simplificar y asegurar, usamos la lección generada en DB, 
-            // pero DB se regenera al cargar la página. 
-            // Para regenerar sin recargar, llamaríamos a buildDynamicCourse de nuevo.
+            // Si es reintento, las preguntas serán distintas
+            const generatedQuestions = qTypes.map(qType => generateQuestion(qType, category)).filter(q => q);
             
-            currentLessonData = les;
+            currentLessonData = { ...les, questions: generatedQuestions };
+            
             state.currentQ = 0; state.checking = false; state.selected = null; state.answers = [];
             matchState = { first: null, second: null, lock: false, solved: [] };
             DOM.overlayGameover.classList.remove('active');
@@ -631,7 +667,7 @@
             }
         };
 
-        // --- INPUT HANDLERS (Idénticos al anterior) ---
+        // --- INPUT HANDLERS (Idénticos) ---
         const selectChoice = (el, val) => { 
             if (state.checking) return; 
             document.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('selected')); 
@@ -718,30 +754,24 @@
             } 
         };
         
-        // Speech
+        // Speech & Typing Handlers (Idénticos)
         const triggerSpeech = () => { 
             if (!recognition) { alert("Navegador no soportado."); switchToTyping(); return; } 
-            
             const micBtn = document.getElementById('mic-btn'); 
             const resultDiv = document.getElementById('mic-result'); 
-            
             micBtn.classList.add('listening'); 
             micBtn.innerText = "🔴 Escuchando..."; 
             resultDiv.innerText = ""; 
-
             recognition.onresult = (event) => { 
                 const res = event.results[0][0].transcript.toLowerCase(); 
                 resultDiv.innerText = `Dijiste: "${res}"`; 
                 checkSpeechResult(res); 
             }; 
-            
             recognition.onerror = (event) => { 
                 resultDiv.innerText = "Error. Intenta escribir."; 
                 resetMicBtn(); 
             }; 
-            
             recognition.onend = () => resetMicBtn(); 
-            
             try { recognition.start(); } catch(e) { recognition.stop(); recognition.start(); } 
         };
 
@@ -779,10 +809,8 @@
             const target = currentLessonData.questions[state.currentQ].text.toLowerCase(); 
             const targetWords = target.replace(/[^a-zA-Z0-9äöüß ]/g, "").split(" "); 
             const spokenWords = spokenText.replace(/[^a-zA-Z0-9äöüß ]/g, "").split(" ");
-            
             let matchCount = 0;
             targetWords.forEach(tw => { if (spokenWords.includes(tw)) matchCount++; });
-
             if (matchCount / targetWords.length >= 0.8 || spokenText.includes(target)) { 
                 state.selected = spokenText; 
                 DOM.btnAction.classList.add('active');
@@ -793,7 +821,7 @@
             } 
         };
 
-        // --- FLOW CONTROL ---
+        // --- FLOW CONTROL (Idéntico) ---
         const handleAction = () => {
             const q = currentLessonData.questions[state.currentQ];
             const txt = document.getElementById('msg-text');
