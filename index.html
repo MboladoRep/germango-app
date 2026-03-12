@@ -177,8 +177,7 @@
 
     <script>
         // --- CONFIGURACIÓN SUPABASE ---
-        // NOTA: Nunca expongas la clave 'service_role' aquí. Usa la clave 'anon' pública.
-        // Asegúrate de tener Row Level Security (RLS) habilitado en tus tablas en Supabase.
+        // ¡IMPORTANTE! Asegúrate de que tus tablas 'units', 'lessons' y 'questions' existan en Supabase.
         const SUPABASE_URL = 'https://eofolsrnycdiioobpihq.supabase.co'; 
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVvZm9sc3JueWNkaWlvb2JwaWhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzMTE1NDgsImV4cCI6MjA4ODg4NzU0OH0.rIma6h2uA3vmUj-NxtYODKdwS9AZHk646awFiQsCFbA';
         
@@ -219,7 +218,7 @@
                 const d = localStorage.getItem('germango_supa'); 
                 if (d) { 
                     const p = JSON.parse(d); 
-                    state.hearts = p.hearts ?? 5; // Usamos ?? para default values
+                    state.hearts = p.hearts ?? 5; 
                     state.gems = p.gems ?? 500; 
                     state.streak = p.streak ?? 0; 
                     state.completed = p.completed ?? []; 
@@ -251,7 +250,6 @@
                             return {
                                 ...l,
                                 questions: questions.filter(q => q.lesson_id === l.id).map(q => {
-                                    // Aplanamos 'content' y manejamos valores nulos
                                     return { ...q, ...q.content }; 
                                 })
                             }
@@ -259,8 +257,12 @@
                     };
                 });
                 
-                renderMap(); 
-                document.querySelector('.loader').style.display = 'none'; 
+                // CORRECCIÓN: Verificamos si hay datos antes de renderizar
+                if (DB.units.length > 0) {
+                    renderMap(); 
+                } else {
+                    DOM.mapContainer.innerHTML = "<p style='color:var(--text-dim); text-align:center;'>No hay datos en la base de datos. Revisa las tablas 'units', 'lessons' y 'questions' en Supabase.</p>";
+                }
 
             } catch (error) {
                 console.error("Error cargando datos:", error);
@@ -284,10 +286,10 @@
         // --- MAP RENDERER ---
         const renderMap = () => {
             if(DB.units.length === 0) return; 
-            DOM.mapContainer.innerHTML = ''; 
+            DOM.mapContainer.innerHTML = ''; // Esto elimina el loader automáticamente
             
             let totalLessons = DB.units.reduce((acc, u) => acc + u.lessons.length, 0);
-            const progressPercent = (state.completed.length / totalLessons) * 100;
+            const progressPercent = totalLessons > 0 ? (state.completed.length / totalLessons) * 100 : 0;
 
             // Global Progress
             const gpHtml = `
@@ -318,11 +320,11 @@
                     const node = document.createElement('div');
                     node.className = 'lesson-node';
                     
-                    // Lógica de desbloqueo robusta
+                    // Lógica de desbloqueo
                     const currentIndex = allLessonsFlat.findIndex(l => l.id === les.id);
                     const prevId = currentIndex > 0 ? allLessonsFlat[currentIndex-1].id : null;
                     
-                    const prevDone = prevId ? state.completed.includes(prevId) : true; // Si es el primero, prevDone es true
+                    const prevDone = prevId ? state.completed.includes(prevId) : true; 
                     const isDone = state.completed.includes(les.id);
                     
                     if (isDone) {
@@ -330,7 +332,7 @@
                         node.innerHTML = `<span class="icon">✓</span>`;
                     } else if (prevDone) {
                         node.classList.add('current');
-                        node.innerHTML = `<span class="icon">${les.icon || '📚'}</span>`; // Default icon si falta
+                        node.innerHTML = `<span class="icon">${les.icon || '📚'}</span>`; 
                     } else {
                         node.classList.add('locked');
                         node.innerHTML = `<span class="icon">🔒</span>`;
@@ -365,7 +367,7 @@
 
         const renderQ = () => {
             const q = currentLessonData.questions[state.currentQ];
-            if(!q) return finishLesson(); // Safety check
+            if(!q) return finishLesson(); 
 
             const progress = (state.currentQ / currentLessonData.questions.length) * 100;
             DOM.progressFill.style.width = `${progress}%`;
@@ -373,23 +375,21 @@
             
             DOM.btnAction.className = 'btn-main'; 
             DOM.btnAction.innerText = 'COMPROBAR';
-            DOM.btnAction.classList.remove('active'); // Reset button state
+            DOM.btnAction.classList.remove('active'); 
 
             const c = DOM.lessonContent;
-            // Usamos textContent para seguridad XSS donde es posible, o plantillas limpias
             let html = `<div class="prompt-text">${q.prompt}</div>`;
             const emojiHtml = q.emoji ? `<span class="emoji">${q.emoji}</span>` : '';
 
             if (q.type === 'choice' || q.type === 'audio') {
                 if (q.type === 'audio') {
                     html += `<button class="audio-prompt-btn" onclick="speak('${q.audioText || q.text}')">🔊</button>`;
-                    setTimeout(() => speak(q.audioText || q.text), 300); // Auto-play con delay
+                    setTimeout(() => speak(q.audioText || q.text), 300);
                 } else {
                     html += `<div class="main-text">${emojiHtml} ${q.text}</div>`;
                 }
                 
                 html += `<div class="options-grid">`;
-                // Barajamos opciones
                 const shuffledOptions = [...q.options].sort(() => Math.random() - 0.5);
                 shuffledOptions.forEach(o => {
                     html += `<button class="opt-btn" onclick="selectChoice(this, '${o.replace(/'/g, "\\'")}')">${o}</button>`;
@@ -429,7 +429,6 @@
 
             c.innerHTML = html;
             
-            // Init Speech Recognition if needed
             if (q.type === 'speak' && 'webkitSpeechRecognition' in window) {
                 recognition = new webkitSpeechRecognition();
                 recognition.lang = 'de-DE';
@@ -440,7 +439,6 @@
 
         // --- INPUT HANDLERS ---
         
-        // Choice
         const selectChoice = (el, val) => { 
             if (state.checking) return; 
             document.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('selected')); 
@@ -449,7 +447,6 @@
             DOM.btnAction.classList.add('active'); 
         };
 
-        // Word Bank
         const addWord = (el) => { 
             if (state.checking || el.classList.contains('placed')) return; 
             el.classList.add('placed'); 
@@ -457,7 +454,6 @@
             renderSentence(); 
         };
         
-        // Función para eliminar la última palabra (click en área vacía)
         const clearLastWord = () => {
              if (state.checking || state.answers.length === 0) return; 
              const w = state.answers.pop(); 
@@ -466,7 +462,6 @@
              renderSentence();
         };
 
-        // Función para eliminar palabra específica (click en la palabra)
         const removeSpecificWord = (index) => { 
             const w = state.answers[index]; 
             const btn = document.querySelector(`.token[data-w="${w}"].placed`); 
@@ -491,7 +486,6 @@
             else DOM.btnAction.classList.remove('active'); 
         };
 
-        // Match
         const selectMatch = (el, id) => { 
             if (matchState.lock || el.classList.contains('matched') || state.checking) return; 
             
@@ -502,7 +496,6 @@
             } else { 
                 matchState.second = el; 
                 
-                // Check match
                 if (matchState.first.dataset.id === matchState.second.dataset.id && matchState.first !== matchState.second) { 
                     matchState.first.classList.add('matched'); 
                     matchState.second.classList.add('matched'); 
@@ -589,18 +582,15 @@
 
         const checkSpeechResult = (spokenText) => { 
             const target = currentLessonData.questions[state.currentQ].text.toLowerCase(); 
-            // Lógica flexible: coincide exacta o todas las palabras clave presentes
-            const targetWords = target.replace(/[^a-zA-Z0-9äöüß ]/g, "").split(" "); // Limpieza básica
+            const targetWords = target.replace(/[^a-zA-Z0-9äöüß ]/g, "").split(" "); 
             const spokenWords = spokenText.replace(/[^a-zA-Z0-9äöüß ]/g, "").split(" ");
             
             let matchCount = 0;
             targetWords.forEach(tw => { if (spokenWords.includes(tw)) matchCount++; });
 
-            // 80% de coincidencia o exacta
             if (matchCount / targetWords.length >= 0.8 || spokenText.includes(target)) { 
                 state.selected = spokenText; 
                 DOM.btnAction.classList.add('active');
-                // Auto-comprobar si es muy preciso
                 if (spokenText === target) handleAction();
             } else { 
                 state.selected = spokenText; 
@@ -615,7 +605,7 @@
             const sub = document.getElementById('msg-sub');
 
             if (DOM.btnAction.innerText === 'COMPROBAR') {
-                if (!state.selected && matchState.solved.length === 0) return; // Nada seleccionado
+                if (!state.selected && matchState.solved.length === 0) return; 
                 state.checking = true;
                 let isCorrect = false;
 
@@ -626,7 +616,7 @@
                     const said = (state.selected || "").toLowerCase(); 
                     const target = q.text.toLowerCase(); 
                     const targetWords = target.split(" "); 
-                    const allPresent = targetWords.every(w => said.includes(w)); // Mejora lógica speak
+                    const allPresent = targetWords.every(w => said.includes(w)); 
                     if (said === target || allPresent) isCorrect = true; 
                 }
 
@@ -651,7 +641,6 @@
                     DOM.btnAction.innerText = "CONTINUAR"; 
                     DOM.btnAction.className = "btn-main retry";
                     
-                    // Mostrar respuesta correcta visualmente en choice/audio
                     if (q.type === 'choice' || q.type === 'audio') { 
                         document.querySelectorAll('.opt-btn').forEach(b => { 
                             if(b.innerText === q.correct) b.classList.add('correct'); 
@@ -660,7 +649,6 @@
                     }
                 }
             } else {
-                // Botón CONTINUAR
                 if (state.hearts <= 0) { 
                     DOM.overlayGameover.classList.add('active'); 
                     return; 
@@ -694,7 +682,7 @@
         function speak(t) { 
             if (!('speechSynthesis' in window)) return; 
             try { 
-                window.speechSynthesis.cancel(); // Detener anteriores
+                window.speechSynthesis.cancel(); 
                 const u = new SpeechSynthesisUtterance(t); 
                 u.lang='de-DE'; 
                 u.rate = 0.9; 
