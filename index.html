@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Germango Pro 5.0.2 - Supabase Stable</title>
+    <title>Germango Pro 6.0 - Ultimate Edition</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <style>
@@ -24,9 +24,12 @@
         
         /* Header */
         header { display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; border-bottom: 2px solid var(--border-color); background: var(--bg-dark); z-index: 100; flex-shrink: 0; }
-        .logo { font-weight: 800; font-size: 1.4rem; color: var(--primary-green); cursor: pointer; display: flex; align-items: center; gap: 5px; }
+        .logo { font-weight: 800; font-size: 1.4rem; color: var(--primary-green); cursor: pointer; display: flex; align-items: center; gap: 5px; transition: transform 0.2s; }
+        .logo:hover { transform: scale(1.05); }
         .stats { display: flex; gap: 15px; }
-        .stat-box { display: flex; align-items: center; gap: 5px; font-weight: 700; background: var(--card-dark); padding: 5px 12px; border-radius: 8px; }
+        .stat-box { display: flex; align-items: center; gap: 5px; font-weight: 700; background: var(--card-dark); padding: 5px 12px; border-radius: 8px; cursor: pointer; transition: background 0.2s; }
+        .stat-box:hover { background: var(--border-color); }
+        .stat-box.buyable { border: 1px solid var(--bonus-gold); }
 
         /* Main Layout */
         main { flex: 1; overflow-y: auto; display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 700px; margin: 0 auto; padding: 20px; }
@@ -36,28 +39,47 @@
 
         /* Map Screen */
         .map-wrapper { position: relative; width: 100%; padding: 20px 0 50px; display: flex; flex-direction: column; align-items: center; }
-        .global-progress-container { width: 100%; margin-bottom: 30px; background: var(--card-dark); padding: 15px; border-radius: 15px; border: 1px solid var(--border-color); }
-        .gp-header { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.9rem; color: var(--text-dim); }
-        .gp-bar { width: 100%; height: 8px; background: var(--border-color); border-radius: 4px; overflow: hidden; }
-        .gp-fill { height: 100%; background: var(--bonus-gold); width: 0%; transition: width 0.5s; }
         
+        /* ZigZag Layout */
+        .unit-container { display: flex; flex-direction: column; align-items: center; width: 100%; margin-bottom: 30px; position: relative; }
         .unit-header { width: 100%; padding: 15px; margin-bottom: 15px; background: linear-gradient(90deg, rgba(88,204,2,0.1) 0%, transparent 100%); border-left: 5px solid var(--primary-green); border-radius: 0 10px 10px 0; }
         .unit-title { font-weight: 800; font-size: 1.2rem; color: var(--primary-green); }
         .unit-sub { font-size: 0.9rem; color: var(--text-dim); margin-top: 4px; }
         
-        .path-line { width: 4px; height: 30px; background: var(--border-color); border-radius: 2px; margin: 5px 0; }
-        .path-line.done { background: var(--primary-green); }
+        .lessons-row { display: flex; flex-direction: column; align-items: center; width: 100%; position: relative; }
         
         .lesson-node { width: 85px; height: 85px; border-radius: 50%; background: var(--card-dark); border: 4px solid var(--text-dim); display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 800; font-size: 1.2rem; cursor: pointer; transition: all 0.2s; position: relative; z-index: 2; gap: 2px; }
         .lesson-node:hover:not(.locked) { transform: scale(1.1); border-color: var(--secondary-blue); }
         .lesson-node.completed { border-color: var(--primary-green); color: var(--primary-green); background: rgba(88, 204, 2, 0.1); }
         .lesson-node.locked { opacity: 0.4; cursor: not-allowed; }
-        .lesson-node.current { border-color: var(--secondary-blue); box-shadow: 0 0 20px rgba(28, 176, 246, 0.4); }
+        .lesson-node.current { border-color: var(--secondary-blue); box-shadow: 0 0 20px rgba(28, 176, 246, 0.4); animation: bounce 2s infinite; }
         .lesson-node .icon { font-size: 1.8rem; }
+        .lesson-node .lvl { font-size: 0.8rem; opacity: 0.7; }
+
+        @keyframes bounce { 0%, 20%, 50%, 80%, 100% {transform: translateY(0);} 40% {transform: translateY(-10px);} 60% {transform: translateY(-5px);} }
+
+        /* Zigzag positioning */
+        .node-wrapper { width: 100%; display: flex; margin: 10px 0; position: relative; }
+        .node-wrapper.left { justify-content: flex-start; padding-left: 10%; }
+        .node-wrapper.center { justify-content: center; }
+        .node-wrapper.right { justify-content: flex-end; padding-right: 10%; }
+        
+        /* Connecting lines */
+        .path-connector { position: absolute; width: 4px; background: var(--border-color); z-index: 1; }
+        .path-connector.done { background: var(--primary-green); }
+        
+        /* Global Progress */
+        .global-progress-container { width: 100%; margin-bottom: 30px; background: var(--card-dark); padding: 15px; border-radius: 15px; border: 1px solid var(--border-color); }
+        .gp-header { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.9rem; color: var(--text-dim); }
+        .gp-bar { width: 100%; height: 8px; background: var(--border-color); border-radius: 4px; overflow: hidden; }
+        .gp-fill { height: 100%; background: linear-gradient(90deg, var(--primary-green), var(--bonus-gold)); width: 0%; transition: width 0.5s; }
 
         /* Lesson Screen */
-        .progress-bar { width: 100%; height: 10px; background: var(--border-color); border-radius: 5px; margin-bottom: 30px; }
-        .progress-fill { height: 100%; background: var(--primary-green); width: 0%; transition: width 0.3s; border-radius: 5px; }
+        .progress-bar { width: 100%; height: 10px; background: var(--border-color); border-radius: 5px; margin-bottom: 30px; display: flex; gap: 2px; overflow: hidden; }
+        .progress-segment { flex: 1; background: transparent; transition: background 0.3s; border-radius: 5px; }
+        .progress-segment.done { background: var(--primary-green); }
+        .progress-segment.current { background: var(--text-dim); }
+        
         .lesson-content { flex: 1; display: flex; flex-direction: column; width: 100%; justify-content: center; }
         
         .prompt-text { text-align: center; font-size: 1.1rem; color: var(--text-dim); margin-bottom: 15px; }
@@ -66,22 +88,24 @@
 
         /* Inputs */
         .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .opt-btn { background: var(--card-dark); border: 2px solid var(--border-color); color: var(--text-main); padding: 15px; border-radius: 12px; font-size: 1rem; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .opt-btn:hover { border-color: var(--text-dim); }
+        .opt-btn { background: var(--card-dark); border: 2px solid var(--border-color); color: var(--text-main); padding: 15px; border-radius: 12px; font-size: 1rem; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; position: relative; overflow: hidden; }
+        .opt-btn:hover { border-color: var(--text-dim); background: rgba(255,255,255,0.05); }
         .opt-btn.selected { border-color: var(--secondary-blue); background: rgba(28, 176, 246, 0.2); color: var(--secondary-blue); }
         .opt-btn.correct { border-color: var(--primary-green); background: rgba(88, 204, 2, 0.2); color: var(--primary-green); }
         .opt-btn.wrong { border-color: var(--error-red); background: rgba(255, 75, 75, 0.2); color: var(--error-red); }
+        .opt-btn .key-hint { position: absolute; top: 5px; right: 8px; font-size: 0.7rem; opacity: 0.5; }
 
         .sentence-area { min-height: 80px; border: 2px dashed var(--border-color); border-radius: 12px; padding: 15px; display: flex; flex-wrap: wrap; gap: 8px; align-content: center; justify-content: center; margin-bottom: 20px; }
-        .token { background: #fff; color: #333; padding: 8px 14px; border-radius: 8px; font-weight: 700; cursor: pointer; box-shadow: 0 2px 0 #aaa; transition: opacity 0.2s; }
+        .token { background: #fff; color: #333; padding: 8px 14px; border-radius: 8px; font-weight: 700; cursor: pointer; box-shadow: 0 2px 0 #aaa; transition: transform 0.1s; }
+        .token:active { transform: translateY(2px); box-shadow: 0 0 0 #aaa; }
         .token.placed { opacity: 0.3; pointer-events: none; }
         .token.in-sentence { background: #f0f0f0; }
         .bank { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 20px; }
 
         .match-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; }
         .match-card { background: var(--card-dark); border: 2px solid var(--border-color); padding: 20px; border-radius: 12px; text-align: center; cursor: pointer; font-weight: 600; min-height: 80px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
-        .match-card.selected { border-color: var(--secondary-blue); background: rgba(28, 176, 246, 0.2); }
-        .match-card.matched { border-color: var(--primary-green); background: rgba(88, 204, 2, 0.2); color: var(--primary-green); pointer-events: none; opacity: 0.6; }
+        .match-card.selected { border-color: var(--secondary-blue); background: rgba(28, 176, 246, 0.2); transform: scale(1.02); }
+        .match-card.matched { border-color: var(--primary-green); background: rgba(88, 204, 2, 0.2); color: var(--primary-green); pointer-events: none; opacity: 0.6; transform: scale(0.95); }
 
         .audio-prompt-btn { background: var(--secondary-blue); border: none; border-radius: 50%; width: 80px; height: 80px; font-size: 2.5rem; cursor: pointer; margin: 0 auto 30px; display: block; color: white; box-shadow: 0 6px 0 #1899D6; transition: transform 0.1s; }
         .audio-prompt-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #1899D6; }
@@ -112,17 +136,25 @@
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.97); display: none; justify-content: center; align-items: center; z-index: 2000; flex-direction: column; text-align: center; padding: 20px; }
         .overlay.active { display: flex; }
         .overlay-icon { font-size: 5rem; margin-bottom: 20px; }
+        .shop-items { display: flex; gap: 20px; flex-direction: column; margin-top: 20px; }
+        .shop-item { background: var(--card-dark); padding: 20px; border-radius: 15px; border: 2px solid var(--border-color); cursor: pointer; transition: all 0.2s; width: 200px; }
+        .shop-item:hover { border-color: var(--secondary-blue); transform: translateY(-5px); }
+
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
         .shake { animation: shake 0.3s; }
         @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 75, 75, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(255, 75, 75, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 75, 75, 0); } }
         
-        .confetti { position: fixed; width: 10px; height: 10px; animation: fall 3s linear forwards; pointer-events: none; }
+        .confetti { position: fixed; width: 10px; height: 10px; animation: fall 3s linear forwards; pointer-events: none; z-index: 3000; }
         @keyframes fall { to { transform: translateY(100vh) rotate(720deg); } }
         
         .loader { border: 5px solid var(--border-color); border-top: 5px solid var(--primary-green); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin: auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        
-        .error-msg { color: var(--error-red); text-align: center; padding: 20px; }
+
+        /* Responsive */
+        @media (max-width: 500px) {
+            .lesson-node { width: 70px; height: 70px; font-size: 1rem; }
+            .main-text { font-size: 1.5rem; }
+        }
     </style>
 </head>
 <body>
@@ -130,7 +162,7 @@
     <header>
         <div class="logo" onclick="showScreen('screen-map')"><span>🦉</span> GERMANGO</div>
         <div class="stats">
-            <div class="stat-box"><span>❤️</span><span id="s-hearts">5</span></div>
+            <div class="stat-box buyable" onclick="openShop()"><span>❤️</span><span id="s-hearts">5</span></div>
             <div class="stat-box"><span>💎</span><span id="s-gems">500</span></div>
             <div class="stat-box"><span>🔥</span><span id="s-streak">0</span></div>
         </div>
@@ -146,7 +178,7 @@
 
         <!-- LESSON -->
         <div id="screen-lesson" class="screen">
-            <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+            <div class="progress-bar" id="progress-bar"></div>
             <div class="lesson-content" id="lesson-content"></div>
             <div class="footer-bar">
                 <div class="feedback-msg" id="feedback-msg">
@@ -161,7 +193,7 @@
         <div id="screen-result" class="screen" style="justify-content: center; text-align: center;">
             <div class="overlay-icon">🎉</div>
             <h1 style="font-size: 2rem; margin-bottom: 10px;">¡Lección completada!</h1>
-            <p style="color: var(--text-dim); margin-bottom: 30px;">+20 XP</p>
+            <p style="color: var(--text-dim); margin-bottom: 30px;">+20 XP 💎</p>
             <button class="btn-main active" onclick="exitToMap()">CONTINUAR</button>
         </div>
         
@@ -170,18 +202,145 @@
             <div class="overlay-icon">💔</div>
             <h2 style="margin-bottom:10px">Lección fallida</h2>
             <p style="color: var(--text-dim); margin-bottom: 30px;">Te has quedado sin vidas.</p>
-            <button class="btn-main active" onclick="retryLesson()">REINTENTAR</button>
+            <button class="btn-main active" onclick="buyLivesFromFail()">Comprar Vidas (50💎)</button>
             <button class="btn-main" style="margin-top:10px; background:#333; border-bottom-color:#222; color:#aaa; pointer-events:all;" onclick="exitToMap()">VOLVER</button>
+        </div>
+
+        <!-- SHOP -->
+        <div id="overlay-shop" class="overlay">
+            <h2 style="margin-bottom:10px">Tienda</h2>
+            <p style="color: var(--text-dim); margin-bottom: 20px;">Mejora tu experiencia</p>
+            <div class="shop-items">
+                <div class="shop-item" onclick="shopPurchase('hearts')">
+                    <div style="font-size: 2rem;">❤️</div>
+                    <div style="font-weight:700; margin-top:10px;">Recargar Vidas</div>
+                    <div style="color: var(--bonus-gold); margin-top:5px;">50 💎</div>
+                </div>
+            </div>
+            <button class="btn-main" style="margin-top:30px; background:#333; border-bottom-color:#222; color:#aaa; pointer-events:all;" onclick="closeShop()">Cerrar</button>
         </div>
     </main>
 
     <script>
-        // --- CONFIGURACIÓN SUPABASE ---
-        // ¡IMPORTANTE! Asegúrate de que tus tablas 'units', 'lessons' y 'questions' existan en Supabase.
+        // --- CONFIGURACIÓN SUPABASE (OPCIONAL) ---
+        // Deja las claves vacías si solo quieres usar la base de datos local integrada
         const SUPABASE_URL = 'https://eofolsrnycdiioobpihq.supabase.co'; 
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVvZm9sc3JueWNkaWlvb2JwaWhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzMTE1NDgsImV4cCI6MjA4ODg4NzU0OH0.rIma6h2uA3vmUj-NxtYODKdwS9AZHk646awFiQsCFbA';
-        
-        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        let _supabase;
+        if(SUPABASE_URL && SUPABASE_URL !== 'TU_URL') {
+            try { _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY); } catch(e) { console.log("Supabase init failed, using local data."); }
+        }
+
+        // --- BASE DE DATOS LOCAL (FALLBACK EXTENSO) ---
+        const LOCAL_DB = {
+            units: [
+                {
+                    id: 'u1', title: 'Unidad 1: Fundamentos', subtitle: 'Lo esencial para empezar', order_index: 0,
+                    lessons: [
+                        {
+                            id: 'l1-1', icon: '👋', order_index: 0,
+                            questions: [
+                                { type: 'choice', prompt: '¿Cómo se saluda?', text: 'Hola', options: ['Hallo', 'Tschüss', 'Danke', 'Bitte'], correct: 'Hallo', emoji: '👋' },
+                                { type: 'choice', prompt: '¿Qué significa "Guten Morgen"?', text: 'Buenos días', options: ['Buenas noches', 'Buenos días', 'Buenas tardes', 'Adiós'], correct: 'Buenos días', emoji: '☀️' },
+                                { type: 'audio', prompt: 'Escucha y selecciona', audioText: 'Tschüss', options: ['Hola', 'Adiós', 'Gracias', 'Por favor'], correct: 'Adiós', emoji: '👂' },
+                                { type: 'speak', prompt: 'Di esto en alemán:', text: 'Hallo', meaning: 'Hola', emoji: '🗣️' },
+                                { type: 'match', prompt: 'Relaciona los saludos', pairs: [['Hallo', 'Hola'], ['Tschüss', 'Adiós'], ['Guten Tag', 'Buen día']] }
+                            ]
+                        },
+                        {
+                            id: 'l1-2', icon: '👨‍👩‍👧', order_index: 1,
+                            questions: [
+                                { type: 'choice', prompt: 'Padre', text: 'Vater', options: ['Mutter', 'Vater', 'Bruder', 'Schwester'], correct: 'Vater', emoji: '👨' },
+                                { type: 'choice', prompt: 'Madre', text: 'Mutter', options: ['Vater', 'Tochter', 'Mutter', 'Sohn'], correct: 'Mutter', emoji: '👩' },
+                                { type: 'wordbank', prompt: 'El padre y la madre', text: 'Vater und Mutter', words: ['Mutter', 'Vater', 'und', 'der'], correct: ['Vater', 'und', 'Mutter'] },
+                                { type: 'match', prompt: 'Familia', pairs: [['Bruder', 'Hermano'], ['Schwester', 'Hermana'], ['Kind', 'Niño/a']] },
+                                { type: 'speak', prompt: 'Di: Mi familia', text: 'Meine Familie', emoji: '👨‍👩‍👧‍👦' }
+                            ]
+                        },
+                        {
+                            id: 'l1-3', icon: '🍕', order_index: 2,
+                            questions: [
+                                { type: 'choice', prompt: 'Agua', text: 'Wasser', options: ['Brot', 'Wasser', 'Apfel', 'Milch'], correct: 'Wasser', emoji: '💧' },
+                                { type: 'audio', prompt: '¿Qué es?', audioText: 'Der Apfel', options: ['La manzana', 'El pan', 'La leche', 'El agua'], correct: 'La manzana', emoji: '🍎' },
+                                { type: 'choice', prompt: 'Pan', text: 'Brot', options: ['Wasser', 'Brot', 'Käse', 'Fleisch'], correct: 'Brot', emoji: '🍞' },
+                                { type: 'wordbank', prompt: 'Yo como pan', text: 'Ich esse Brot', words: ['Brot', 'Ich', 'esse', 'trinke'], correct: ['Ich', 'esse', 'Brot'] },
+                                { type: 'match', prompt: 'Comida', pairs: [['Apfel', 'Manzana'], ['Brot', 'Pan'], ['Wasser', 'Agua']] }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    id: 'u2', title: 'Unidad 2: Frases Útiles', subtitle: 'Interacciones básicas', order_index: 1,
+                    lessons: [
+                        {
+                            id: 'l2-1', icon: '🛂', order_index: 0,
+                            questions: [
+                                { type: 'choice', prompt: '¿De dónde eres?', text: 'Woher kommst du?', options: ['Wer bist du?', 'Woher kommst du?', 'Wie alt bist du?', 'Wo wohnst du?'], correct: 'Woher kommst du?', emoji: '🌍' },
+                                { type: 'choice', prompt: 'Soy de España', text: 'Ich komme aus Spanien', options: ['Ich komme aus Deutschland', 'Ich bin Spanier', 'Ich komme aus Spanien', 'Ich lebe in Spanien'], correct: 'Ich komme aus Spanien', emoji: '🇪🇸' },
+                                { type: 'speak', prompt: 'Di: Yo soy de Alemania', text: 'Ich komme aus Deutschland', emoji: '🇩🇪' },
+                                { type: 'wordbank', prompt: 'Vivo en Berlín', text: 'Ich wohne in Berlin', words: ['wohne', 'Berlin', 'Ich', 'in'], correct: ['Ich', 'wohne', 'in', 'Berlin'] },
+                                { type: 'match', prompt: 'Origen', pairs: [['Woher', 'De dónde'], ['Kommst du', 'Vienes'], ['Aus', 'De/Desde']] }
+                            ]
+                        },
+                        {
+                            id: 'l2-2', icon: '☕', order_index: 1,
+                            questions: [
+                                { type: 'choice', prompt: 'Un café, por favor', text: 'Einen Kaffee, bitte', options: ['Einen Tee, bitte', 'Einen Kaffee, bitte', 'Ein Wasser, bitte', 'Zwei Kaffee'], correct: 'Einen Kaffee, bitte', emoji: '☕' },
+                                { type: 'audio', prompt: 'Elige la traducción', audioText: 'Ich möchte ein Bier', options: ['Quiero un vino', 'Quiero una cerveza', 'Quiero un agua', 'Tengo una cerveza'], correct: 'Quiero una cerveza', emoji: '🍺' },
+                                { type: 'speak', prompt: 'Di: La cuenta, por favor', text: 'Die Rechnung, bitte', emoji: '🧾' },
+                                { type: 'choice', prompt: 'Gracias', text: 'Danke', options: ['Bitte', 'Danke', 'Entschuldigung', 'Tschüss'], correct: 'Danke', emoji: '🙏' },
+                                { type: 'match', prompt: 'Restaurante', pairs: [['Der Tisch', 'La mesa'], ['Der Stuhl', 'La silla'], ['Die Speisekarte', 'El menú']] }
+                            ]
+                        },
+                        {
+                            id: 'l2-3', icon: '🚕', order_index: 2,
+                            questions: [
+                                { type: 'choice', prompt: '¿Dónde está la estación?', text: 'Wo ist der Bahnhof?', options: ['Wo ist der Bahnhof?', 'Wo ist der Flughafen?', 'Wo ist die Bank?', 'Wo ist das Hotel?'], correct: 'Wo ist der Bahnhof?', emoji: '🚉' },
+                                { type: 'choice', prompt: 'Izquierda / Derecha', text: 'Links / Rechts', options: ['Geradeaus', 'Links / Rechts', 'Hier', 'Dort'], correct: 'Links / Rechts', emoji: '↔️' },
+                                { type: 'wordbank', prompt: 'Todo recto', text: 'Immer geradeaus', words: ['geradeaus', 'Immer', 'gehen', 'links'], correct: ['Immer', 'geradeaus'] },
+                                { type: 'speak', prompt: 'Di: A la izquierda', text: 'Nach links', emoji: '🚗' },
+                                { type: 'match', prompt: 'Direcciones', pairs: [['Links', 'Izquierda'], ['Rechts', 'Derecha'], ['Geradeaus', 'Recto']] }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    id: 'u3', title: 'Unidad 3: Números y Tiempo', subtitle: 'Contar y tiempo', order_index: 2,
+                    lessons: [
+                        {
+                            id: 'l3-1', icon: '🔢', order_index: 0,
+                            questions: [
+                                { type: 'choice', prompt: 'Uno, Dos, Tres', text: 'Eins, Zwei, Drei', options: ['Ein, Zwei, Drei', 'Eins, Zwei, Drei', 'Eins, Zwo, Drei', 'Uno, Due, Tre'], correct: 'Eins, Zwei, Drei', emoji: '1️⃣' },
+                                { type: 'match', prompt: 'Números 1-5', pairs: [['Eins', '1'], ['Zwei', '2'], ['Drei', '3'], ['Vier', '4'], ['Fünf', '5']] },
+                                { type: 'choice', prompt: 'Diez', text: 'Zehn', options: ['Neun', 'Zehn', 'Elf', 'Zwölf'], correct: 'Zehn', emoji: '🔟' },
+                                { type: 'audio', prompt: 'Escucha el número', audioText: 'Sieben', options: ['5', '6', '7', '8'], correct: '7', emoji: '👂' },
+                                { type: 'speak', prompt: 'Di: Mi número de teléfono', text: 'Meine Telefonnummer', emoji: '📱' }
+                            ]
+                        },
+                        {
+                            id: 'l3-2', icon: '📅', order_index: 1,
+                            questions: [
+                                { type: 'choice', prompt: 'Hoy / Mañana', text: 'Heute / Morgen', options: ['Gestern / Morgen', 'Heute / Morgen', 'Heute / Gestern', 'Morgen / Abend'], correct: 'Heute / Morgen', emoji: '📆' },
+                                { type: 'match', prompt: 'Días de la semana', pairs: [['Montag', 'Lunes'], ['Dienstag', 'Martes'], ['Mittwoch', 'Miércoles']] },
+                                { type: 'wordbank', prompt: 'Mañana es martes', text: 'Morgen ist Dienstag', words: ['Morgen', 'Dienstag', 'ist', 'Heute'], correct: ['Morgen', 'ist', 'Dienstag'] },
+                                { type: 'choice', prompt: 'Ayer', text: 'Gestern', options: ['Heute', 'Morgen', 'Gestern', 'Jetzt'], correct: 'Gestern', emoji: '⬅️' },
+                                { type: 'speak', prompt: 'Di: El fin de semana', text: 'Das Wochenende', emoji: '🎉' }
+                            ]
+                        },
+                        {
+                            id: 'l3-3', icon: '⏰', order_index: 2,
+                            questions: [
+                                { type: 'choice', prompt: '¿Qué hora es? (14:00)', text: 'Es ist zwei Uhr', options: ['Es ist ein Uhr', 'Es ist zwei Uhr', 'Es ist drei Uhr', 'Es ist vierzehn Uhr'], correct: 'Es ist zwei Uhr', emoji: '🕑' },
+                                { type: 'wordbank', prompt: 'Media hora', text: 'Eine halbe Stunde', words: ['Stunde', 'halbe', 'Eine', 'Zeit'], correct: ['Eine', 'halbe', 'Stunde'] },
+                                { type: 'match', prompt: 'Tiempo', pairs: [['Die Stunde', 'La hora'], ['Die Minute', 'El minuto'], ['Die Sekunde', 'El segundo']] },
+                                { type: 'audio', prompt: 'Escucha', audioText: 'Der Wecker klingelt', options: ['El reloj corre', 'La alarma suena', 'Es temprano', 'Es tarde'], correct: 'La alarma suena', emoji: '⏰' },
+                                { type: 'speak', prompt: 'Di: Es muy tarde', text: 'Es ist sehr spät', emoji: '🌙' }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        };
 
         // --- STATE ---
         let state = { hearts: 5, gems: 500, streak: 0, completed: [], currentQ: 0, answers: [], selected: null, checking: false };
@@ -189,85 +348,97 @@
         let recognition = null;
         let matchState = { first: null, second: null, lock: false, solved: [] };
         let DB = { units: [] }; 
+        let audioCtx = null; // Contexto de audio
 
-        // --- DOM ELEMENTS (Cache para rendimiento) ---
+        // --- DOM ELEMENTS ---
         const DOM = {
             hearts: document.getElementById('s-hearts'),
             gems: document.getElementById('s-gems'),
             streak: document.getElementById('s-streak'),
             mapContainer: document.getElementById('map-container'),
             lessonContent: document.getElementById('lesson-content'),
-            progressFill: document.getElementById('progress-fill'),
+            progressBar: document.getElementById('progress-bar'),
             feedbackMsg: document.getElementById('feedback-msg'),
             msgText: document.getElementById('msg-text'),
             msgSub: document.getElementById('msg-sub'),
             btnAction: document.getElementById('btn-action'),
             screenLesson: document.getElementById('screen-lesson'),
-            overlayGameover: document.getElementById('overlay-gameover')
+            overlayGameover: document.getElementById('overlay-gameover'),
+            overlayShop: document.getElementById('overlay-shop')
         };
+
+        // --- SOUND ENGINE (Sin archivos externos) ---
+        function initAudio() { if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+        function playSound(type) {
+            initAudio();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            if (type === 'correct') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(900, audioCtx.currentTime + 0.1);
+                gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.2);
+            } else if (type === 'wrong') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(200, audioCtx.currentTime);
+                osc.frequency.linearRampToValueAtTime(150, audioCtx.currentTime + 0.2);
+                gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.3);
+            } else if (type === 'win') {
+                osc.type = 'sine';
+                const now = audioCtx.currentTime;
+                osc.frequency.setValueAtTime(523.25, now); // C5
+                osc.frequency.setValueAtTime(659.25, now + 0.1); // E5
+                osc.frequency.setValueAtTime(783.99, now + 0.2); // G5
+                gainNode.gain.setValueAtTime(0.1, now);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+                osc.start();
+                osc.stop(now + 0.5);
+            }
+        }
 
         // --- STORAGE ---
-        const save = () => { 
-            try { 
-                localStorage.setItem('germango_supa', JSON.stringify({ hearts: state.hearts, gems: state.gems, streak: state.streak, completed: state.completed })); 
-            } catch (e) { console.warn("LocalStorage no disponible"); } 
-        };
-        
-        const loadLocal = () => { 
-            try { 
-                const d = localStorage.getItem('germango_supa'); 
-                if (d) { 
-                    const p = JSON.parse(d); 
-                    state.hearts = p.hearts ?? 5; 
-                    state.gems = p.gems ?? 500; 
-                    state.streak = p.streak ?? 0; 
-                    state.completed = p.completed ?? []; 
-                } 
-            } catch (e) { console.warn("Error cargando progreso local"); } 
-            updateUI(); 
-        };
+        const save = () => { try { localStorage.setItem('germango_ultimate', JSON.stringify(state)); } catch (e) {} };
+        const loadLocal = () => { try { const d = localStorage.getItem('germango_ultimate'); if (d) { const p = JSON.parse(d); state.hearts = p.hearts ?? 5; state.gems = p.gems ?? 500; state.streak = p.streak ?? 0; state.completed = p.completed ?? []; } } catch (e) {} updateUI(); };
 
-        // --- DATA FETCHING (SUPABASE) ---
+        // --- DATA FETCHING ---
         async function fetchCourseData() {
-            try {
-                // 1. Fetch Units
-                const { data: units, error: errU } = await _supabase.from('units').select('*').order('order_index');
-                if(errU) throw errU;
-
-                // 2. Fetch Lessons
-                const { data: lessons, error: errL } = await _supabase.from('lessons').select('*').order('order_index');
-                if(errL) throw errL;
-
-                // 3. Fetch Questions
-                const { data: questions, error: errQ } = await _supabase.from('questions').select('*').order('order_index');
-                if(errQ) throw errQ;
-
-                // 4. Reconstruct Nested Structure
-                DB.units = units.map(u => {
-                    return {
-                        ...u,
-                        lessons: lessons.filter(l => l.unit_id === u.id).map(l => {
-                            return {
+            let loaded = false;
+            // Intentar Supabase si está configurado
+            if (_supabase) {
+                try {
+                    const { data: units, error: errU } = await _supabase.from('units').select('*').order('order_index');
+                    if (units && units.length > 0) {
+                        const { data: lessons } = await _supabase.from('lessons').select('*').order('order_index');
+                        const { data: questions } = await _supabase.from('questions').select('*').order('order_index');
+                        
+                        DB.units = units.map(u => ({
+                            ...u,
+                            lessons: lessons.filter(l => l.unit_id === u.id).map(l => ({
                                 ...l,
-                                questions: questions.filter(q => q.lesson_id === l.id).map(q => {
-                                    return { ...q, ...q.content }; 
-                                })
-                            }
-                        })
-                    };
-                });
-                
-                // CORRECCIÓN: Verificamos si hay datos antes de renderizar
-                if (DB.units.length > 0) {
-                    renderMap(); 
-                } else {
-                    DOM.mapContainer.innerHTML = "<p style='color:var(--text-dim); text-align:center;'>No hay datos en la base de datos. Revisa las tablas 'units', 'lessons' y 'questions' en Supabase.</p>";
-                }
-
-            } catch (error) {
-                console.error("Error cargando datos:", error);
-                DOM.mapContainer.innerHTML = `<p class="error-msg">Error conectando a la base de datos.<br>Revisa la consola (F12) y tus claves de Supabase.<br><small>${error.message}</small></p>`;
+                                questions: questions.filter(q => q.lesson_id === l.id).map(q => ({ ...q, ...q.content }))
+                            }))
+                        }));
+                        loaded = true;
+                    }
+                } catch (e) { console.warn("Fallo Supabase, usando datos locales.", e); }
             }
+            
+            // Fallback a datos locales
+            if (!loaded) {
+                DB = JSON.parse(JSON.stringify(LOCAL_DB)); // Deep copy
+            }
+            
+            renderMap();
         }
 
         // --- UI UPDATES ---
@@ -275,24 +446,35 @@
             DOM.hearts.innerText = state.hearts;
             DOM.gems.innerText = state.gems;
             DOM.streak.innerText = state.streak;
-            if(DB.units.length > 0) renderMap();
+            renderMap();
         };
 
         const showScreen = (id) => {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(id).classList.add('active');
         };
+        
+        const openShop = () => { DOM.overlayShop.classList.add('active'); };
+        const closeShop = () => { DOM.overlayShop.classList.remove('active'); };
+        const buyLivesFromFail = () => { shopPurchase('hearts'); DOM.overlayGameover.classList.remove('active'); startLesson(currentLessonData); };
+        
+        const shopPurchase = (item) => {
+            if (item === 'hearts') {
+                if (state.gems >= 50) { state.gems -= 50; state.hearts = 5; playSound('correct'); save(); updateUI(); closeShop(); }
+                else { alert("No tienes suficientes gemas!"); playSound('wrong'); }
+            }
+        };
 
-        // --- MAP RENDERER ---
+        // --- MAP RENDERER (ZigZag) ---
         const renderMap = () => {
             if(DB.units.length === 0) return; 
-            DOM.mapContainer.innerHTML = ''; // Esto elimina el loader automáticamente
+            DOM.mapContainer.innerHTML = ''; 
             
             let totalLessons = DB.units.reduce((acc, u) => acc + u.lessons.length, 0);
             const progressPercent = totalLessons > 0 ? (state.completed.length / totalLessons) * 100 : 0;
 
             // Global Progress
-            const gpHtml = `
+            let gpHtml = `
                 <div class="global-progress-container">
                     <div class="gp-header"><span>Progreso Global</span><span>${Math.round(progressPercent)}%</span></div>
                     <div class="gp-bar"><div class="gp-fill" style="width: ${progressPercent}%"></div></div>
@@ -300,82 +482,80 @@
             `;
             DOM.mapContainer.innerHTML += gpHtml;
 
-            // Units & Lessons
             const allLessonsFlat = DB.units.flatMap(u => u.lessons);
 
             DB.units.forEach((unit) => {
+                const unitDiv = document.createElement('div');
+                unitDiv.className = 'unit-container';
+                
+                // Unit Header
                 const header = document.createElement('div');
                 header.className = 'unit-header';
                 header.innerHTML = `<div class="unit-title">${unit.title}</div><div class="unit-sub">${unit.subtitle}</div>`;
-                DOM.mapContainer.appendChild(header);
+                unitDiv.appendChild(header);
 
+                // Lessons
+                const lessonsRow = document.createElement('div');
+                lessonsRow.className = 'lessons-row';
+                
                 unit.lessons.forEach((les, lIndex) => {
-                    // Path line
-                    if (lIndex > 0) {
-                        const line = document.createElement('div');
-                        line.className = 'path-line' + (state.completed.includes(unit.lessons[lIndex-1].id) ? ' done' : '');
-                        DOM.mapContainer.appendChild(line);
-                    }
-                    
+                    const wrapper = document.createElement('div');
+                    // ZigZag logic: index 0 -> left, 1 -> center, 2 -> right, repeat
+                    const positions = ['left', 'center', 'right'];
+                    wrapper.className = `node-wrapper ${positions[lIndex % 3]}`;
+
                     const node = document.createElement('div');
                     node.className = 'lesson-node';
                     
-                    // Lógica de desbloqueo
                     const currentIndex = allLessonsFlat.findIndex(l => l.id === les.id);
                     const prevId = currentIndex > 0 ? allLessonsFlat[currentIndex-1].id : null;
-                    
                     const prevDone = prevId ? state.completed.includes(prevId) : true; 
                     const isDone = state.completed.includes(les.id);
                     
-                    if (isDone) {
-                        node.classList.add('completed');
-                        node.innerHTML = `<span class="icon">✓</span>`;
-                    } else if (prevDone) {
-                        node.classList.add('current');
-                        node.innerHTML = `<span class="icon">${les.icon || '📚'}</span>`; 
-                    } else {
-                        node.classList.add('locked');
-                        node.innerHTML = `<span class="icon">🔒</span>`;
-                    }
+                    if (isDone) { node.classList.add('completed'); node.innerHTML = `<span class="icon">✓</span>`; }
+                    else if (prevDone) { node.classList.add('current'); node.innerHTML = `<span class="icon">${les.icon || '📚'}</span><span class="lvl">Nivel ${lIndex+1}</span>`; }
+                    else { node.classList.add('locked'); node.innerHTML = `<span class="icon">🔒</span>`; }
                     
-                    if (!node.classList.contains('locked')) {
-                        node.onclick = () => startLesson(les);
-                    }
-                    DOM.mapContainer.appendChild(node);
+                    if (!node.classList.contains('locked')) node.onclick = () => startLesson(les);
+                    
+                    wrapper.appendChild(node);
+                    lessonsRow.appendChild(wrapper);
                 });
+                
+                unitDiv.appendChild(lessonsRow);
+                DOM.mapContainer.appendChild(unitDiv);
             });
         };
 
         // --- LÓGICA DE LECCIONES ---
-        
         const startLesson = (les) => {
             currentLessonData = les;
-            state.currentQ = 0; 
-            state.checking = false; 
-            state.selected = null; 
-            state.answers = [];
+            state.currentQ = 0; state.checking = false; state.selected = null; state.answers = [];
             matchState = { first: null, second: null, lock: false, solved: [] };
             DOM.overlayGameover.classList.remove('active');
             showScreen('screen-lesson');
+            renderProgress();
             renderQ();
         };
 
-        const retryLesson = () => {
-            state.hearts = 5; save(); updateUI();
-            startLesson(currentLessonData);
+        const renderProgress = () => {
+            DOM.progressBar.innerHTML = '';
+            currentLessonData.questions.forEach((_, i) => {
+                const seg = document.createElement('div');
+                seg.className = 'progress-segment';
+                if (i < state.currentQ) seg.classList.add('done');
+                else if (i === state.currentQ) seg.classList.add('current');
+                DOM.progressBar.appendChild(seg);
+            });
         };
 
         const renderQ = () => {
             const q = currentLessonData.questions[state.currentQ];
             if(!q) return finishLesson(); 
 
-            const progress = (state.currentQ / currentLessonData.questions.length) * 100;
-            DOM.progressFill.style.width = `${progress}%`;
             DOM.feedbackMsg.className = 'feedback-msg';
-            
-            DOM.btnAction.className = 'btn-main'; 
-            DOM.btnAction.innerText = 'COMPROBAR';
-            DOM.btnAction.classList.remove('active'); 
+            DOM.btnAction.className = 'btn-main'; DOM.btnAction.innerText = 'COMPROBAR';
+            DOM.btnAction.classList.remove('active');
 
             const c = DOM.lessonContent;
             let html = `<div class="prompt-text">${q.prompt}</div>`;
@@ -391,8 +571,9 @@
                 
                 html += `<div class="options-grid">`;
                 const shuffledOptions = [...q.options].sort(() => Math.random() - 0.5);
-                shuffledOptions.forEach(o => {
-                    html += `<button class="opt-btn" onclick="selectChoice(this, '${o.replace(/'/g, "\\'")}')">${o}</button>`;
+                shuffledOptions.forEach((o, i) => {
+                    // Add key hints
+                    html += `<button class="opt-btn" data-key="${i+1}" onclick="selectChoice(this, '${o.replace(/'/g, "\\'")}')"><span class="key-hint">${i+1}</span>${o}</button>`;
                 });
                 html += `</div>`;
             } 
@@ -438,7 +619,6 @@
         };
 
         // --- INPUT HANDLERS ---
-        
         const selectChoice = (el, val) => { 
             if (state.checking) return; 
             document.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('selected')); 
@@ -508,9 +688,12 @@
                     if (matchState.solved.length === total) { 
                         state.selected = "MATCH_COMPLETE"; 
                         handleAction(); 
-                    } 
+                    } else {
+                        playSound('correct');
+                    }
                 } else { 
                     matchState.lock = true; 
+                    playSound('wrong');
                     setTimeout(() => { 
                         if(matchState.first) matchState.first.classList.remove('selected'); 
                         if(matchState.second) matchState.second.classList.remove('selected'); 
@@ -621,12 +804,14 @@
                 }
 
                 if (isCorrect) {
+                    playSound('correct');
                     txt.innerText = "¡Excelente!";
                     sub.innerText = (q.type === 'speak' && q.meaning) ? `${q.text} = ${q.meaning}` : "";
                     DOM.feedbackMsg.className = "feedback-msg show correct";
                     DOM.btnAction.innerText = "CONTINUAR"; 
                     DOM.btnAction.className = "btn-main continue";
                 } else {
+                    playSound('wrong');
                     txt.innerText = "Incorrecto";
                     let cText = q.correct || q.text; 
                     if (q.type === 'wordbank') cText = q.correct.join(" "); 
@@ -643,7 +828,7 @@
                     
                     if (q.type === 'choice' || q.type === 'audio') { 
                         document.querySelectorAll('.opt-btn').forEach(b => { 
-                            if(b.innerText === q.correct) b.classList.add('correct'); 
+                            if(b.innerText.includes(q.correct)) b.classList.add('correct'); 
                             if(b.classList.contains('selected')) b.classList.add('wrong'); 
                         }); 
                     }
@@ -661,11 +846,12 @@
                 matchState = { first: null, second: null, lock: false, solved: [] };
                 
                 if (state.currentQ >= currentLessonData.questions.length) finishLesson(); 
-                else renderQ();
+                else { renderProgress(); renderQ(); }
             }
         };
 
         const finishLesson = () => { 
+            playSound('win');
             if (!state.completed.includes(currentLessonData.id)) { 
                 state.completed.push(currentLessonData.id); 
                 state.gems += 20; 
@@ -699,8 +885,14 @@
             setTimeout(()=>c.remove(), 3000); 
         }
 
+        // Keyboard Support
         document.addEventListener('keydown', (e) => { 
-            if (e.key === 'Enter') { 
+            const key = parseInt(e.key);
+            if (!isNaN(key) && key >= 1 && key <= 4) {
+                const btns = document.querySelectorAll('.opt-btn');
+                if (btns[key-1]) btns[key-1].click();
+            }
+            else if (e.key === 'Enter') { 
                 if (DOM.btnAction.classList.contains('active') || DOM.btnAction.innerText === 'CONTINUAR') DOM.btnAction.click(); 
             } 
         });
