@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Germango Pro 9.0 - Ultimate Edition</title>
+    <title>Germango Pro 9.1 - Ultimate Edition</title>
     
     <!-- FAVICON GENERADO POR CÓDIGO (Búho SVG) -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦉</text></svg>">
@@ -107,9 +107,14 @@
         .audio-prompt-btn { background: var(--secondary-blue); border: none; border-radius: 50%; width: 70px; height: 70px; font-size: 2rem; cursor: pointer; margin: 0 auto 20px; display: block; color: white; box-shadow: 0 4px 0 #1899D6; transition: transform 0.1s; }
         .audio-prompt-btn:active { transform: translateY(4px); box-shadow: 0 0 0 #1899D6; }
 
+        /* Speak UI specific styles */
+        .speak-container { display: flex; flex-direction: column; align-items: center; width: 100%; gap: 10px; }
         .speak-btn { width: 100%; background: var(--secondary-blue); color: white; border: none; border-bottom: 4px solid #1899D6; padding: 15px; font-size: 1rem; font-weight: 700; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
         .speak-btn.listening { background: var(--error-red); border-bottom-color: #D43939; animation: pulse 1.5s infinite; }
         
+        .listen-again-btn { background: transparent; border: 2px solid var(--border-color); color: var(--text-main); padding: 8px 16px; border-radius: 8px; font-size: 0.9rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s; }
+        .listen-again-btn:active { background: rgba(255,255,255,0.1); }
+
         .write-mode-btn { background: transparent; border: none; color: var(--text-dim); text-decoration: underline; font-size: 0.8rem; cursor: pointer; margin-top: 5px; }
         .text-input-fallback { width: 100%; background: var(--card-dark); border: 2px solid var(--border-color); border-radius: 12px; padding: 12px; color: var(--text-main); font-size: 1rem; text-align: center; outline: none; }
         
@@ -367,7 +372,7 @@
             { id: 'u5', title: 'Acciones', subtitle: 'Verbos básicos', lessons: ['verbs', 'colors', 'verbs'] },
             { id: 'u6', title: 'El Cuerpo', subtitle: 'Anatomía', lessons: ['body', 'body', 'verbs'] },
             { id: 'u7', title: 'La Casa', subtitle: 'Hogar dulce hogar', lessons: ['house', 'house', 'house'] },
-            { id: 'u8', title: 'Clima y Naturaleza', subtitle: 'El tiempo', lessons: ['weather', 'weather', 'body'] }, // Body (sensaciones)
+            { id: 'u8', title: 'Clima y Naturaleza', subtitle: 'El tiempo', lessons: ['weather', 'weather', 'body'] },
             { id: 'u9', title: 'Transporte', subtitle: 'Movilidad', lessons: ['transport', 'transport', 'numbers'] },
             { id: 'u10', title: 'Profesiones', subtitle: 'El trabajo', lessons: ['professions', 'professions', 'verbs'] }
         ];
@@ -435,10 +440,10 @@
         }
 
         // --- STORAGE & DATA INIT ---
-        const save = () => { try { localStorage.setItem('germango_v9', JSON.stringify(state)); } catch (e) {} };
+        const save = () => { try { localStorage.setItem('germango_v91', JSON.stringify(state)); } catch (e) {} };
         const loadLocal = () => { 
             try { 
-                const d = localStorage.getItem('germango_v9'); 
+                const d = localStorage.getItem('germango_v91'); 
                 if (d) { 
                     const p = JSON.parse(d); 
                     state.hearts = p.hearts ?? 5; 
@@ -450,7 +455,7 @@
             updateUI(); 
         };
 
-        // Construir el mapa del curso (solo metadatos, sin preguntas aún para ahorrar memoria)
+        // Construir el mapa del curso
         function buildCourseMap() {
             return COURSE_STRUCTURE.map((u, uIndex) => {
                 return {
@@ -461,10 +466,10 @@
                     lessons: u.lessons.map((catKey, lIndex) => {
                         return {
                             id: `${u.id}-l${lIndex}`,
-                            icon: lIndex === 0 ? '📘' : (lIndex === 1 ? '📗' : '📙'), // Iconos distintos
+                            icon: lIndex === 0 ? '📘' : (lIndex === 1 ? '📗' : '📙'),
                             order_index: lIndex,
-                            category: catKey, // Guardamos la categoría para generar preguntas después
-                            questions: [] // Se llenan al jugar
+                            category: catKey,
+                            questions: []
                         };
                     })
                 };
@@ -571,16 +576,10 @@
         };
 
         // --- LESSON LOGIC ---
-        // GENERACIÓN BAJO DEMANDA: Genera preguntas solo cuando inicias la lección
         const startLesson = (les) => {
-            // Regenerar preguntas aleatorias para esta lección
             const qTypes = ['choice', 'choice', 'match', 'audio', 'speak']; 
-            // Usamos la categoría guardada en el objeto lección
             const category = les.category || 'greetings'; 
-            
-            // Si es reintento, las preguntas serán distintas
             const generatedQuestions = qTypes.map(qType => generateQuestion(qType, category)).filter(q => q);
-            
             currentLessonData = { ...les, questions: generatedQuestions };
             
             state.currentQ = 0; state.checking = false; state.selected = null; state.answers = [];
@@ -631,11 +630,14 @@
             else if (q.type === 'speak') {
                 html += `<div class="main-text">${emojiHtml} ${q.text}</div>
                 <div class="speak-container" id="speak-ui">
+                    <!-- NUEVO BOTÓN DE ESCUCHAR -->
+                    <button class="listen-again-btn" onclick="speak('${q.text}')"><span>🔊</span> Escuchar de nuevo</button>
+                    
                     <button class="speak-btn" id="mic-btn" onclick="triggerSpeech()">🎤 Toca para hablar</button>
                     <button class="write-mode-btn" onclick="switchToTyping()">No puedo usar el micrófono</button>
                     <div class="mic-feedback" id="mic-result"></div>
                 </div>`;
-                setTimeout(() => speak(q.text), 300);
+                setTimeout(() => speak(q.text), 300); // Auto-play inicial
             }
             else if (q.type === 'wordbank') {
                 html += `<div class="main-text">${emojiHtml} ${q.text}</div>
@@ -667,7 +669,7 @@
             }
         };
 
-        // --- INPUT HANDLERS (Idénticos) ---
+        // --- INPUT HANDLERS ---
         const selectChoice = (el, val) => { 
             if (state.checking) return; 
             document.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('selected')); 
@@ -754,7 +756,7 @@
             } 
         };
         
-        // Speech & Typing Handlers (Idénticos)
+        // Speech & Typing Handlers
         const triggerSpeech = () => { 
             if (!recognition) { alert("Navegador no soportado."); switchToTyping(); return; } 
             const micBtn = document.getElementById('mic-btn'); 
@@ -821,7 +823,7 @@
             } 
         };
 
-        // --- FLOW CONTROL (Idéntico) ---
+        // --- FLOW CONTROL ---
         const handleAction = () => {
             const q = currentLessonData.questions[state.currentQ];
             const txt = document.getElementById('msg-text');
