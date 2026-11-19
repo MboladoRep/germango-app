@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Germango Pro 9.3 - Ultimate Edition</title>
+<title>Germango Pro 9.4 - Ultimate Edition</title>
 <!-- FAVICON GENERADO POR CÓDIGO (Búho SVG) -->
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦉</text></svg>">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -97,6 +97,8 @@ main { flex: 1; overflow-y: auto; display: flex; flex-direction: column; align-i
 
 .audio-prompt-btn { background: var(--secondary-blue); border: none; border-radius: 50%; width: 70px; height: 70px; font-size: 2rem; cursor: pointer; margin: 0 auto 20px; display: block; color: white; box-shadow: 0 4px 0 #1899D6; transition: transform 0.1s; }
 .audio-prompt-btn:active { transform: translateY(4px); box-shadow: 0 0 0 #1899D6; }
+.speak-word-btn { background: var(--secondary-blue); border: none; border-bottom: 3px solid #1899D6; border-radius: 50%; width: 44px; height: 44px; font-size: 1.2rem; cursor: pointer; color: white; flex-shrink: 0; }
+.speak-word-btn:active { transform: translateY(3px); border-bottom-width: 0; }
 
 /* Speak UI specific styles */
 .speak-container { display: flex; flex-direction: column; align-items: center; width: 100%; gap: 10px; }
@@ -613,7 +615,9 @@ const renderQ = () => {
             html += `<button class="audio-prompt-btn" onclick="speak('${q.audioText || q.text}')">🔊</button>`;
             setTimeout(() => speak(q.audioText || q.text), 300);
         } else {
-            html += `<div class="main-text">${emojiHtml} ${q.text}</div>`;
+            html += `<div class="main-text">${emojiHtml} ${q.text}
+                <button class="speak-word-btn" onclick="speak('${q.text}')">🔊</button></div>`;
+            setTimeout(() => speak(q.text), 300);
         }
         html += `<div class="options-grid">`;
         q.options.forEach((o) => {
@@ -643,10 +647,10 @@ const renderQ = () => {
     else if (q.type === 'match') {
         html += `<div class="match-grid" id="match-grid">`;
         const cards = [];
-        q.pairs.forEach((p, i) => { cards.push({id: i, val: p[0]}); cards.push({id: i, val: p[1]}); });
+        q.pairs.forEach((p, i) => { cards.push({id: i, val: p[0], de: true}); cards.push({id: i, val: p[1], de: false}); });
         cards.sort(() => Math.random() - 0.5);
         cards.forEach(card => {
-            html += `<div class="match-card" data-id="${card.id}" onclick="selectMatch(this, ${card.id})">${card.val}</div>`;
+            html += `<div class="match-card" data-id="${card.id}" data-de="${card.de ? 1 : 0}" onclick="selectMatch(this, ${card.id})">${card.val}</div>`;
         });
         html += `</div>`;
     }
@@ -705,6 +709,7 @@ const renderSentence = () => {
 const selectMatch = (el, id) => {
     if (matchState.lock || el.classList.contains('matched') || state.checking) return;
     el.classList.add('selected');
+    if (el.dataset.de === '1') speak(el.innerText);
 
     if (!matchState.first) {
         matchState.first = el;
