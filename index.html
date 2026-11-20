@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Germango Pro 9.4 - Ultimate Edition</title>
+<title>Germango Pro 9.5 - Ultimate Edition</title>
 <!-- FAVICON GENERADO POR CÓDIGO (Búho SVG) -->
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦉</text></svg>">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -74,6 +74,7 @@ main { flex: 1; overflow-y: auto; display: flex; flex-direction: column; align-i
 .prompt-text { text-align: center; font-size: 1rem; color: var(--text-dim); margin-bottom: 10px; }
 .main-text { text-align: center; font-size: 1.6rem; font-weight: 700; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 10px; }
 .main-text .emoji { font-size: 2rem; }
+@media (max-width: 420px) { .main-text { font-size: 1.3rem; } }
 
 /* Inputs */
 .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
@@ -140,7 +141,7 @@ main { flex: 1; overflow-y: auto; display: flex; flex-direction: column; align-i
 <header>
     <div class="logo" onclick="showScreen('screen-map')"><span>🦉</span> GERMANGO</div>
     <div class="stats">
-        <div class="stat-box buyable" onclick="openShop()"><span>❤️</span><span id="s-hearts">5</span></div>
+        <div class="stat-box buyable" onclick="openShop()"><span>❤️</span><span id="s-hearts">5</span><span id="s-heart-timer" style="font-size:0.7rem; color:var(--text-dim); font-weight:600;"></span></div>
         <div class="stat-box"><span>💎</span><span id="s-gems">500</span></div>
         <div class="stat-box"><span>🔥</span><span id="s-streak">0</span></div>
     </div>
@@ -161,14 +162,14 @@ main { flex: 1; overflow-y: auto; display: flex; flex-direction: column; align-i
     <div id="screen-result" class="screen" style="justify-content: center; text-align: center;">
         <div class="overlay-icon">🎉</div>
         <h1 style="font-size: 1.8rem; margin-bottom: 10px;">¡Lección completada!</h1>
-        <p style="color: var(--text-dim); margin-bottom: 20px;">+20 XP 💎</p>
+        <p id="result-msg" style="color: var(--text-dim); margin-bottom: 20px;">+20 💎</p>
         <button class="btn-main active" onclick="exitToMap()">CONTINUAR</button>
     </div>
 
     <div id="overlay-gameover" class="overlay">
         <div class="overlay-icon">💔</div>
         <h2 style="margin-bottom:10px; font-size:1.5rem">Lección fallida</h2>
-        <p style="color: var(--text-dim); margin-bottom: 20px; font-size:0.9rem">Te has quedado sin vidas.</p>
+        <p style="color: var(--text-dim); margin-bottom: 20px; font-size:0.9rem">Te has quedado sin vidas. Recuperas 1 cada 20 minutos.</p>
         <button class="btn-main active" onclick="buyLivesRetry()">Comprar Vidas (50💎)</button>
         <button class="btn-main" style="margin-top:10px; background:#333; border-bottom-color:#222; color:#aaa; pointer-events:all;" onclick="exitToMap()">VOLVER</button>
     </div>
@@ -180,6 +181,7 @@ main { flex: 1; overflow-y: auto; display: flex; flex-direction: column; align-i
             <div style="font-weight:700; margin-top:10px;">Recargar Vidas</div>
             <div style="color: var(--bonus-gold); margin-top:5px;">50 💎</div>
         </div>
+        <p id="shop-note" style="color: var(--text-dim); margin-top: 20px; font-size: 0.9rem;"></p>
         <button class="btn-main" style="margin-top:30px; background:#333; border-bottom-color:#222; color:#aaa; pointer-events:all;" onclick="closeShop()">Cerrar</button>
     </div>
 </main>
@@ -194,6 +196,7 @@ if(SUPABASE_URL && SUPABASE_URL !== 'TU_URL') {
 }
 
 // --- MOTOR DE DATOS DINÁMICO (BANCO MASIVO) ---
+const P = (de, es) => ({ de, es, emoji: '💬' });
 const VOCAB = {
     greetings: [
         { de: 'Hallo', es: 'Hola', emoji: '👋' }, { de: 'Guten Morgen', es: 'Buenos días', emoji: '☀️' },
@@ -289,6 +292,37 @@ const VOCAB = {
         { de: 'der Polizist', es: 'El policía', emoji: '👮' }, { de: 'der Koch', es: 'El cocinero', emoji: '👨‍🍳' },
         { de: 'der Ingenieur', es: 'El ingeniero', emoji: '👷' }, { de: 'der Schüler', es: 'El estudiante', emoji: '👦' },
         { de: 'der Fahrer', es: 'El conductor', emoji: '🚕' }, { de: 'der Musiker', es: 'El músico', emoji: '🎸' }
+    ],
+    // ---- FRASES COMPLETAS (las categorías que empiezan por "phrases" activan ordenar palabras) ----
+    phrases_basic: [
+        P('Ich heiße Anna', 'Me llamo Anna'),
+        P('Wie heißt du?', '¿Cómo te llamas?'),
+        P('Ich komme aus Spanien', 'Soy de España'),
+        P('Ich bin müde', 'Estoy cansado'),
+        P('Ich habe einen Hund', 'Tengo un perro'),
+        P('Das ist meine Familie', 'Esta es mi familia'),
+        P('Ich spreche ein bisschen Deutsch', 'Hablo un poco de alemán'),
+        P('Freut mich', 'Encantado')
+    ],
+    phrases_daily: [
+        P('Ich trinke Wasser', 'Bebo agua'),
+        P('Ich esse einen Apfel', 'Como una manzana'),
+        P('Wir gehen nach Hause', 'Vamos a casa'),
+        P('Ich habe Hunger', 'Tengo hambre'),
+        P('Ich habe Durst', 'Tengo sed'),
+        P('Das Essen ist gut', 'La comida está buena'),
+        P('Ich möchte ein Brot', 'Quisiera un pan'),
+        P('Es ist heute kalt', 'Hoy hace frío')
+    ],
+    phrases_travel: [
+        P('Wo ist der Bahnhof?', '¿Dónde está la estación?'),
+        P('Ich möchte ein Ticket', 'Quisiera un billete'),
+        P('Wie viel kostet das?', '¿Cuánto cuesta esto?'),
+        P('Sprechen Sie Englisch?', '¿Habla usted inglés?'),
+        P('Ich verstehe nicht', 'No entiendo'),
+        P('Können Sie mir helfen?', '¿Puede ayudarme?'),
+        P('Wo ist die Toilette?', '¿Dónde está el baño?'),
+        P('Die Rechnung, bitte', 'La cuenta, por favor')
     ]
 };
 
@@ -296,11 +330,27 @@ const VOCAB = {
 const getRandom = (arr, n) => [...arr].sort(() => 0.5 - Math.random()).slice(0, n);
 const getRandomItem = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
-function generateQuestion(type, categoryKey) {
+// Peso de cada palabra: las que más fallas (y las nuevas) salen más a menudo
+const wordWeight = (w) => {
+    const st = state.stats[w];
+    if (!st) return 2;
+    return 1 + 2 * Math.max(0, st.ko - st.ok);
+};
+function pickWeighted(arr) {
+    let pool = arr.filter(i => !lessonUsed.has(i.de));   // no repetir dentro de la lección
+    if (pool.length === 0) pool = arr;
+    const total = pool.reduce((a, i) => a + wordWeight(i.de), 0);
+    let r = Math.random() * total;
+    for (const i of pool) { r -= wordWeight(i.de); if (r <= 0) return i; }
+    return pool[pool.length - 1];
+}
+
+function generateQuestion(type, categoryKey, forcedItem) {
     const category = VOCAB[categoryKey];
     if (!category) return null;
 
-    const item = getRandomItem(category);
+    const item = forcedItem || pickWeighted(category);
+    lessonUsed.add(item.de);
     let wrongOptions = category.filter(i => i.de !== item.de);
     if (wrongOptions.length < 3) wrongOptions = Object.values(VOCAB).flat();
 
@@ -315,7 +365,8 @@ function generateQuestion(type, categoryKey) {
                 text: item.de,
                 options: options,
                 correct: item.es,
-                emoji: item.emoji || '❓'
+                emoji: item.emoji || '❓',
+                word: item.de
             };
         case 'audio':
             return {
@@ -324,7 +375,8 @@ function generateQuestion(type, categoryKey) {
                 audioText: item.de,
                 options: options,
                 correct: item.es,
-                emoji: '🔊'
+                emoji: '🔊',
+                word: item.de
             };
         case 'match':
             const matchItems = getRandom(category, 4);
@@ -339,9 +391,25 @@ function generateQuestion(type, categoryKey) {
                 prompt: 'Di esto en alemán:',
                 text: item.de,
                 meaning: item.es,
-                emoji: item.emoji || '🗣️'
+                emoji: item.emoji || '🗣️',
+                word: item.de
             };
         case 'wordbank':
+            if (categoryKey.startsWith('phrases')) {
+                const ws = item.de.split(' ');
+                let shuffled = [...ws], tries = 0;
+                do { shuffled.sort(() => 0.5 - Math.random()); tries++; }
+                while (ws.length > 1 && shuffled.join(' ') === ws.join(' ') && tries < 10);
+                return {
+                    type: 'wordbank',
+                    prompt: 'Ordena la frase en alemán:',
+                    text: item.es,
+                    emoji: '🧩',
+                    words: shuffled,
+                    correct: ws,
+                    word: item.de
+                };
+            }
             const words = getRandom(category, 3);
             return {
                 type: 'wordbank',
@@ -358,18 +426,25 @@ function generateQuestion(type, categoryKey) {
 const COURSE_STRUCTURE = [
     { id: 'u1', title: 'Fundamentos', subtitle: 'Saludos y Familia', lessons: ['greetings', 'family', 'greetings'] },
     { id: 'u2', title: 'Comida y Bebida', subtitle: 'En el restaurante', lessons: ['food', 'food', 'verbs'] },
+    { id: 'p1', title: 'Mis primeras frases', subtitle: 'Preséntate', lessons: ['phrases_basic', 'phrases_basic', 'phrases_basic'] },
     { id: 'u3', title: 'Números y Tiempo', subtitle: 'Calendario', lessons: ['numbers', 'time', 'time'] },
     { id: 'u4', title: 'Animales', subtitle: 'Naturaleza', lessons: ['animals', 'animals', 'animals'] },
     { id: 'u5', title: 'Acciones', subtitle: 'Verbos básicos', lessons: ['verbs', 'colors', 'verbs'] },
+    { id: 'p2', title: 'Frases del día a día', subtitle: 'Hablar de lo cotidiano', lessons: ['phrases_daily', 'phrases_daily', 'phrases_daily'] },
     { id: 'u6', title: 'El Cuerpo', subtitle: 'Anatomía', lessons: ['body', 'body', 'verbs'] },
     { id: 'u7', title: 'La Casa', subtitle: 'Hogar dulce hogar', lessons: ['house', 'house', 'house'] },
     { id: 'u8', title: 'Clima y Naturaleza', subtitle: 'El tiempo', lessons: ['weather', 'weather', 'body'] },
+    { id: 'p3', title: 'De viaje', subtitle: 'Frases para sobrevivir', lessons: ['phrases_travel', 'phrases_travel', 'phrases_travel'] },
     { id: 'u9', title: 'Transporte', subtitle: 'Movilidad', lessons: ['transport', 'transport', 'numbers'] },
     { id: 'u10', title: 'Profesiones', subtitle: 'El trabajo', lessons: ['professions', 'professions', 'verbs'] }
 ];
 
 // --- STATE & DOM ---
-let state = { hearts: 5, gems: 500, streak: 0, completed: [], currentQ: 0, answers: [], selected: null, checking: false };
+let state = { hearts: 5, gems: 500, streak: 0, completed: [], currentQ: 0, answers: [], selected: null, checking: false,
+              stats: {}, lastDay: null, heartsAt: null };
+const MAX_HEARTS = 5;
+const HEART_MS = 20 * 60 * 1000;   // 1 vida cada 20 minutos
+let lessonUsed = new Set();
 let currentLessonData = null;
 let recognition = null;
 let matchState = { first: null, second: null, lock: false, solved: [] };
@@ -442,9 +517,87 @@ const loadLocal = () => {
             state.gems = p.gems ?? 500;
             state.streak = p.streak ?? 0;
             state.completed = p.completed ?? [];
+            state.stats = p.stats ?? {};
+            state.lastDay = p.lastDay ?? null;
+            state.heartsAt = p.heartsAt ?? null;
         }
     } catch (e) {}
+    regenHearts();
+    checkStreakExpiry();
     updateUI();
+};
+
+// ============================================================
+// --- ESTADÍSTICAS (REPASO), RACHA POR DÍAS Y VIDAS ---
+// ============================================================
+const recordResult = (w, ok) => {
+    const st = state.stats[w] || { ok: 0, ko: 0 };
+    if (ok) st.ok++; else st.ko++;
+    state.stats[w] = st;
+};
+const recordMatch = (a, b, ok) => {
+    if (!a || !b || a === b) return;
+    [a, b].forEach(c => { if (c.dataset.de === '1') recordResult(c.innerText, ok); });
+    save();
+};
+const weakness = (w) => { const st = state.stats[w]; return st ? st.ko - st.ok : 0; };
+function weakWords() {
+    const out = [];
+    Object.entries(VOCAB).forEach(([key, items]) => {
+        items.forEach(i => { if (weakness(i.de) > 0) out.push({ item: i, key }); });
+    });
+    return out.sort((x, y) => weakness(y.item.de) - weakness(x.item.de));
+}
+
+const dayStr = (d = new Date()) =>
+    `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+const yesterdayStr = () => { const d = new Date(); d.setDate(d.getDate() - 1); return dayStr(d); };
+const checkStreakExpiry = () => {
+    if (!state.lastDay) return;
+    if (state.lastDay !== dayStr() && state.lastDay !== yesterdayStr()) state.streak = 0;
+};
+const registerPractice = () => {
+    const today = dayStr();
+    if (state.lastDay === today) return;
+    state.streak = (state.lastDay === yesterdayStr()) ? state.streak + 1 : 1;
+    state.lastDay = today;
+};
+
+const regenHearts = () => {
+    if (state.hearts >= MAX_HEARTS) { state.heartsAt = null; return false; }
+    const now = Date.now();
+    if (!state.heartsAt) { state.heartsAt = now; return false; }
+    const gained = Math.floor((now - state.heartsAt) / HEART_MS);
+    if (gained <= 0) return false;
+    state.hearts = Math.min(MAX_HEARTS, state.hearts + gained);
+    state.heartsAt = state.hearts >= MAX_HEARTS ? null : state.heartsAt + gained * HEART_MS;
+    save();
+    return true;
+};
+const heartTimerText = () => {
+    if (state.hearts >= MAX_HEARTS || !state.heartsAt) return '';
+    const left = Math.max(0, HEART_MS - (Date.now() - state.heartsAt));
+    const m = Math.floor(left / 60000), sec = Math.floor((left % 60000) / 1000);
+    return `${m}:${String(sec).padStart(2, '0')}`;
+};
+const loseHeart = () => {
+    if (state.hearts >= MAX_HEARTS) state.heartsAt = Date.now();
+    state.hearts = Math.max(0, state.hearts - 1);
+};
+const refillHearts = () => { state.hearts = MAX_HEARTS; state.heartsAt = null; };
+const shopNoteText = () => {
+    const t = heartTimerText();
+    return t ? `Próxima vida en ${t}` : 'Tienes todas las vidas';
+};
+const tickHearts = () => {
+    const streakBefore = state.streak;
+    checkStreakExpiry();
+    const changed = regenHearts() || state.streak !== streakBefore;
+    if (changed) { save(); updateUI(); }
+    const el = document.getElementById('s-heart-timer');
+    if (el) el.innerText = heartTimerText();
+    const note = document.getElementById('shop-note');
+    if (note && DOM.overlayShop.classList.contains('active')) note.innerText = shopNoteText();
 };
 
 function buildCourseMap() {
@@ -476,6 +629,8 @@ async function fetchCourseData() {
 const updateUI = () => {
     DOM.hearts.innerText = state.hearts;
     DOM.gems.innerText = state.gems;
+    const ht = document.getElementById('s-heart-timer');
+    if (ht) ht.innerText = heartTimerText();
     DOM.streak.innerText = state.streak;
     renderMap();
 };
@@ -485,12 +640,16 @@ const showScreen = (id) => {
     document.getElementById(id).classList.add('active');
 };
 
-const openShop = () => { DOM.overlayShop.classList.add('active'); };
+const openShop = () => {
+    const note = document.getElementById('shop-note');
+    if (note) note.innerText = shopNoteText();
+    DOM.overlayShop.classList.add('active');
+};
 const closeShop = () => { DOM.overlayShop.classList.remove('active'); };
 
 const buyLivesRetry = () => {
     if(state.gems >= 50) {
-        state.gems -= 50; state.hearts = 5; save(); updateUI();
+        state.gems -= 50; refillHearts(); save(); updateUI();
         DOM.overlayGameover.classList.remove('active');
         startLesson(currentLessonData);
     } else { alert("No tienes suficientes gemas."); }
@@ -498,7 +657,8 @@ const buyLivesRetry = () => {
 
 const shopPurchase = (item) => {
     if (item === 'hearts') {
-        if (state.gems >= 50) { state.gems -= 50; state.hearts = 5; playSound('correct'); save(); updateUI(); closeShop(); }
+        if (state.hearts >= MAX_HEARTS) { alert("Ya tienes todas las vidas"); return; }
+        if (state.gems >= 50) { state.gems -= 50; refillHearts(); playSound('correct'); save(); updateUI(); closeShop(); }
         else { alert("Gemas insuficientes"); playSound('wrong'); }
     }
 };
@@ -567,10 +727,25 @@ const renderMap = () => {
 
 // --- LESSON LOGIC ---
 const startLesson = (les) => {
-    const qTypes = ['choice', 'choice', 'match', 'audio', 'speak'];
+    regenHearts();
+    if (state.hearts <= 0) { openShop(); return; }   // sin vidas: tienda / esperar
+
+    lessonUsed = new Set();
     const category = les.category || 'greetings';
+    const isPhrases = category.startsWith('phrases');
+    const qTypes = isPhrases
+        ? ['choice', 'wordbank', 'audio', 'wordbank', 'speak']
+        : ['choice', 'choice', 'match', 'audio', 'speak'];
 
     const generatedQuestions = qTypes.map(qType => generateQuestion(qType, category)).filter(q => q);
+
+    // REPASO: una pregunta de las palabras que más fallas (de cualquier unidad)
+    const weak = weakWords().filter(w => !lessonUsed.has(w.item.de)).slice(0, 5);
+    if (weak.length && generatedQuestions.length > 1) {
+        const w = getRandomItem(weak);
+        const rq = generateQuestion('choice', w.key, w.item);
+        if (rq) { rq.prompt = '🔁 Repaso: ' + rq.prompt; generatedQuestions[1] = rq; }
+    }
 
     currentLessonData = { ...les, questions: generatedQuestions };
     state.currentQ = 0; state.checking = false; state.selected = null; state.answers = [];
@@ -702,6 +877,7 @@ const renderSentence = () => {
         s.onclick = (e) => { e.stopPropagation(); removeSpecificWord(i); };
         area.appendChild(s);
     });
+    state.selected = state.answers.length > 0 ? state.answers.join(' ') : null;
     if (state.answers.length > 0) DOM.btnAction.classList.add('active');
     else DOM.btnAction.classList.remove('active');
 };
@@ -716,6 +892,7 @@ const selectMatch = (el, id) => {
     } else {
         matchState.second = el;
         if (matchState.first.dataset.id === matchState.second.dataset.id && matchState.first !== matchState.second) {
+            recordMatch(matchState.first, matchState.second, true);
             matchState.first.classList.add('matched');
             matchState.second.classList.add('matched');
             matchState.solved.push(id);
@@ -732,6 +909,7 @@ const selectMatch = (el, id) => {
             }
         } else {
             matchState.lock = true;
+            recordMatch(matchState.first, matchState.second, false);
             playSound('wrong');
             setTimeout(() => {
                 if(matchState.first) matchState.first.classList.remove('selected');
@@ -905,6 +1083,9 @@ const handleAction = () => {
             isCorrect = speechMatches(state.selected || '', q.text);
         }
 
+        // estadísticas por palabra (alimentan el repaso)
+        if (q.word && q.type !== 'match') { recordResult(q.word, isCorrect); save(); }
+
         if (isCorrect) {
             playSound('correct');
             txt.innerText = "¡Excelente!";
@@ -914,6 +1095,9 @@ const handleAction = () => {
                 feedbackSub = `${q.text} = ${q.meaning}`;
             } else if (q.type === 'audio') {
                 feedbackSub = `${q.audioText} = ${q.correct}`;
+            } else if (q.type === 'wordbank' && q.word) {
+                feedbackSub = q.word;
+                setTimeout(() => speak(q.word), 200);
             }
             sub.innerText = feedbackSub;
 
@@ -930,7 +1114,7 @@ const handleAction = () => {
             DOM.feedbackMsg.className = "feedback-msg show wrong";
             DOM.screenLesson.classList.add('shake');
             setTimeout(() => DOM.screenLesson.classList.remove('shake'), 300);
-            state.hearts--; updateUI(); save();
+            loseHeart(); updateUI(); save();
             DOM.btnAction.innerText = "CONTINUAR";
             DOM.btnAction.className = "btn-main retry";
 
@@ -959,13 +1143,16 @@ const handleAction = () => {
 
 const finishLesson = () => {
     playSound('win');
-    if (!state.completed.includes(currentLessonData.id)) {
+    registerPractice();   // racha: +1 por día practicado
+    const firstTime = !state.completed.includes(currentLessonData.id);
+    if (firstTime) {
         state.completed.push(currentLessonData.id);
         state.gems += 20;
-        state.streak++;
-        save();
-        updateUI();
     }
+    save();
+    updateUI();
+    const rm = document.getElementById('result-msg');
+    if (rm) rm.innerText = `${firstTime ? '+20 💎' : 'Lección repasada 🔁'} · 🔥 ${state.streak} ${state.streak === 1 ? 'día' : 'días'}`;
     for(let i=0; i<50; i++) createConfetti();
     showScreen('screen-result');
 };
@@ -999,6 +1186,8 @@ function createConfetti() {
 // INIT
 loadLocal();
 fetchCourseData();
+setInterval(tickHearts, 1000);
+document.addEventListener('visibilitychange', tickHearts);
 </script>
 </body>
 </html>
