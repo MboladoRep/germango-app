@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Germango Pro 9.5 - Ultimate Edition</title>
+<title>Germango Pro 9.8 - Ultimate Edition</title>
 <!-- FAVICON GENERADO POR CÓDIGO (Búho SVG) -->
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦉</text></svg>">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -111,6 +111,37 @@ main { flex: 1; overflow-y: auto; display: flex; flex-direction: column; align-i
 .text-input-fallback { width: 100%; background: var(--card-dark); border: 2px solid var(--border-color); border-radius: 12px; padding: 12px; color: var(--text-main); font-size: 1rem; text-align: center; outline: none; user-select: text; -webkit-user-select: text; }
 .mic-feedback { min-height: 22px; font-size: 0.9rem; color: var(--text-dim); text-align: center; }
 
+/* Canciones */
+.songs-head { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
+.songs-head h2 { font-size: 1.3rem; }
+.back-btn { background: var(--card-dark); border: 2px solid var(--border-color); color: var(--text-main); border-radius: 10px; padding: 6px 14px; font-size: 1rem; cursor: pointer; }
+.back-btn:active { transform: scale(0.95); }
+.song-card { background: var(--card-dark); border: 2px solid var(--border-color); border-radius: 14px; padding: 14px 16px; margin-bottom: 10px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: transform 0.1s; }
+.song-card:active { transform: scale(0.98); }
+.song-card .ico { font-size: 1.8rem; }
+.song-card .t { font-weight: 700; }
+.song-card .a { font-size: 0.8rem; color: var(--text-dim); margin-top: 2px; }
+.song-artist { color: var(--text-dim); font-size: 0.9rem; margin: -8px 0 12px; }
+.song-empty { background: var(--card-dark); border: 2px dashed var(--border-color); border-radius: 12px; padding: 16px; color: var(--text-dim); font-size: 0.9rem; text-align: center; margin-bottom: 12px; }
+.video-wrap { position: relative; width: 100%; padding-top: 56.25%; border-radius: 12px; overflow: hidden; background: #000; margin-bottom: 10px; }
+.video-wrap iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+.song-tools { display: flex; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+.tool-btn { background: var(--card-dark); border: 2px solid var(--border-color); color: var(--text-main); border-radius: 10px; padding: 8px 12px; font-size: 0.85rem; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
+.tool-btn:active { transform: scale(0.97); }
+.song-hint { color: var(--text-dim); font-size: 0.8rem; margin-bottom: 10px; }
+.lyrics { padding-bottom: 30px; }
+.lyric-line { padding: 8px 10px; border-radius: 10px; cursor: pointer; transition: background 0.2s; }
+.lyric-line:active { background: rgba(255,255,255,0.06); }
+.lyric-line.playing { background: rgba(28, 176, 246, 0.15); }
+.lyric-line .de { font-weight: 700; font-size: 1.05rem; }
+.lyric-line .es { color: var(--text-dim); font-size: 0.9rem; margin-top: 2px; }
+.lyric-gap { height: 14px; }
+@media (max-width: 420px) {
+    .logo { font-size: 1rem; }
+    .stats { gap: 6px; }
+    .stat-box { padding: 4px 7px; font-size: 0.85rem; }
+}
+
 /* Footer & Feedback */
 .footer-bar { margin-top: auto; width: 100%; padding-top: 15px; flex-shrink: 0; }
 .feedback-msg { min-height: 50px; border-radius: 10px; display: none; align-items: center; justify-content: center; font-weight: 700; margin-bottom: 10px; padding: 10px; flex-direction: column; font-size: 0.95rem; }
@@ -144,11 +175,14 @@ main { flex: 1; overflow-y: auto; display: flex; flex-direction: column; align-i
         <div class="stat-box buyable" onclick="openShop()"><span>❤️</span><span id="s-hearts">5</span><span id="s-heart-timer" style="font-size:0.7rem; color:var(--text-dim); font-weight:600;"></span></div>
         <div class="stat-box"><span>💎</span><span id="s-gems">500</span></div>
         <div class="stat-box"><span>🔥</span><span id="s-streak">0</span></div>
+        <div class="stat-box" onclick="openSongs()" title="Canciones"><span>🎵</span></div>
     </div>
 </header>
 
 <main id="app">
     <div id="screen-map" class="screen active"><div class="map-wrapper" id="map-container"><div class="loader"></div></div></div>
+
+    <div id="screen-songs" class="screen"><div id="songs-container"></div></div>
 
     <div id="screen-lesson" class="screen">
         <div class="progress-bar" id="progress-bar"></div>
@@ -469,9 +503,33 @@ const DOM = {
 
 // --- SOUND ENGINE ---
 function initAudio() { if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+// Fanfarria al acertar: arpegio ascendente Do-Mi-Sol + acorde final brillante con destellos
+function playVictory() {
+    const t0 = audioCtx.currentTime;
+    const tone = (freq, start, dur, wave, vol) => {
+        const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+        o.type = wave;
+        o.frequency.setValueAtTime(freq, t0 + start);
+        g.gain.setValueAtTime(0.0001, t0 + start);
+        g.gain.exponentialRampToValueAtTime(vol, t0 + start + 0.015);
+        g.gain.exponentialRampToValueAtTime(0.0001, t0 + start + dur);
+        o.connect(g); g.connect(audioCtx.destination);
+        o.start(t0 + start); o.stop(t0 + start + dur + 0.05);
+    };
+    [[523.25, 0], [659.25, 0.09], [783.99, 0.18]].forEach(([f, st]) => {
+        tone(f, st, 0.22, 'triangle', 0.14);
+        tone(f * 2, st, 0.15, 'sine', 0.04);
+    });
+    [1046.5, 1318.5, 1568].forEach(f => tone(f, 0.30, 0.7, 'triangle', 0.10));  // acorde de Do mayor
+    tone(523.25, 0.30, 0.7, 'sine', 0.10);                                       // base grave
+    tone(2093, 0.34, 0.35, 'sine', 0.04);                                        // destellos
+    tone(2637, 0.42, 0.30, 'sine', 0.03);
+}
+
 function playSound(type) {
     initAudio();
     if (audioCtx.state === 'suspended') audioCtx.resume();
+    if (type === 'victory') { playVictory(); return; }
     const osc = audioCtx.createOscillator();
     const gainNode = audioCtx.createGain();
     osc.connect(gainNode);
@@ -638,6 +696,11 @@ const updateUI = () => {
 const showScreen = (id) => {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById(id).classList.add('active');
+    // al salir de Canciones se vacía el contenedor para que el vídeo deje de sonar
+    if (id !== 'screen-songs') {
+        const sc = document.getElementById('songs-container');
+        if (sc) sc.innerHTML = '';
+    }
 };
 
 const openShop = () => {
@@ -723,6 +786,138 @@ const renderMap = () => {
         unitDiv.appendChild(lessonsRow);
         DOM.mapContainer.appendChild(unitDiv);
     });
+};
+
+// ============================================================
+// --- CANCIONES ---
+// ============================================================
+// CÓMO AÑADIR UNA CANCIÓN: copia un bloque { ... } de la lista y rellénalo.
+//  - youtube: el ID del vídeo (o pega la URL completa, también vale)
+//  - lines:   cada línea es ['alemán', 'español']; usa null para separar estrofas
+// Nota: las letras de canciones actuales tienen derechos de autor. Los vídeos se pueden
+// incrustar sin problema; para las letras, valora usar fragmentos cortos o tu propia traducción.
+const SONGS = [
+    {
+        title: 'Alle meine Entchen',
+        artist: 'Canción popular infantil (dominio público)',
+        youtube: '',   // ← pega aquí el ID o la URL del vídeo de YouTube
+        lines: [
+            ['Alle meine Entchen', 'Todos mis patitos'],
+            ['Schwimmen auf dem See,', 'nadan en el lago,'],
+            ['Schwimmen auf dem See,', 'nadan en el lago,'],
+            ['Köpfchen in das Wasser,', 'cabecita en el agua,'],
+            ['Schwänzchen in die Höh.', 'colita hacia arriba.'],
+            null,
+            ['Alle meine Täubchen', 'Todas mis palomitas'],
+            ['Gurren auf dem Dach,', 'arrullan en el tejado,'],
+            ['Gurren auf dem Dach,', 'arrullan en el tejado,'],
+            ['Fliegt eins in die Lüfte,', 'si una vuela por el aire,'],
+            ['Fliegen alle nach.', 'todas la siguen.']
+        ]
+    },
+    {
+        title: 'Hänschen klein',
+        artist: 'Canción popular infantil (dominio público)',
+        youtube: '',   // ← pega aquí el ID o la URL del vídeo de YouTube
+        lines: [
+            ['Hänschen klein', 'Hänschen pequeño'],
+            ['Ging allein', 'se fue solo'],
+            ['In die weite Welt hinein.', 'al ancho mundo.'],
+            ['Stock und Hut', 'Bastón y sombrero'],
+            ['Steht ihm gut,', 'le sientan bien,'],
+            ['Ist gar wohlgemut.', 'va de muy buen ánimo.'],
+            null,
+            ['Aber Mama weint so sehr,', 'Pero mamá llora tanto,'],
+            ['Hat ja nun kein Hänschen mehr!', '¡ya no tiene a su Hänschen!'],
+            ['Da besinnt sich das Kind,', 'Entonces el niño recapacita,'],
+            ['Kehrt nach Haus geschwind.', 'y vuelve a casa enseguida.']
+        ]
+    },
+    {
+        title: 'Eins Zwei Polizei',
+        artist: 'Mo-Do',
+        youtube: 'https://www.youtube.com/watch?v=dSy2DcATYUo',
+        lines: [
+            // Rima tradicional alemana para contar (de dominio público)
+            ['Eins, zwei, Polizei', 'Uno, dos, policía'],
+            ['Drei, vier, Grenadier', 'tres, cuatro, granadero'],
+            ['Fünf, sechs, alte Hex\'', 'cinco, seis, vieja bruja'],
+            ['Sieben, acht – gute Nacht!', 'siete, ocho, ¡buenas noches!']
+            // Para añadir más líneas (por ejemplo el estribillo), sigue este formato:
+            // , null, ['línea en alemán', 'traducción al español']
+        ]
+    }
+];
+
+let songTrans = true;   // mostrar traducción
+const esc = (t) => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+const ytId = (v) => {
+    const m = String(v || '').match(/(?:v=|youtu\.be\/|embed\/|shorts\/)([\w-]{11})/);
+    return m ? m[1] : String(v || '').trim().replace(/[^\w-]/g, '');
+};
+
+const openSongs = () => {
+    if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+    showScreen('screen-songs');
+    renderSongList();
+};
+
+const renderSongList = () => {
+    const c = document.getElementById('songs-container');
+    if (!c) return;
+    let html = `<div class="songs-head"><button class="back-btn" onclick="showScreen('screen-map')">←</button><h2>🎵 Canciones</h2></div>`;
+    if (SONGS.length === 0) html += `<div class="song-empty">Aún no hay canciones. Añádelas en la lista SONGS del código.</div>`;
+    SONGS.forEach((s, i) => {
+        html += `<div class="song-card" onclick="openSong(${i})"><span class="ico">🎵</span>
+            <div><div class="t">${esc(s.title)}</div><div class="a">${esc(s.artist || '')}</div></div></div>`;
+    });
+    c.innerHTML = html;
+};
+
+const lyricsHtml = (si) => !(SONGS[si].lines && SONGS[si].lines.length)
+  ? '<div class="song-empty">📝 Todavía no hay letra: añádela en el campo <b>lines</b> de esta canción.</div>'
+  : SONGS[si].lines.map((l, li) => {
+    if (!l) return '<div class="lyric-gap"></div>';
+    const es = (songTrans && l[1]) ? `<div class="es">${esc(l[1])}</div>` : '';
+    return `<div class="lyric-line" onclick="speakLyric(this, ${si}, ${li})"><div class="de">${esc(l[0])}</div>${es}</div>`;
+}).join('');
+
+const openSong = (i) => {
+    const s = SONGS[i];
+    const c = document.getElementById('songs-container');
+    if (!s || !c) return;
+    const id = ytId(s.youtube);
+    let html = `<div class="songs-head"><button class="back-btn" onclick="renderSongList()">←</button><h2>${esc(s.title)}</h2></div>`;
+    if (s.artist) html += `<div class="song-artist">${esc(s.artist)}</div>`;
+    if (id) {
+        html += `<div class="video-wrap"><iframe src="https://www.youtube-nocookie.com/embed/${id}?rel=0&playsinline=1"
+            title="${esc(s.title)}" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen></iframe></div>`;
+    } else {
+        html += `<div class="song-empty">🎬 Falta el vídeo: añade el ID o la URL de YouTube en el campo <b>youtube</b> de esta canción.</div>`;
+    }
+    html += `<div class="song-tools">`;
+    if (id) html += `<a class="tool-btn" href="https://www.youtube.com/watch?v=${id}" target="_blank" rel="noopener">▶ Abrir en YouTube</a>`;
+    html += `<button class="tool-btn" id="trans-btn" onclick="toggleTrans(${i})">${songTrans ? '👁️ Ocultar traducción' : '👁️ Mostrar traducción'}</button></div>
+        <div class="song-hint">Toca una línea para escuchar cómo se pronuncia.</div>
+        <div class="lyrics" id="lyrics">${lyricsHtml(i)}</div>`;
+    c.innerHTML = html;
+    window.scrollTo(0, 0);
+};
+
+const toggleTrans = (i) => {
+    songTrans = !songTrans;
+    const l = document.getElementById('lyrics');
+    if (l) l.innerHTML = lyricsHtml(i);   // el vídeo no se recarga
+    const b = document.getElementById('trans-btn');
+    if (b) b.innerText = songTrans ? '👁️ Ocultar traducción' : '👁️ Mostrar traducción';
+};
+
+const speakLyric = (el, si, li) => {
+    document.querySelectorAll('.lyric-line.playing').forEach(e => e.classList.remove('playing'));
+    el.classList.add('playing');
+    speak(SONGS[si].lines[li][0]);
 };
 
 // --- LESSON LOGIC ---
@@ -1087,7 +1282,7 @@ const handleAction = () => {
         if (q.word && q.type !== 'match') { recordResult(q.word, isCorrect); save(); }
 
         if (isCorrect) {
-            playSound('correct');
+            playSound('victory');
             txt.innerText = "¡Excelente!";
 
             let feedbackSub = "";
