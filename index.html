@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Germango Pro 9.8 - Ultimate Edition</title>
+<title>Germango Pro 10.0 - Ultimate Edition</title>
 <!-- FAVICON GENERADO POR CÓDIGO (Búho SVG) -->
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦉</text></svg>">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -136,6 +136,19 @@ main { flex: 1; overflow-y: auto; display: flex; flex-direction: column; align-i
 .lyric-line .de { font-weight: 700; font-size: 1.05rem; }
 .lyric-line .es { color: var(--text-dim); font-size: 0.9rem; margin-top: 2px; }
 .lyric-gap { height: 14px; }
+a.btn-main { display: block; text-align: center; text-decoration: none; }
+.lesson-time { text-align: right; font-size: 0.8rem; color: var(--text-dim); margin-bottom: 6px; min-height: 14px; }
+.acct-bar { width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 10px; background: var(--card-dark); border: 1px solid var(--border-color); border-radius: 12px; padding: 10px 12px; margin-bottom: 12px; flex-wrap: wrap; }
+.acct-name { font-weight: 700; font-size: 0.9rem; word-break: break-all; }
+.acct-sub { font-size: 0.78rem; color: var(--text-dim); margin-top: 2px; }
+.acct-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+.auth-form { width: 100%; max-width: 340px; display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+.auth-msg { min-height: 20px; font-size: 0.85rem; color: var(--bonus-gold); text-align: center; }
+.pw-actions { width: 100%; max-width: 340px; display: flex; flex-direction: column; gap: 10px; }
+.pw-note { font-size: 0.78rem; color: var(--text-dim); }
+.donate-box { text-align: center; margin-top: 18px; color: var(--text-dim); font-size: 0.85rem; }
+.donate-btn { display: inline-block; margin-top: 8px; padding: 10px 18px; border: 2px solid var(--bonus-gold); border-radius: 12px; color: var(--bonus-gold); font-weight: 700; text-decoration: none; font-size: 0.95rem; }
+.donate-btn:active { transform: scale(0.97); }
 @media (max-width: 420px) {
     .logo { font-size: 1rem; }
     .stats { gap: 6px; }
@@ -185,6 +198,7 @@ main { flex: 1; overflow-y: auto; display: flex; flex-direction: column; align-i
     <div id="screen-songs" class="screen"><div id="songs-container"></div></div>
 
     <div id="screen-lesson" class="screen">
+        <div class="lesson-time" id="lesson-time"></div>
         <div class="progress-bar" id="progress-bar"></div>
         <div class="lesson-content" id="lesson-content"></div>
         <div class="footer-bar">
@@ -198,6 +212,7 @@ main { flex: 1; overflow-y: auto; display: flex; flex-direction: column; align-i
         <h1 style="font-size: 1.8rem; margin-bottom: 10px;">¡Lección completada!</h1>
         <p id="result-msg" style="color: var(--text-dim); margin-bottom: 20px;">+20 💎</p>
         <button class="btn-main active" onclick="exitToMap()">CONTINUAR</button>
+        <div id="result-donate"></div>
     </div>
 
     <div id="overlay-gameover" class="overlay">
@@ -218,12 +233,32 @@ main { flex: 1; overflow-y: auto; display: flex; flex-direction: column; align-i
         <p id="shop-note" style="color: var(--text-dim); margin-top: 20px; font-size: 0.9rem;"></p>
         <button class="btn-main" style="margin-top:30px; background:#333; border-bottom-color:#222; color:#aaa; pointer-events:all;" onclick="closeShop()">Cerrar</button>
     </div>
+
+    <div id="overlay-paywall" class="overlay">
+        <div class="overlay-icon" id="pw-icon">⏱️</div>
+        <h2 id="pw-title" style="margin-bottom:8px; font-size:1.4rem"></h2>
+        <p id="pw-text" style="color: var(--text-dim); margin-bottom: 18px; max-width: 340px; font-size: 0.9rem;"></p>
+        <div class="pw-actions" id="pw-actions"></div>
+    </div>
+
+    <div id="overlay-auth" class="overlay">
+        <h2 id="auth-title" style="font-size:1.4rem">Crear cuenta</h2>
+        <p id="auth-sub" style="color: var(--text-dim); font-size: 0.85rem; margin-top: 6px; max-width: 340px;"></p>
+        <div class="auth-form">
+            <input type="email" id="auth-email" class="text-input-fallback" placeholder="Email" autocomplete="email" autocapitalize="off">
+            <input type="password" id="auth-pass" class="text-input-fallback" placeholder="Contraseña (mínimo 6 caracteres)" autocomplete="current-password">
+            <div class="auth-msg" id="auth-msg"></div>
+            <button class="btn-main active" id="auth-submit" onclick="submitAuth()">CREAR CUENTA</button>
+            <button class="write-mode-btn" id="auth-toggle" onclick="toggleAuthMode()">¿Ya tienes cuenta? Entrar</button>
+            <button class="write-mode-btn" onclick="closeAuth()">Cancelar</button>
+        </div>
+    </div>
 </main>
 
 <script>
 // --- CONFIGURACIÓN SUPABASE (OPCIONAL) ---
-const SUPABASE_URL = 'https://eofolsrnycdiioobpihq.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVvZm9sc3JueWNkaWlvb2JwaWhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzMTE1NDgsImV4cCI6MjA4ODg4NzU0OH0.rIma6h2uA3vmUj-NxtYODKdwS9AZHk646awFiQsCFbA';
+const SUPABASE_URL = 'https://oscgttkcxpdzyfbmhibr.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_bEI-B6Z0EfnACKTP9o2rIw_fIKHIt6V';
 let _supabase;
 if(SUPABASE_URL && SUPABASE_URL !== 'TU_URL') {
     try { _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY); } catch(e) { console.log("Supabase init failed, using local engine."); }
@@ -479,6 +514,8 @@ let state = { hearts: 5, gems: 500, streak: 0, completed: [], currentQ: 0, answe
 const MAX_HEARTS = 5;
 const HEART_MS = 20 * 60 * 1000;   // 1 vida cada 20 minutos
 let lessonUsed = new Set();
+let account = { user: null, plan: 'anon' };   // plan: 'anon' | 'free' | 'premium'
+let usage = { day: '', sec: 0 };               // segundos jugados hoy (en este dispositivo)
 let currentLessonData = null;
 let recognition = null;
 let matchState = { first: null, second: null, lock: false, solved: [] };
@@ -498,7 +535,9 @@ const DOM = {
     btnAction: document.getElementById('btn-action'),
     screenLesson: document.getElementById('screen-lesson'),
     overlayGameover: document.getElementById('overlay-gameover'),
-    overlayShop: document.getElementById('overlay-shop')
+    overlayShop: document.getElementById('overlay-shop'),
+    overlayPaywall: document.getElementById('overlay-paywall'),
+    overlayAuth: document.getElementById('overlay-auth')
 };
 
 // --- SOUND ENGINE ---
@@ -741,7 +780,7 @@ const renderMap = () => {
             <div class="gp-bar"><div class="gp-fill" style="width: ${progressPercent}%"></div></div>
         </div>
     `;
-    DOM.mapContainer.innerHTML += gpHtml;
+    DOM.mapContainer.innerHTML += accountBarHtml() + gpHtml;
 
     let globalIndex = 0;
 
@@ -786,6 +825,7 @@ const renderMap = () => {
         unitDiv.appendChild(lessonsRow);
         DOM.mapContainer.appendChild(unitDiv);
     });
+    DOM.mapContainer.insertAdjacentHTML('beforeend', donateHtml());
 };
 
 // ============================================================
@@ -920,8 +960,192 @@ const speakLyric = (el, si, li) => {
     speak(SONGS[si].lines[li][0]);
 };
 
+// ============================================================
+// --- APOYO / DONACIONES ---
+// ============================================================
+// Pega aquí tu enlace de Ko-fi, Buy Me a Coffee o PayPal.me (debe empezar por https://).
+// Si lo dejas vacío, el botón no se muestra.
+const DONATE_URL = 'https://www.paypal.me/MiguelBolado';
+const donateHtml = () => /^https:\/\//.test(DONATE_URL)
+    ? `<div class="donate-box">Germango es gratis. Si te gusta, puedes apoyarlo:<br>
+       <a class="donate-btn" href="${esc(DONATE_URL)}" target="_blank" rel="noopener">☕ Invítame a un café</a></div>`
+    : '';
+
+// ============================================================
+// --- CUENTAS, TIEMPO GRATIS Y PREMIUM ---
+// ============================================================
+// CONFIGURACIÓN (cámbiala a tu gusto)
+const FREE_ANON_MIN = 15;    // minutos gratis al día SIN cuenta
+const FREE_USER_MIN = 30;    // minutos gratis al día CON cuenta (total, incluye los anteriores)
+const PAY_AMOUNT = 5;        // precio del pago único en € (más adelante: suscripción)
+const PAY_URL = 'https://www.paypal.me/MiguelBolado/' + PAY_AMOUNT + 'EUR';
+const PAY_PRICE = PAY_AMOUNT + ' €';
+
+const fmt = (sec) => `${Math.floor(sec / 60)}:${String(Math.floor(sec % 60)).padStart(2, '0')}`;
+const allowedSec = () => account.plan === 'premium' ? Infinity
+    : (account.plan === 'free' ? FREE_USER_MIN : FREE_ANON_MIN) * 60;
+const remainingSec = () => Math.max(0, allowedSec() - usage.sec);
+const timeExceeded = () => account.plan !== 'premium' && remainingSec() <= 0;
+
+const loadUsage = () => {
+    usage = { day: dayStr(), sec: 0 };
+    try {
+        const u = JSON.parse(localStorage.getItem('germango_usage'));
+        if (u && u.day === dayStr() && Number.isFinite(u.sec)) usage = u;
+    } catch (e) {}
+};
+const saveUsage = () => { try { localStorage.setItem('germango_usage', JSON.stringify(usage)); } catch (e) {} };
+
+const updateTimeBar = () => {
+    const premium = account.plan === 'premium';
+    const a = document.getElementById('acct-time');
+    if (a) a.innerText = premium ? 'sin límite de tiempo' : `⏱ ${fmt(remainingSec())} gratis hoy`;
+    const l = document.getElementById('lesson-time');
+    if (l) l.innerText = premium ? '' : `⏱ ${fmt(remainingSec())}`;
+};
+
+// cuenta el tiempo solo mientras hay una lección en pantalla y la pestaña está visible
+const tickPlay = () => {
+    if (usage.day !== dayStr()) { usage = { day: dayStr(), sec: 0 }; saveUsage(); }
+    const playing = document.visibilityState === 'visible' && DOM.screenLesson.classList.contains('active');
+    if (playing && account.plan !== 'premium') {
+        usage.sec++;
+        if (usage.sec % 5 === 0) saveUsage();
+    }
+    updateTimeBar();
+};
+
+const planLabel = () => account.plan === 'premium' ? '⭐ Premium' : (account.plan === 'free' ? 'Cuenta gratis' : 'Invitado');
+const accountBarHtml = () => {
+    const who = account.user ? esc(account.user.email) : 'Invitado';
+    let right = '';
+    if (account.plan === 'anon') {
+        right = `<button class="tool-btn" onclick="openAuth('register')">Crear cuenta</button>
+                 <button class="tool-btn" onclick="openAuth('login')">Entrar</button>`;
+    } else {
+        right = (account.plan === 'free' ? `<button class="tool-btn" onclick="showPaywall()">⭐ Premium</button>` : '')
+              + `<button class="tool-btn" onclick="signOut()">Salir</button>`;
+    }
+    return `<div class="acct-bar"><div><div class="acct-name">${who}</div>
+        <div class="acct-sub">${planLabel()} · <span id="acct-time"></span></div></div>
+        <div class="acct-actions">${right}</div></div>`;
+};
+
+// --- Supabase: sesión y plan (el plan solo lo puedes cambiar tú desde el panel de Supabase) ---
+const refreshAccount = async () => {
+    let next = { user: null, plan: 'anon' };
+    if (_supabase) {
+        try {
+            const { data } = await _supabase.auth.getSession();
+            const user = data && data.session ? data.session.user : null;
+            if (user) {
+                let plan = 'free';
+                try {
+                    const r = await _supabase.from('profiles').select('plan').eq('id', user.id).maybeSingle();
+                    if (r.data && r.data.plan === 'premium') plan = 'premium';
+                } catch (e) {}
+                next = { user, plan };
+            }
+        } catch (e) {}
+    }
+    account = next;
+    updateUI();
+    updateTimeBar();
+};
+
+const signOut = async () => {
+    try { if (_supabase) await _supabase.auth.signOut(); } catch (e) {}
+    await refreshAccount();
+};
+
+// --- Registro / inicio de sesión ---
+let authMode = 'register';
+const setAuthMode = (m) => {
+    authMode = m;
+    const reg = m === 'register';
+    document.getElementById('auth-title').innerText = reg ? 'Crear cuenta gratis' : 'Entrar';
+    document.getElementById('auth-sub').innerText = reg
+        ? `Con una cuenta consigues ${FREE_USER_MIN - FREE_ANON_MIN} minutos más al día.` : '';
+    document.getElementById('auth-submit').innerText = reg ? 'CREAR CUENTA' : 'ENTRAR';
+    document.getElementById('auth-toggle').innerText = reg ? '¿Ya tienes cuenta? Entrar' : '¿No tienes cuenta? Crear una';
+    document.getElementById('auth-msg').innerText = '';
+};
+const openAuth = (m) => { setAuthMode(m || 'register'); DOM.overlayAuth.classList.add('active'); };
+const closeAuth = () => DOM.overlayAuth.classList.remove('active');
+const toggleAuthMode = () => setAuthMode(authMode === 'register' ? 'login' : 'register');
+
+const authErrorText = (err) => {
+    const m = String((err && err.message) || '');
+    if (/invalid login/i.test(m)) return 'Email o contraseña incorrectos.';
+    if (/already registered/i.test(m)) return 'Ese email ya tiene cuenta: pulsa "Entrar".';
+    if (/not confirmed/i.test(m)) return 'Confirma tu email (revisa tu correo) y vuelve a entrar.';
+    if (/at least/i.test(m)) return 'La contraseña debe tener al menos 6 caracteres.';
+    if (/rate limit/i.test(m)) return 'Demasiados intentos. Espera un momento.';
+    return m || 'No se pudo completar la operación.';
+};
+
+const submitAuth = async () => {
+    const email = (document.getElementById('auth-email').value || '').trim();
+    const pass = document.getElementById('auth-pass').value || '';
+    const msg = document.getElementById('auth-msg');
+    if (!_supabase) { msg.innerText = 'El servicio de cuentas no está disponible ahora mismo.'; return; }
+    if (!/^\S+@\S+\.\S+$/.test(email)) { msg.innerText = 'Escribe un email válido.'; return; }
+    if (pass.length < 6) { msg.innerText = 'La contraseña debe tener al menos 6 caracteres.'; return; }
+    msg.innerText = 'Un momento...';
+    try {
+        if (authMode === 'register') {
+            const { data, error } = await _supabase.auth.signUp({ email, password: pass });
+            if (error) { msg.innerText = authErrorText(error); return; }
+            if (!data.session) {   // el proyecto exige confirmar el email
+                setAuthMode('login');
+                msg.innerText = '📧 Te hemos enviado un correo para confirmar tu cuenta. Confírmalo y pulsa "Entrar".';
+                return;
+            }
+        } else {
+            const { error } = await _supabase.auth.signInWithPassword({ email, password: pass });
+            if (error) { msg.innerText = authErrorText(error); return; }
+        }
+        closeAuth(); closePaywall();
+        await refreshAccount();
+    } catch (e) { msg.innerText = 'Error de conexión. Inténtalo de nuevo.'; }
+};
+
+// --- Muro de pago ---
+const closePaywall = () => DOM.overlayPaywall.classList.remove('active');
+const checkPaid = async (btn) => {
+    if (btn) btn.innerText = 'Comprobando...';
+    await refreshAccount();
+    if (account.plan === 'premium') { closePaywall(); alert('¡Premium activado! Gracias por apoyar Germango ⭐'); }
+    else showPaywall(true);
+};
+const showPaywall = (notYet) => {
+    const set = (id, v) => { document.getElementById(id).innerHTML = v; };
+    const exceeded = timeExceeded();
+    if (account.plan === 'anon') {
+        set('pw-icon', '⏱️');
+        set('pw-title', 'Has agotado tu tiempo gratis de hoy');
+        set('pw-text', `Llevas ${FREE_ANON_MIN} minutos jugando. Crea una cuenta gratis y consigue ${FREE_USER_MIN - FREE_ANON_MIN} minutos más hoy.`);
+        set('pw-actions', `
+            <button class="btn-main continue" onclick="openAuth('register')">CREAR CUENTA GRATIS</button>
+            <button class="btn-main" style="background:#333; border-bottom-color:#222; color:#aaa; pointer-events:all;" onclick="openAuth('login')">YA TENGO CUENTA</button>
+            <button class="write-mode-btn" onclick="closePaywall()">Volver mañana</button>`);
+    } else {
+        set('pw-icon', exceeded ? '⏱️' : '⭐');
+        set('pw-title', exceeded ? 'Tiempo gratis agotado' : 'Germango Premium');
+        set('pw-text', `${exceeded ? `Has usado tus ${FREE_USER_MIN} minutos gratis de hoy. ` : ''}Con Premium juegas sin límite de tiempo. Pago único de <b>${PAY_PRICE}</b> (más adelante será una suscripción).`);
+        const email = account.user ? esc(account.user.email) : '';
+        set('pw-actions', `
+            <a class="btn-main continue" href="${esc(PAY_URL)}" target="_blank" rel="noopener">⭐ DESBLOQUEAR PREMIUM (${PAY_PRICE})</a>
+            <div class="pw-note">En la nota del pago escribe tu email: <b>${email}</b>.<br>Activamos tu cuenta en cuanto recibamos el pago (por ahora de forma manual).${notYet === true ? '<br><span style="color:var(--bonus-gold)">Todavía no aparece activado. Puede tardar un poco.</span>' : ''}</div>
+            <button class="btn-main active" onclick="checkPaid(this)">YA HE PAGADO: COMPROBAR</button>
+            <button class="write-mode-btn" onclick="closePaywall()">${exceeded ? 'Volver mañana' : 'Cerrar'}</button>`);
+    }
+    DOM.overlayPaywall.classList.add('active');
+};
+
 // --- LESSON LOGIC ---
 const startLesson = (les) => {
+    if (timeExceeded()) { showPaywall(); return; }   // se acabó el tiempo gratis de hoy
     regenHearts();
     if (state.hearts <= 0) { openShop(); return; }   // sin vidas: tienda / esperar
 
@@ -1346,13 +1570,18 @@ const finishLesson = () => {
     }
     save();
     updateUI();
+    const rd = document.getElementById('result-donate');
+    if (rd) rd.innerHTML = state.completed.length >= 3 ? donateHtml() : '';   // solo tras 3 lecciones
     const rm = document.getElementById('result-msg');
     if (rm) rm.innerText = `${firstTime ? '+20 💎' : 'Lección repasada 🔁'} · 🔥 ${state.streak} ${state.streak === 1 ? 'día' : 'días'}`;
     for(let i=0; i<50; i++) createConfetti();
     showScreen('screen-result');
 };
 
-const exitToMap = () => { showScreen('screen-map'); };
+const exitToMap = () => {
+    showScreen('screen-map');
+    if (timeExceeded()) showPaywall();
+};
 
 // --- UTILS ---
 // CAMBIO: elige una voz alemana si el dispositivo la tiene
@@ -1383,6 +1612,10 @@ loadLocal();
 fetchCourseData();
 setInterval(tickHearts, 1000);
 document.addEventListener('visibilitychange', tickHearts);
+loadUsage();
+setInterval(tickPlay, 1000);
+refreshAccount();
+if (_supabase) _supabase.auth.onAuthStateChange(() => setTimeout(refreshAccount, 0));
 </script>
 </body>
 </html>
