@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Germango Pro 10.0 - Ultimate Edition</title>
+<title>Germango Pro 10.1 - Ultimate Edition</title>
 <!-- FAVICON GENERADO POR CÓDIGO (Búho SVG) -->
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦉</text></svg>">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -136,6 +136,11 @@ main { flex: 1; overflow-y: auto; display: flex; flex-direction: column; align-i
 .lyric-line .de { font-weight: 700; font-size: 1.05rem; }
 .lyric-line .es { color: var(--text-dim); font-size: 0.9rem; margin-top: 2px; }
 .lyric-gap { height: 14px; }
+.de-sentence { flex-wrap: wrap; gap: 6px 10px; font-size: 1.4rem; }
+.de-word { border-bottom: 2px dotted var(--secondary-blue); cursor: pointer; padding: 0 2px; }
+.de-word.active { color: var(--secondary-blue); }
+.gloss-box { text-align: center; min-height: 40px; background: var(--card-dark); border-radius: 10px; padding: 10px; margin-bottom: 12px; font-size: 0.95rem; color: var(--text-dim); }
+.gloss-box b { color: var(--text-main); }
 a.btn-main { display: block; text-align: center; text-decoration: none; }
 .lesson-time { text-align: right; font-size: 0.8rem; color: var(--text-dim); margin-bottom: 6px; min-height: 14px; }
 .acct-bar { width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 10px; background: var(--card-dark); border: 1px solid var(--border-color); border-radius: 12px; padding: 10px 12px; margin-bottom: 12px; flex-wrap: wrap; }
@@ -265,7 +270,7 @@ if(SUPABASE_URL && SUPABASE_URL !== 'TU_URL') {
 }
 
 // --- MOTOR DE DATOS DINÁMICO (BANCO MASIVO) ---
-const P = (de, es) => ({ de, es, emoji: '💬' });
+const P = (de, es, gloss) => ({ de, es, gloss, emoji: '💬' });   // gloss: significado de cada palabra alemana, en orden
 const VOCAB = {
     greetings: [
         { de: 'Hallo', es: 'Hola', emoji: '👋' }, { de: 'Guten Morgen', es: 'Buenos días', emoji: '☀️' },
@@ -364,40 +369,46 @@ const VOCAB = {
     ],
     // ---- FRASES COMPLETAS (las categorías que empiezan por "phrases" activan ordenar palabras) ----
     phrases_basic: [
-        P('Ich heiße Anna', 'Me llamo Anna'),
-        P('Wie heißt du?', '¿Cómo te llamas?'),
-        P('Ich komme aus Spanien', 'Soy de España'),
-        P('Ich bin müde', 'Estoy cansado'),
-        P('Ich habe einen Hund', 'Tengo un perro'),
-        P('Das ist meine Familie', 'Esta es mi familia'),
-        P('Ich spreche ein bisschen Deutsch', 'Hablo un poco de alemán'),
-        P('Freut mich', 'Encantado')
+        P('Ich heiße Anna', 'Me llamo Anna', ['yo', 'me llamo', 'Anna']),
+        P('Wie heißt du?', '¿Cómo te llamas?', ['cómo', 'te llamas', 'tú']),
+        P('Ich komme aus Spanien', 'Soy de España', ['yo', 'vengo', 'de', 'España']),
+        P('Ich bin müde', 'Estoy cansado', ['yo', 'soy / estoy', 'cansado']),
+        P('Ich habe einen Hund', 'Tengo un perro', ['yo', 'tengo', 'un', 'perro']),
+        P('Das ist meine Familie', 'Esta es mi familia', ['esto / esta', 'es', 'mi', 'familia']),
+        P('Ich spreche ein bisschen Deutsch', 'Hablo un poco de alemán', ['yo', 'hablo', 'un', 'poco', 'alemán']),
+        P('Freut mich', 'Encantado', ['alegra', 'me'])
     ],
     phrases_daily: [
-        P('Ich trinke Wasser', 'Bebo agua'),
-        P('Ich esse einen Apfel', 'Como una manzana'),
-        P('Wir gehen nach Hause', 'Vamos a casa'),
-        P('Ich habe Hunger', 'Tengo hambre'),
-        P('Ich habe Durst', 'Tengo sed'),
-        P('Das Essen ist gut', 'La comida está buena'),
-        P('Ich möchte ein Brot', 'Quisiera un pan'),
-        P('Es ist heute kalt', 'Hoy hace frío')
+        P('Ich trinke Wasser', 'Bebo agua', ['yo', 'bebo', 'agua']),
+        P('Ich esse einen Apfel', 'Como una manzana', ['yo', 'como', 'un', 'manzana']),
+        P('Wir gehen nach Hause', 'Vamos a casa', ['nosotros', 'vamos', 'a / hacia', 'casa']),
+        P('Ich habe Hunger', 'Tengo hambre', ['yo', 'tengo', 'hambre']),
+        P('Ich habe Durst', 'Tengo sed', ['yo', 'tengo', 'sed']),
+        P('Das Essen ist gut', 'La comida está buena', ['el / la', 'comida', 'es / está', 'bueno']),
+        P('Ich möchte ein Brot', 'Quisiera un pan', ['yo', 'quisiera', 'un', 'pan']),
+        P('Es ist heute kalt', 'Hoy hace frío', ['(sujeto impersonal)', 'es / está', 'hoy', 'frío'])
     ],
     phrases_travel: [
-        P('Wo ist der Bahnhof?', '¿Dónde está la estación?'),
-        P('Ich möchte ein Ticket', 'Quisiera un billete'),
-        P('Wie viel kostet das?', '¿Cuánto cuesta esto?'),
-        P('Sprechen Sie Englisch?', '¿Habla usted inglés?'),
-        P('Ich verstehe nicht', 'No entiendo'),
-        P('Können Sie mir helfen?', '¿Puede ayudarme?'),
-        P('Wo ist die Toilette?', '¿Dónde está el baño?'),
-        P('Die Rechnung, bitte', 'La cuenta, por favor')
+        P('Wo ist der Bahnhof?', '¿Dónde está la estación?', ['dónde', 'está', 'el', 'estación de tren']),
+        P('Ich möchte ein Ticket', 'Quisiera un billete', ['yo', 'quisiera', 'un', 'billete']),
+        P('Wie viel kostet das?', '¿Cuánto cuesta esto?', ['cómo', 'mucho', 'cuesta', 'esto']),
+        P('Sprechen Sie Englisch?', '¿Habla usted inglés?', ['habla', 'usted', 'inglés']),
+        P('Ich verstehe nicht', 'No entiendo', ['yo', 'entiendo', 'no']),
+        P('Können Sie mir helfen?', '¿Puede ayudarme?', ['puede', 'usted', 'me', 'ayudar']),
+        P('Wo ist die Toilette?', '¿Dónde está el baño?', ['dónde', 'está', 'la', 'baño / aseo']),
+        P('Die Rechnung, bitte', 'La cuenta, por favor', ['la', 'cuenta', 'por favor'])
     ]
 };
 
 // CAMBIO: copia el array antes de barajar (antes mutaba VOCAB)
 const getRandom = (arr, n) => [...arr].sort(() => 0.5 - Math.random()).slice(0, n);
 const getRandomItem = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+// --- Ejercicio "traducir oración": tokens de la frase en español ---
+const PROPER = ['Anna', 'España'];   // nombres propios (mantienen la mayúscula)
+const esTokens = (es) => es.replace(/[¿?¡!.,;:]/g, '').split(' ').filter(Boolean)
+    .map((w, i) => (i === 0 && !PROPER.includes(w)) ? w.toLowerCase() : w);
+const canTranslate = (i) => Array.isArray(i.gloss) && i.gloss.length === i.de.split(' ').length && esTokens(i.es).length >= 2;
 
 // Peso de cada palabra: las que más fallas (y las nuevas) salen más a menudo
 const wordWeight = (w) => {
@@ -418,7 +429,12 @@ function generateQuestion(type, categoryKey, forcedItem) {
     const category = VOCAB[categoryKey];
     if (!category) return null;
 
-    const item = forcedItem || pickWeighted(category);
+    let pool = category;
+    if (type === 'translate') {
+        pool = category.filter(canTranslate);
+        if (!pool.length) return null;   // solo las categorías de frases tienen este ejercicio
+    }
+    const item = forcedItem || pickWeighted(pool);
     lessonUsed.add(item.de);
     let wrongOptions = category.filter(i => i.de !== item.de);
     if (wrongOptions.length < 3) wrongOptions = Object.values(VOCAB).flat();
@@ -463,6 +479,26 @@ function generateQuestion(type, categoryKey, forcedItem) {
                 emoji: item.emoji || '🗣️',
                 word: item.de
             };
+        case 'translate': {
+            const ans = esTokens(item.es);
+            const ansLow = ans.map(w => w.toLowerCase());
+            const poolWords = [...new Set(
+                Object.entries(VOCAB).filter(([k]) => k.startsWith('phrases'))
+                    .flatMap(([, items]) => items.flatMap(i => esTokens(i.es)))
+                    .filter(w => w === w.toLowerCase() && !ansLow.includes(w))
+            )];
+            const bank = [...ans, ...getRandom(poolWords, 3)].sort(() => 0.5 - Math.random());
+            return {
+                type: 'translate',
+                prompt: 'Traduce al español:',
+                text: item.de,
+                gloss: item.gloss,
+                words: bank,
+                correct: ans,
+                answer: item.es,
+                word: item.de
+            };
+        }
         case 'wordbank':
             if (categoryKey.startsWith('phrases')) {
                 const ws = item.de.split(' ');
@@ -1153,7 +1189,7 @@ const startLesson = (les) => {
     const category = les.category || 'greetings';
     const isPhrases = category.startsWith('phrases');
     const qTypes = isPhrases
-        ? ['choice', 'wordbank', 'audio', 'wordbank', 'speak']
+        ? ['choice', 'translate', 'audio', 'wordbank', 'translate', 'speak']
         : ['choice', 'choice', 'match', 'audio', 'speak'];
 
     const generatedQuestions = qTypes.map(qType => generateQuestion(qType, category)).filter(q => q);
@@ -1163,7 +1199,8 @@ const startLesson = (les) => {
     if (weak.length && generatedQuestions.length > 1) {
         const w = getRandomItem(weak);
         const rq = generateQuestion('choice', w.key, w.item);
-        if (rq) { rq.prompt = '🔁 Repaso: ' + rq.prompt; generatedQuestions[1] = rq; }
+        const ri = Math.max(0, qTypes.lastIndexOf('choice'));   // sustituye una pregunta de tipo "choice"
+        if (rq) { rq.prompt = '🔁 Repaso: ' + rq.prompt; generatedQuestions[ri] = rq; }
     }
 
     currentLessonData = { ...les, questions: generatedQuestions };
@@ -1229,6 +1266,20 @@ const renderQ = () => {
         </div>`;
         setTimeout(() => speak(q.text), 300);
     }
+    else if (q.type === 'translate') {
+        const chips = q.text.split(' ').map((w, i) =>
+            `<span class="de-word" onclick="showGloss(${i})">${esc(w)}</span>`).join(' ');
+        html += `<button class="audio-prompt-btn" onclick="speak('${q.text}')">🔊</button>
+        <div class="main-text de-sentence">${chips}</div>
+        <div class="gloss-box" id="gloss-box">👆 Toca una palabra para ver su significado</div>
+        <div class="sentence-area" id="sentence-area" onclick="clearLastWord()"></div>
+        <div class="bank" id="bank-area">`;
+        q.words.forEach(w => {
+            html += `<div class="token" data-w="${esc(w)}" onclick="addWord(this)">${esc(w)}</div>`;
+        });
+        html += `</div>`;
+        setTimeout(() => speak(q.text), 300);
+    }
     else if (q.type === 'wordbank') {
         html += `<div class="main-text">${emojiHtml} ${q.text}</div>
         <div class="sentence-area" id="sentence-area" onclick="clearLastWord()"></div>
@@ -1260,6 +1311,17 @@ const selectChoice = (el, val) => {
     el.classList.add('selected');
     state.selected = val;
     DOM.btnAction.classList.add('active');
+};
+
+// Muestra el significado de una palabra alemana de la frase (y la pronuncia)
+const showGloss = (i) => {
+    const q = currentLessonData && currentLessonData.questions[state.currentQ];
+    if (!q || q.type !== 'translate') return;
+    const clean = q.text.split(' ')[i].replace(/[¿?¡!.,;:]/g, '');
+    document.querySelectorAll('.de-word').forEach((e, k) => e.classList.toggle('active', k === i));
+    const box = document.getElementById('gloss-box');
+    if (box) box.innerHTML = `<b>${esc(clean)}</b> → ${esc((q.gloss && q.gloss[i]) || '—')}`;
+    speak(clean);
 };
 
 const addWord = (el) => {
@@ -1496,7 +1558,7 @@ const handleAction = () => {
         let isCorrect = false;
         if (q.type === 'choice' || q.type === 'audio') isCorrect = state.selected === q.correct;
         else if (q.type === 'match') isCorrect = matchState.solved.length === q.pairs.length;
-        else if (q.type === 'wordbank') isCorrect = JSON.stringify(state.answers) === JSON.stringify(q.correct);
+        else if (q.type === 'wordbank' || q.type === 'translate') isCorrect = JSON.stringify(state.answers) === JSON.stringify(q.correct);
         else if (q.type === 'speak') {
             // CAMBIO: comparación tolerante (puntuación, tildes, números, artículos)
             isCorrect = speechMatches(state.selected || '', q.text);
@@ -1517,6 +1579,9 @@ const handleAction = () => {
             } else if (q.type === 'wordbank' && q.word) {
                 feedbackSub = q.word;
                 setTimeout(() => speak(q.word), 200);
+            } else if (q.type === 'translate') {
+                feedbackSub = `${q.text} = ${q.answer}`;
+                setTimeout(() => speak(q.text), 200);
             }
             sub.innerText = feedbackSub;
 
@@ -1528,6 +1593,7 @@ const handleAction = () => {
             txt.innerText = "Incorrecto";
             let cText = q.correct || q.text;
             if (q.type === 'wordbank') cText = q.correct.join(" ");
+            if (q.type === 'translate') cText = q.answer;
             if (q.type === 'audio') cText = q.correct;
             sub.innerText = `Correcto: ${cText}`;
             DOM.feedbackMsg.className = "feedback-msg show wrong";
