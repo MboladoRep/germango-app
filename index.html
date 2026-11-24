@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Germango Pro 10.1 - Ultimate Edition</title>
+<title>Germango Pro 10.2 - Ultimate Edition</title>
 <!-- FAVICON GENERADO POR CÓDIGO (Búho SVG) -->
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦉</text></svg>">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -141,6 +141,21 @@ main { flex: 1; overflow-y: auto; display: flex; flex-direction: column; align-i
 .de-word.active { color: var(--secondary-blue); }
 .gloss-box { text-align: center; min-height: 40px; background: var(--card-dark); border-radius: 10px; padding: 10px; margin-bottom: 12px; font-size: 0.95rem; color: var(--text-dim); }
 .gloss-box b { color: var(--text-main); }
+.mine-card { width: 100%; background: var(--card-dark); border: 1px solid var(--bonus-gold); border-radius: 12px; padding: 12px; margin-bottom: 12px; }
+.mine-head { display: flex; justify-content: space-between; font-weight: 800; color: var(--bonus-gold); }
+.mine-sub { font-size: 0.8rem; color: var(--text-dim); margin: 4px 0 10px; }
+.tr-wrap { width: 100%; padding-bottom: 30px; }
+.tr-label { font-size: 0.85rem; color: var(--text-dim); margin: 12px 0 6px; display: flex; align-items: center; gap: 8px; }
+.tr-area { text-align: left; resize: none; font-family: inherit; }
+.tr-input { text-align: left; }
+.tr-alts { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.tr-gloss { margin: 10px 0; color: var(--text-dim); font-size: 0.85rem; }
+.tr-gloss summary { cursor: pointer; margin-bottom: 8px; }
+.tr-h { margin: 22px 0 10px; font-size: 1.1rem; }
+.my-item { display: flex; justify-content: space-between; align-items: center; gap: 10px; background: var(--card-dark); border: 1px solid var(--border-color); border-radius: 12px; padding: 10px 12px; margin-bottom: 8px; }
+.my-item .de { font-weight: 700; }
+.my-item .es { color: var(--text-dim); font-size: 0.85rem; margin-top: 2px; }
+.my-act { display: flex; gap: 6px; flex-shrink: 0; }
 a.btn-main { display: block; text-align: center; text-decoration: none; }
 .lesson-time { text-align: right; font-size: 0.8rem; color: var(--text-dim); margin-bottom: 6px; min-height: 14px; }
 .acct-bar { width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 10px; background: var(--card-dark); border: 1px solid var(--border-color); border-radius: 12px; padding: 10px 12px; margin-bottom: 12px; flex-wrap: wrap; }
@@ -201,6 +216,8 @@ a.btn-main { display: block; text-align: center; text-decoration: none; }
     <div id="screen-map" class="screen active"><div class="map-wrapper" id="map-container"><div class="loader"></div></div></div>
 
     <div id="screen-songs" class="screen"><div id="songs-container"></div></div>
+
+    <div id="screen-translator" class="screen"><div id="translator-container" class="tr-wrap"></div></div>
 
     <div id="screen-lesson" class="screen">
         <div class="lesson-time" id="lesson-time"></div>
@@ -431,13 +448,13 @@ function generateQuestion(type, categoryKey, forcedItem) {
 
     let pool = category;
     if (type === 'translate') {
-        pool = category.filter(canTranslate);
-        if (!pool.length) return null;   // solo las categorías de frases tienen este ejercicio
+        pool = category.filter(i => canTranslate(i) && !lessonUsed.has(i.de));   // sin repetir frases en la lección
+        if (!pool.length) return null;   // sin frases con ayuda disponibles: se omite este ejercicio
     }
     const item = forcedItem || pickWeighted(pool);
     lessonUsed.add(item.de);
     let wrongOptions = category.filter(i => i.de !== item.de);
-    if (wrongOptions.length < 3) wrongOptions = Object.values(VOCAB).flat();
+    if (wrongOptions.length < 3) wrongOptions = Object.values(VOCAB).flat().filter(i => i.de !== item.de && i.es !== item.es);
 
     const distractors = getRandom(wrongOptions, 3).map(i => i.es);
     const options = [item.es, ...distractors].sort(() => 0.5 - Math.random());
@@ -816,7 +833,7 @@ const renderMap = () => {
             <div class="gp-bar"><div class="gp-fill" style="width: ${progressPercent}%"></div></div>
         </div>
     `;
-    DOM.mapContainer.innerHTML += accountBarHtml() + gpHtml;
+    DOM.mapContainer.innerHTML += accountBarHtml() + mineCardHtml() + gpHtml;
 
     let globalIndex = 0;
 
@@ -1177,6 +1194,195 @@ const showPaywall = (notYet) => {
             <button class="write-mode-btn" onclick="closePaywall()">${exceeded ? 'Volver mañana' : 'Cerrar'}</button>`);
     }
     DOM.overlayPaywall.classList.add('active');
+};
+
+// ============================================================
+// --- TRADUCTOR (ES → DE) Y "MIS FRASES" ---
+// ============================================================
+const MAX_PHRASE_LEN = 120;
+const MAX_MY_PHRASES = 200;
+const MYMEMORY_EMAIL = '';   // opcional: poner un email sube el límite diario gratuito del traductor (MyMemory)
+let myPhrases = [];          // [{ de, es, gloss? }] guardadas en este dispositivo
+let trAlts = [];
+
+// Limpia el texto para que sea seguro en el HTML de la app (sin < > & " \ $) y las comillas simples pasan a ’
+const cleanPhrase = (t) => String(t || '')
+    .replace(/['‘`´]/g, '’')
+    .replace(/[<>&"\\$\r\n\t]/g, ' ')
+    .replace(/\s+/g, ' ').trim().slice(0, MAX_PHRASE_LEN);
+const decodeEntities = (t) => {
+    try { const x = document.createElement('textarea'); x.innerHTML = t; return x.value || t; } catch (e) { return t; }
+};
+
+const syncMyPhrases = () => {
+    VOCAB.phrases_mine = myPhrases.map(p => ({ de: p.de, es: p.es, gloss: p.gloss, emoji: '💬' }));
+};
+const loadMyPhrases = () => {
+    try {
+        const a = JSON.parse(localStorage.getItem('germango_myphrases'));
+        if (Array.isArray(a)) {
+            myPhrases = a.map(p => ({
+                de: cleanPhrase(p && p.de), es: cleanPhrase(p && p.es),
+                gloss: (p && Array.isArray(p.gloss)) ? p.gloss.map(cleanPhrase) : undefined
+            })).filter(p => p.de && p.es).slice(0, MAX_MY_PHRASES);
+        }
+    } catch (e) {}
+    syncMyPhrases();
+    updateUI();
+};
+const saveMyPhrases = () => {
+    try { localStorage.setItem('germango_myphrases', JSON.stringify(myPhrases)); } catch (e) {}
+    syncMyPhrases();
+};
+
+// --- tarjeta del mapa ---
+const mineCardHtml = () => {
+    const n = myPhrases.length;
+    return `<div class="mine-card"><div class="mine-head"><span>⭐ Mis frases</span><span>${n}</span></div>
+        <div class="mine-sub">${n >= 3 ? 'Practica las frases que has guardado.' : 'Traduce y guarda frases (mínimo 3) para practicarlas.'}</div>
+        <div class="acct-actions"><button class="tool-btn" onclick="startMine()">▶ Practicar</button>
+        <button class="tool-btn" onclick="openTranslator()">🌐 Traductor</button></div></div>`;
+};
+const startMine = () => {
+    if (myPhrases.length < 3) {
+        openTranslator();
+        const m = document.getElementById('tr-msg');
+        if (m) m.innerText = 'Añade al menos 3 frases para poder practicarlas.';
+        return;
+    }
+    startLesson({ id: 'mine', category: 'phrases_mine', icon: '⭐' });
+};
+
+// --- pantalla del traductor ---
+const openTranslator = () => {
+    const c = document.getElementById('translator-container');
+    if (!c) return;
+    showScreen('screen-translator');
+    c.innerHTML = `
+        <div class="songs-head"><button class="back-btn" onclick="showScreen('screen-map')">←</button><h2>🌐 Traductor</h2></div>
+        <div class="tr-label">Español</div>
+        <textarea id="tr-es" class="text-input-fallback tr-area" rows="2" maxlength="${MAX_PHRASE_LEN}" placeholder="Escribe una frase en español..."></textarea>
+        <button class="btn-main active" id="tr-btn" style="margin-top:10px" onclick="doTranslate()">TRADUCIR AL ALEMÁN</button>
+        <div class="tr-alts" id="tr-alts"></div>
+        <div class="tr-label">Alemán <button class="tool-btn" onclick="speakTr()">🔊 Escuchar</button></div>
+        <input type="text" id="tr-de" class="text-input-fallback tr-input" maxlength="${MAX_PHRASE_LEN}" oninput="updateGlossHint()" placeholder="La traducción aparecerá aquí (puedes corregirla)" autocomplete="off" autocapitalize="off">
+        <details class="tr-gloss"><summary>Opcional: significado palabra por palabra</summary>
+            <input type="text" id="tr-gloss" class="text-input-fallback tr-input" placeholder="yo, me llamo, Anna" autocomplete="off">
+            <div class="song-hint" id="tr-gloss-hint" style="margin-top:6px">Sirve para usar la frase en el ejercicio de traducir oraciones.</div>
+        </details>
+        <div class="auth-msg" id="tr-msg"></div>
+        <button class="btn-main continue" onclick="addMyPhrase()">➕ AÑADIR A MIS FRASES</button>
+        <div class="song-hint" style="margin-top:10px">⚠️ Las traducciones automáticas pueden tener errores: revisa la frase antes de añadirla. El texto se envía a un servicio externo (MyMemory) para traducirlo. También puedes escribir tú mismo la frase en alemán.</div>
+        <h3 class="tr-h">Mis frases (<span id="tr-count">0</span>)</h3>
+        <div id="tr-list"></div>`;
+    renderMyList();
+};
+
+const speakTr = () => { const d = document.getElementById('tr-de'); if (d && d.value.trim()) speak(cleanPhrase(d.value)); };
+
+const updateGlossHint = () => {
+    const d = document.getElementById('tr-de'), h = document.getElementById('tr-gloss-hint');
+    if (!d || !h) return;
+    const n = cleanPhrase(d.value).split(' ').filter(Boolean).length;
+    h.innerText = n
+        ? `La frase alemana tiene ${n} palabra${n === 1 ? '' : 's'}: escribe ${n} significado${n === 1 ? '' : 's'} separados por comas (opcional).`
+        : 'Sirve para usar la frase en el ejercicio de traducir oraciones.';
+};
+
+const doTranslate = async () => {
+    const esEl = document.getElementById('tr-es'), msg = document.getElementById('tr-msg');
+    const btn = document.getElementById('tr-btn'), alts = document.getElementById('tr-alts');
+    const es = cleanPhrase(esEl && esEl.value);
+    if (!es) { msg.innerText = 'Escribe primero una frase en español.'; return; }
+    msg.innerText = ''; alts.innerHTML = ''; trAlts = [];
+    btn.innerText = 'Traduciendo...';
+    try {
+        const ctrl = new AbortController();
+        const timer = setTimeout(() => ctrl.abort(), 10000);
+        let url = 'https://api.mymemory.translated.net/get?q=' + encodeURIComponent(es) + '&langpair=es%7Cde';
+        if (MYMEMORY_EMAIL) url += '&de=' + encodeURIComponent(MYMEMORY_EMAIL);
+        const res = await fetch(url, { signal: ctrl.signal });
+        clearTimeout(timer);
+        const data = await res.json();
+        const main = decodeEntities(String((data.responseData && data.responseData.translatedText) || ''));
+        const status = Number(data.responseStatus);
+        if (/MYMEMORY WARNING/i.test(main) || status === 429) {
+            msg.innerText = 'Has llegado al límite diario del traductor. Inténtalo mañana o escribe tú la frase en alemán.';
+            return;
+        }
+        if (status !== 200 || !main) { msg.innerText = 'No se pudo traducir. Inténtalo de nuevo.'; return; }
+        const best = cleanPhrase(main);
+        document.getElementById('tr-de').value = best;
+        updateGlossHint();
+        // otras traducciones posibles
+        const seen = new Set([best.toLowerCase()]);
+        (data.matches || []).slice().sort((a, b) => (Number(b.match) || 0) - (Number(a.match) || 0)).forEach(m => {
+            const t = cleanPhrase(decodeEntities(String(m.translation || '')));
+            if (t && !seen.has(t.toLowerCase()) && !/MYMEMORY WARNING/i.test(t) && trAlts.length < 3) { seen.add(t.toLowerCase()); trAlts.push(t); }
+        });
+        if (trAlts.length) {
+            alts.innerHTML = '<div class="song-hint" style="width:100%">Otras opciones:</div>' +
+                trAlts.map((t, i) => `<button class="tool-btn" onclick="useAlt(${i})">${esc(t)}</button>`).join('');
+        }
+        speak(best);
+    } catch (e) {
+        msg.innerText = 'No se pudo conectar con el traductor. Revisa tu conexión.';
+    } finally {
+        btn.innerText = 'TRADUCIR AL ALEMÁN';
+    }
+};
+const useAlt = (i) => {
+    const d = document.getElementById('tr-de');
+    if (d && trAlts[i]) { d.value = trAlts[i]; updateGlossHint(); }
+};
+
+// --- guardar / borrar ---
+const addMyPhrase = () => {
+    const msg = document.getElementById('tr-msg');
+    const es = cleanPhrase(document.getElementById('tr-es').value);
+    const de = cleanPhrase(document.getElementById('tr-de').value);
+    if (!es || !de) { msg.innerText = 'Escribe la frase en español y en alemán.'; return; }
+    if (myPhrases.length >= MAX_MY_PHRASES) { msg.innerText = `Has llegado al máximo de ${MAX_MY_PHRASES} frases.`; return; }
+    if (myPhrases.some(p => p.de.toLowerCase() === de.toLowerCase())) { msg.innerText = 'Esa frase ya está en tu lista.'; return; }
+    let gloss;
+    const raw = (document.getElementById('tr-gloss').value || '').trim();
+    if (raw) {
+        const n = de.split(' ').length;
+        const g = raw.split(',').map(cleanPhrase);
+        if (g.length !== n || g.some(x => !x)) {
+            msg.innerText = `La frase alemana tiene ${n} palabra${n === 1 ? '' : 's'}: escribe ${n} significado${n === 1 ? '' : 's'} separados por comas, o deja el campo vacío.`;
+            return;
+        }
+        gloss = g;
+    }
+    myPhrases.push({ de, es, gloss });
+    saveMyPhrases();
+    document.getElementById('tr-es').value = '';
+    document.getElementById('tr-de').value = '';
+    document.getElementById('tr-gloss').value = '';
+    document.getElementById('tr-alts').innerHTML = '';
+    updateGlossHint();
+    renderMyList();
+    updateUI();
+    msg.innerText = myPhrases.length >= 3 ? '✅ Añadida. Ya puedes practicar en ⭐ Mis frases.' : `✅ Añadida. Faltan ${3 - myPhrases.length} para poder practicar.`;
+};
+const removeMyPhrase = (i) => {
+    if (!myPhrases[i]) return;
+    if (typeof confirm === 'function' && !confirm('¿Borrar esta frase?')) return;
+    myPhrases.splice(i, 1);
+    saveMyPhrases();
+    renderMyList();
+    updateUI();
+};
+const renderMyList = () => {
+    const l = document.getElementById('tr-list'), c = document.getElementById('tr-count');
+    if (c) c.innerText = myPhrases.length;
+    if (!l) return;
+    l.innerHTML = myPhrases.length ? myPhrases.map((p, i) => `
+        <div class="my-item"><div><div class="de">${esc(p.de)}${p.gloss ? ' 🔤' : ''}</div><div class="es">${esc(p.es)}</div></div>
+        <div class="my-act"><button class="tool-btn" onclick="speak(myPhrases[${i}].de)">🔊</button>
+        <button class="tool-btn" onclick="removeMyPhrase(${i})">🗑️</button></div></div>`).join('')
+        : '<div class="song-empty">Aún no has guardado ninguna frase.</div>';
 };
 
 // --- LESSON LOGIC ---
@@ -1629,7 +1835,8 @@ const handleAction = () => {
 const finishLesson = () => {
     playSound('win');
     registerPractice();   // racha: +1 por día practicado
-    const firstTime = !state.completed.includes(currentLessonData.id);
+    const isMine = currentLessonData.category === 'phrases_mine';   // práctica repetible: no cuenta como lección del mapa
+    const firstTime = !isMine && !state.completed.includes(currentLessonData.id);
     if (firstTime) {
         state.completed.push(currentLessonData.id);
         state.gems += 20;
@@ -1679,6 +1886,7 @@ fetchCourseData();
 setInterval(tickHearts, 1000);
 document.addEventListener('visibilitychange', tickHearts);
 loadUsage();
+loadMyPhrases();
 setInterval(tickPlay, 1000);
 refreshAccount();
 if (_supabase) _supabase.auth.onAuthStateChange(() => setTimeout(refreshAccount, 0));
