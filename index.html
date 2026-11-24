@@ -117,6 +117,58 @@ main { flex: 1; overflow-y: auto; display: flex; flex-direction: column; align-i
 .shake { animation: shake 0.3s; }
 .mic-feedback { min-height: 24px; color: var(--text-dim); font-size: 0.9rem; text-align: center; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 6px; }
 .mini-spin { display: inline-block; width: 16px; height: 16px; border: 3px solid var(--border-color); border-top-color: var(--secondary-blue); border-radius: 50%; animation: spin 1s linear infinite; flex-shrink: 0; }
+/* Canciones y Traductor */
+.songs-head { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
+.songs-head h2 { font-size: 1.3rem; }
+.back-btn { background: var(--card-dark); border: 2px solid var(--border-color); color: var(--text-main); border-radius: 10px; padding: 6px 14px; font-size: 1rem; cursor: pointer; }
+.back-btn:active { transform: scale(0.95); }
+.song-card { background: var(--card-dark); border: 2px solid var(--border-color); border-radius: 14px; padding: 14px 16px; margin-bottom: 10px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: transform 0.1s; }
+.song-card:active { transform: scale(0.98); }
+.song-card .ico { font-size: 1.8rem; }
+.song-card .t { font-weight: 700; }
+.song-card .a { font-size: 0.8rem; color: var(--text-dim); margin-top: 2px; }
+.song-artist { color: var(--text-dim); font-size: 0.9rem; margin: -8px 0 12px; }
+.song-empty { background: var(--card-dark); border: 2px dashed var(--border-color); border-radius: 12px; padding: 16px; color: var(--text-dim); font-size: 0.9rem; text-align: center; margin-bottom: 12px; }
+.video-wrap { position: relative; width: 100%; padding-top: 56.25%; border-radius: 12px; overflow: hidden; background: #000; margin-bottom: 10px; }
+.video-wrap iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+.song-tools { display: flex; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+.tool-btn { background: var(--card-dark); border: 2px solid var(--border-color); color: var(--text-main); border-radius: 10px; padding: 8px 12px; font-size: 0.85rem; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
+.tool-btn:active { transform: scale(0.97); }
+.song-hint { color: var(--text-dim); font-size: 0.8rem; margin-bottom: 10px; }
+.lyrics { padding-bottom: 30px; }
+.lyric-line { padding: 8px 10px; border-radius: 10px; cursor: pointer; transition: background 0.2s; }
+.lyric-line:active { background: rgba(255,255,255,0.06); }
+.lyric-line.playing { background: rgba(28, 176, 246, 0.15); }
+.lyric-line .de { font-weight: 700; font-size: 1.05rem; }
+.lyric-line .es { color: var(--text-dim); font-size: 0.9rem; margin-top: 2px; }
+.lyric-gap { height: 14px; }
+.de-sentence { flex-wrap: wrap; gap: 6px 10px; font-size: 1.4rem; }
+.de-word { border-bottom: 2px dotted var(--secondary-blue); cursor: pointer; padding: 0 2px; }
+.de-word.active { color: var(--secondary-blue); }
+.gloss-box { text-align: center; min-height: 40px; background: var(--card-dark); border-radius: 10px; padding: 10px; margin-bottom: 12px; font-size: 0.95rem; color: var(--text-dim); }
+.gloss-box b { color: var(--text-main); }
+.mine-card { width: 100%; background: var(--card-dark); border: 1px solid var(--bonus-gold); border-radius: 12px; padding: 12px; margin-bottom: 12px; }
+.mine-head { display: flex; justify-content: space-between; font-weight: 800; color: var(--bonus-gold); }
+.mine-sub { font-size: 0.8rem; color: var(--text-dim); margin: 4px 0 10px; }
+.acct-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+.auth-msg { min-height: 20px; font-size: 0.85rem; color: var(--bonus-gold); text-align: center; }
+.tr-wrap { width: 100%; padding-bottom: 30px; }
+.tr-label { font-size: 0.85rem; color: var(--text-dim); margin: 12px 0 6px; display: flex; align-items: center; gap: 8px; }
+.tr-area { text-align: left; resize: none; font-family: inherit; }
+.tr-input { text-align: left; }
+.tr-alts { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.tr-gloss { margin: 10px 0; color: var(--text-dim); font-size: 0.85rem; }
+.tr-gloss summary { cursor: pointer; margin-bottom: 8px; }
+.tr-h { margin: 22px 0 10px; font-size: 1.1rem; }
+.my-item { display: flex; justify-content: space-between; align-items: center; gap: 10px; background: var(--card-dark); border: 1px solid var(--border-color); border-radius: 12px; padding: 10px 12px; margin-bottom: 8px; }
+.my-item .de { font-weight: 700; }
+.my-item .es { color: var(--text-dim); font-size: 0.85rem; margin-top: 2px; }
+.my-act { display: flex; gap: 6px; flex-shrink: 0; }
+@media (max-width: 420px) {
+    .logo { font-size: 1rem; }
+    .stats { gap: 6px; }
+    .stat-box { padding: 4px 7px; font-size: 0.85rem; }
+}
 </style>
 </head>
 <body>
@@ -126,11 +178,14 @@ main { flex: 1; overflow-y: auto; display: flex; flex-direction: column; align-i
 <div class="stat-box buyable" onclick="openShop()"><span>❤️</span><span id="s-hearts">5</span></div>
 <div class="stat-box"><span>💎</span><span id="s-gems">500</span></div>
 <div class="stat-box"><span>🔥</span><span id="s-streak">0</span></div>
+   <div class="stat-box" onclick="openSongs()" title="Canciones"><span>🎵</span></div>
 </div>
 </header>
 <main id="app">
 <div id="screen-map" class="screen active"><div class="map-wrapper" id="map-container"><div class="loader"></div></div></div>
-<div id="screen-lesson" class="screen">
+<div id="screen-songs" class="screen"><div id="songs-container"></div></div>
+<div id="screen-translator" class="screen"><div id="translator-container" class="tr-wrap"></div></div>
+   <div id="screen-lesson" class="screen">
 <div class="progress-bar" id="progress-bar"></div>
 <div class="lesson-content" id="lesson-content"></div>
 <div class="footer-bar">
@@ -269,15 +324,24 @@ professions: [
 ]
 };
 
-const getRandom = (arr, n) => arr.sort(() => 0.5 - Math.random()).slice(0, n);
+const getRandom = (arr, n) => [...arr].sort(() => 0.5 - Math.random()).slice(0, n);
 const getRandomItem = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+const esTokens = (es) => es.replace(/[¿?¡!.,;:]/g, '').split(' ').filter(Boolean)
+    .map((w, i) => i === 0 ? w.toLowerCase() : w);
+const canTranslate = (i) => Array.isArray(i.gloss) && i.gloss.length === i.de.split(' ').length && esTokens(i.es).length >= 2;
 
 function generateQuestion(type, categoryKey) {
 const category = VOCAB[categoryKey];
 if (!category) return null;
-const item = getRandomItem(category);
+let pool = category;
+if (type === 'translate') {
+pool = category.filter(i => canTranslate(i));
+if (!pool.length) return null;
+}
+const item = getRandomItem(pool);
 let wrongOptions = category.filter(i => i.de !== item.de);
-if (wrongOptions.length < 3) wrongOptions = Object.values(VOCAB).flat();
+if (wrongOptions.length < 3) wrongOptions = Object.values(VOCAB).flat().filter(i => i.de !== item.de && i.es !== item.es);
 const distractors = getRandom(wrongOptions, 3).map(i => i.es);
 const options = [item.es, ...distractors].sort(() => 0.5 - Math.random());
 switch(type) {
@@ -290,7 +354,31 @@ const matchItems = getRandom(category, 4);
 return { type: 'match', prompt: 'Relaciona las parejas', pairs: matchItems.map(i => [i.de, i.es]) };
 case 'speak':
 return { type: 'speak', prompt: 'Di esto en alemán:', text: item.de, meaning: item.es, emoji: item.emoji || '🗣️' };
+case 'translate': {
+const ans = esTokens(item.es);
+const ansLow = ans.map(w => w.toLowerCase());
+let poolWords = [...new Set(
+    Object.entries(VOCAB).filter(([k]) => k.startsWith('phrases'))
+        .flatMap(([, items]) => items.flatMap(i => esTokens(i.es)))
+        .filter(w => w === w.toLowerCase() && !ansLow.includes(w))
+)];
+if (poolWords.length < 3) {
+    poolWords = [...new Set([
+        ...poolWords,
+        ...Object.values(VOCAB).flat().flatMap(i => esTokens(i.es)).filter(w => w === w.toLowerCase() && !ansLow.includes(w))
+    ])];
+}
+const bank = [...ans, ...getRandom(poolWords, 3)].sort(() => 0.5 - Math.random());
+return { type: 'translate', prompt: 'Traduce al español:', text: item.de, gloss: item.gloss, words: bank, correct: ans, answer: item.es };
+}
 case 'wordbank':
+if (categoryKey.startsWith('phrases')) {
+const ws = item.de.split(' ');
+let shuffled = [...ws], tries = 0;
+do { shuffled.sort(() => 0.5 - Math.random()); tries++; }
+while (ws.length > 1 && shuffled.join(' ') === ws.join(' ') && tries < 10);
+return { type: 'wordbank', prompt: 'Ordena la frase en alemán:', text: item.es, emoji: '🧩', words: shuffled, correct: ws, word: item.de };
+}
 const words = getRandom(category, 3);
 return { type: 'wordbank', prompt: 'Ordena las palabras (concepto)', text: words.map(w => w.de).join(' + '), words: words.map(w => w.de).sort(() => 0.5 - Math.random()), correct: words.map(w => w.de) };
 default:
@@ -425,6 +513,10 @@ renderMap();
 const showScreen = (id) => {
 document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
 document.getElementById(id).classList.add('active');
+if (id !== 'screen-songs') {
+const sc = document.getElementById('songs-container');
+if (sc) sc.innerHTML = '';
+}
 };
 
 const openShop = () => { DOM.overlayShop.classList.add('active'); };
@@ -458,7 +550,7 @@ let gpHtml = `
 <div class="gp-bar"><div class="gp-fill" style="width: ${progressPercent}%"></div></div>
 </div>
 `;
-DOM.mapContainer.innerHTML += gpHtml;
+DOM.mapContainer.innerHTML += mineCardHtml() + gpHtml;
 let globalIndex = 0;
 DB.units.forEach((unit) => {
 const unitDiv = document.createElement('div');
@@ -498,8 +590,11 @@ DOM.mapContainer.appendChild(unitDiv);
 
 // --- LESSON LOGIC ---
 const startLesson = (les) => {
-const qTypes = ['choice', 'choice', 'match', 'audio', 'speak'];
 const category = les.category || 'greetings';
+const isPhrases = category.startsWith('phrases');
+const qTypes = isPhrases
+    ? ['choice', 'translate', 'audio', 'wordbank', 'translate', 'speak']
+    : ['choice', 'choice', 'match', 'audio', 'speak'];
 const generatedQuestions = qTypes.map(qType => generateQuestion(qType, category)).filter(q => q);
 currentLessonData = { ...les, questions: generatedQuestions };
 state.currentQ = 0; state.checking = false; state.selected = null; state.answers = [];
@@ -553,6 +648,20 @@ html += `<div class="main-text">${emojiHtml} ${q.text}</div>
 </div>`;
 setTimeout(() => speak(q.text), 300);
 }
+   else if (q.type === 'translate') {
+const chips = q.text.split(' ').map((w, i) =>
+    `<span class="de-word" onclick="showGloss(${i})">${esc(w)}</span>`).join(' ');
+html += `<button class="audio-prompt-btn" onclick="speak('${q.text}')">🔊</button>
+<div class="main-text de-sentence">${chips}</div>
+<div class="gloss-box" id="gloss-box">👆 Toca una palabra para ver su significado</div>
+<div class="sentence-area" id="sentence-area" onclick="clearLastWord()"></div>
+<div class="bank" id="bank-area">`;
+q.words.forEach(w => {
+html += `<div class="token" data-w="${esc(w)}" onclick="addWord(this)">${esc(w)}</div>`;
+});
+html += `</div>`;
+setTimeout(() => speak(q.text), 300);
+}
 else if (q.type === 'wordbank') {
 html += `<div class="main-text">${emojiHtml} ${q.text}</div>
 <div class="sentence-area" id="sentence-area" onclick="clearLastWord()"></div>
@@ -589,7 +698,15 @@ el.classList.add('selected');
 state.selected = val;
 DOM.btnAction.classList.add('active');
 };
-
+const showGloss = (i) => {
+const q = currentLessonData && currentLessonData.questions[state.currentQ];
+if (!q || q.type !== 'translate') return;
+const clean = q.text.split(' ')[i].replace(/[¿?¡!.,;:]/g, '');
+document.querySelectorAll('.de-word').forEach((e, k) => e.classList.toggle('active', k === i));
+const box = document.getElementById('gloss-box');
+if (box) box.innerHTML = `<b>${esc(clean)}</b> → ${esc((q.gloss && q.gloss[i]) || '—')}`;
+speak(clean);
+};
 const addWord = (el) => {
 if (state.checking || el.classList.contains('placed')) return;
 el.classList.add('placed');
@@ -624,6 +741,7 @@ s.innerText = w;
 s.onclick = (e) => { e.stopPropagation(); removeSpecificWord(i); };
 area.appendChild(s);
 });
+   state.selected = state.answers.length > 0 ? state.answers.join(' ') : null;
 if (state.answers.length > 0) DOM.btnAction.classList.add('active');
 else DOM.btnAction.classList.remove('active');
 };
@@ -766,7 +884,7 @@ state.checking = true;
 let isCorrect = false;
 if (q.type === 'choice' || q.type === 'audio') isCorrect = state.selected === q.correct;
 else if (q.type === 'match') isCorrect = matchState.solved.length === q.pairs.length;
-else if (q.type === 'wordbank') isCorrect = JSON.stringify(state.answers) === JSON.stringify(q.correct);
+else if (q.type === 'wordbank' || q.type === 'translate') isCorrect = JSON.stringify(state.answers) === JSON.stringify(q.correct);
 else if (q.type === 'speak') {
 const said = (state.selected || "").toLowerCase();
 const target = q.text.toLowerCase();
@@ -784,6 +902,12 @@ feedbackSub = `${q.text} = ${q.meaning}`;
 } else if (q.type === 'audio') {
 // Mostramos Alemán y Español
 feedbackSub = `${q.audioText} = ${q.correct}`;
+} else if (q.type === 'wordbank' && q.word) {
+feedbackSub = q.word;
+setTimeout(() => speak(q.word), 200);
+} else if (q.type === 'translate') {
+feedbackSub = `${q.text} = ${q.answer}`;
+setTimeout(() => speak(q.text), 200);
 }
 sub.innerText = feedbackSub;
 DOM.feedbackMsg.className = "feedback-msg show correct";
@@ -794,6 +918,7 @@ playSound('wrong');
 txt.innerText = "Incorrecto";
 let cText = q.correct || q.text;
 if (q.type === 'wordbank') cText = q.correct.join(" ");
+   if (q.type === 'translate') cText = q.answer;
 if (q.type === 'audio') cText = q.correct;
 sub.innerText = `Correcto: ${cText}`;
 DOM.feedbackMsg.className = "feedback-msg show wrong";
@@ -826,7 +951,8 @@ else { renderProgress(); renderQ(); }
 
 const finishLesson = () => {
 playSound('win');
-if (!state.completed.includes(currentLessonData.id)) {
+const isMine = currentLessonData.category === 'phrases_mine';
+if (!isMine && !state.completed.includes(currentLessonData.id)) {
 state.completed.push(currentLessonData.id);
 state.gems += 20;
 state.streak++;
@@ -860,9 +986,314 @@ document.body.appendChild(c);
 setTimeout(()=>c.remove(), 3000);
 }
 
+// --- CANCIONES ---
+const SONGS = [
+    {
+        title: 'Alle meine Entchen',
+        artist: 'Canción popular infantil (dominio público)',
+        youtube: '',
+        lines: [
+            ['Alle meine Entchen', 'Todos mis patitos'],
+            ['Schwimmen auf dem See,', 'nadan en el lago,'],
+            ['Schwimmen auf dem See,', 'nadan en el lago,'],
+            ['Köpfchen in das Wasser,', 'cabecita en el agua,'],
+            ['Schwänzchen in die Höh.', 'colita hacia arriba.'],
+            null,
+            ['Alle meine Täubchen', 'Todas mis palomitas'],
+            ['Gurren auf dem Dach,', 'arrullan en el tejado,'],
+            ['Gurren auf dem Dach,', 'arrullan en el tejado,'],
+            ['Fliegt eins in die Lüfte,', 'si una vuela por el aire,'],
+            ['Fliegen alle nach.', 'todas la siguen.']
+        ]
+    },
+    {
+        title: 'Hänschen klein',
+        artist: 'Canción popular infantil (dominio público)',
+        youtube: '',
+        lines: [
+            ['Hänschen klein', 'Hänschen pequeño'],
+            ['Ging allein', 'se fue solo'],
+            ['In die weite Welt hinein.', 'al ancho mundo.'],
+            ['Stock und Hut', 'Bastón y sombrero'],
+            ['Steht ihm gut,', 'le sientan bien,'],
+            ['Ist gar wohlgemut.', 'va de muy buen ánimo.'],
+            null,
+            ['Aber Mama weint so sehr,', 'Pero mamá llora tanto,'],
+            ['Hat ja nun kein Hänschen mehr!', '¡ya no tiene a su Hänschen!'],
+            ['Da besinnt sich das Kind,', 'Entonces el niño recapacita,'],
+            ['Kehrt nach Haus geschwind.', 'y vuelve a casa enseguida.']
+        ]
+    },
+    {
+        title: 'Eins Zwei Polizei',
+        artist: 'Mo-Do',
+        youtube: 'https://www.youtube.com/watch?v=dSy2DcATYUo',
+        lines: [
+            ['Eins, zwei, Polizei', 'Uno, dos, policía'],
+            ['Drei, vier, Grenadier', 'tres, cuatro, granadero'],
+            ['Fünf, sechs, alte Hex\'', 'cinco, seis, vieja bruja'],
+            ['Sieben, acht – gute Nacht!', 'siete, ocho, ¡buenas noches!']
+        ]
+    }
+];
+
+let songTrans = true;
+const esc = (t) => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+const ytId = (v) => {
+    const m = String(v || '').match(/(?:v=|youtu\.be\/|embed\/|shorts\/)([\w-]{11})/);
+    return m ? m[1] : String(v || '').trim().replace(/[^\w-]/g, '');
+};
+
+const openSongs = () => {
+    if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+    showScreen('screen-songs');
+    renderSongList();
+};
+
+const renderSongList = () => {
+    const c = document.getElementById('songs-container');
+    if (!c) return;
+    let html = `<div class="songs-head"><button class="back-btn" onclick="showScreen('screen-map')">←</button><h2>🎵 Canciones</h2></div>`;
+    if (SONGS.length === 0) html += `<div class="song-empty">Aún no hay canciones. Añádelas en la lista SONGS del código.</div>`;
+    SONGS.forEach((s, i) => {
+        html += `<div class="song-card" onclick="openSong(${i})"><span class="ico">🎵</span>
+            <div><div class="t">${esc(s.title)}</div><div class="a">${esc(s.artist || '')}</div></div></div>`;
+    });
+    c.innerHTML = html;
+};
+
+const lyricsHtml = (si) => !(SONGS[si].lines && SONGS[si].lines.length)
+  ? '<div class="song-empty">📝 Todavía no hay letra: añádela en el campo <b>lines</b> de esta canción.</div>'
+  : SONGS[si].lines.map((l, li) => {
+    if (!l) return '<div class="lyric-gap"></div>';
+    const es = (songTrans && l[1]) ? `<div class="es">${esc(l[1])}</div>` : '';
+    return `<div class="lyric-line" onclick="speakLyric(this, ${si}, ${li})"><div class="de">${esc(l[0])}</div>${es}</div>`;
+}).join('');
+
+const openSong = (i) => {
+    const s = SONGS[i];
+    const c = document.getElementById('songs-container');
+    if (!s || !c) return;
+    const id = ytId(s.youtube);
+    let html = `<div class="songs-head"><button class="back-btn" onclick="renderSongList()">←</button><h2>${esc(s.title)}</h2></div>`;
+    if (s.artist) html += `<div class="song-artist">${esc(s.artist)}</div>`;
+    if (id) {
+        html += `<div class="video-wrap"><iframe src="https://www.youtube-nocookie.com/embed/${id}?rel=0&playsinline=1"
+            title="${esc(s.title)}" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen></iframe></div>`;
+    } else {
+        html += `<div class="song-empty">🎬 Falta el vídeo: añade el ID o la URL de YouTube en el campo <b>youtube</b> de esta canción.</div>`;
+    }
+    html += `<div class="song-tools">`;
+    if (id) html += `<a class="tool-btn" href="https://www.youtube.com/watch?v=${id}" target="_blank" rel="noopener">▶ Abrir en YouTube</a>`;
+    html += `<button class="tool-btn" id="trans-btn" onclick="toggleTrans(${i})">${songTrans ? '👁️ Ocultar traducción' : '👁️ Mostrar traducción'}</button></div>
+        <div class="song-hint">Toca una línea para escuchar cómo se pronuncia.</div>
+        <div class="lyrics" id="lyrics">${lyricsHtml(i)}</div>`;
+    c.innerHTML = html;
+    window.scrollTo(0, 0);
+};
+
+const toggleTrans = (i) => {
+    songTrans = !songTrans;
+    const l = document.getElementById('lyrics');
+    if (l) l.innerHTML = lyricsHtml(i);
+    const b = document.getElementById('trans-btn');
+    if (b) b.innerText = songTrans ? '👁️ Ocultar traducción' : '👁️ Mostrar traducción';
+};
+
+const speakLyric = (el, si, li) => {
+    document.querySelectorAll('.lyric-line.playing').forEach(e => e.classList.remove('playing'));
+    el.classList.add('playing');
+    speak(SONGS[si].lines[li][0]);
+};
+
+// --- TRADUCTOR (ES → DE) Y "MIS FRASES" ---
+const MAX_PHRASE_LEN = 120;
+const MAX_MY_PHRASES = 200;
+const MYMEMORY_EMAIL = '';
+let myPhrases = [];
+let trAlts = [];
+
+const cleanPhrase = (t) => String(t || '')
+    .replace(/['‘`´]/g, '’')
+    .replace(/[<>&"\\$\r\n\t]/g, ' ')
+    .replace(/\s+/g, ' ').trim().slice(0, MAX_PHRASE_LEN);
+const decodeEntities = (t) => {
+    try { const x = document.createElement('textarea'); x.innerHTML = t; return x.value || t; } catch (e) { return t; }
+};
+
+const syncMyPhrases = () => {
+    VOCAB.phrases_mine = myPhrases.map(p => ({ de: p.de, es: p.es, gloss: p.gloss, emoji: '💬' }));
+};
+const loadMyPhrases = () => {
+    try {
+        const a = JSON.parse(localStorage.getItem('germango_myphrases'));
+        if (Array.isArray(a)) {
+            myPhrases = a.map(p => ({
+                de: cleanPhrase(p && p.de), es: cleanPhrase(p && p.es),
+                gloss: (p && Array.isArray(p.gloss)) ? p.gloss.map(cleanPhrase) : undefined
+            })).filter(p => p.de && p.es).slice(0, MAX_MY_PHRASES);
+        }
+    } catch (e) {}
+    syncMyPhrases();
+    updateUI();
+};
+const saveMyPhrases = () => {
+    try { localStorage.setItem('germango_myphrases', JSON.stringify(myPhrases)); } catch (e) {}
+    syncMyPhrases();
+};
+
+const mineCardHtml = () => {
+    const n = myPhrases.length;
+    return `<div class="mine-card"><div class="mine-head"><span>⭐ Mis frases</span><span>${n}</span></div>
+        <div class="mine-sub">${n >= 3 ? 'Practica las frases que has guardado.' : 'Traduce y guarda frases (mínimo 3) para practicarlas.'}</div>
+        <div class="acct-actions"><button class="tool-btn" onclick="startMine()">▶ Practicar</button>
+        <button class="tool-btn" onclick="openTranslator()">🌐 Traductor</button></div></div>`;
+};
+const startMine = () => {
+    if (myPhrases.length < 3) {
+        openTranslator();
+        const m = document.getElementById('tr-msg');
+        if (m) m.innerText = 'Añade al menos 3 frases para poder practicarlas.';
+        return;
+    }
+    startLesson({ id: 'mine', category: 'phrases_mine', icon: '⭐' });
+};
+
+const openTranslator = () => {
+    const c = document.getElementById('translator-container');
+    if (!c) return;
+    showScreen('screen-translator');
+    c.innerHTML = `
+        <div class="songs-head"><button class="back-btn" onclick="showScreen('screen-map')">←</button><h2>🌐 Traductor</h2></div>
+        <div class="tr-label">Español</div>
+        <textarea id="tr-es" class="text-input-fallback tr-area" rows="2" maxlength="${MAX_PHRASE_LEN}" placeholder="Escribe una frase en español..."></textarea>
+        <button class="btn-main active" id="tr-btn" style="margin-top:10px" onclick="doTranslate()">TRADUCIR AL ALEMÁN</button>
+        <div class="tr-alts" id="tr-alts"></div>
+        <div class="tr-label">Alemán <button class="tool-btn" onclick="speakTr()">🔊 Escuchar</button></div>
+        <input type="text" id="tr-de" class="text-input-fallback tr-input" maxlength="${MAX_PHRASE_LEN}" oninput="updateGlossHint()" placeholder="La traducción aparecerá aquí (puedes corregirla)" autocomplete="off" autocapitalize="off">
+        <details class="tr-gloss"><summary>Opcional: significado palabra por palabra</summary>
+            <input type="text" id="tr-gloss" class="text-input-fallback tr-input" placeholder="yo, me llamo, Anna" autocomplete="off">
+            <div class="song-hint" id="tr-gloss-hint" style="margin-top:6px">Sirve para usar la frase en el ejercicio de traducir oraciones.</div>
+        </details>
+        <div class="auth-msg" id="tr-msg"></div>
+        <button class="btn-main continue" onclick="addMyPhrase()">➕ AÑADIR A MIS FRASES</button>
+        <div class="song-hint" style="margin-top:10px">⚠️ Las traducciones automáticas pueden tener errores: revisa la frase antes de añadirla. El texto se envía a un servicio externo (MyMemory) para traducirlo. También puedes escribir tú mismo la frase en alemán.</div>
+        <h3 class="tr-h">Mis frases (<span id="tr-count">0</span>)</h3>
+        <div id="tr-list"></div>`;
+    renderMyList();
+};
+
+const speakTr = () => { const d = document.getElementById('tr-de'); if (d && d.value.trim()) speak(cleanPhrase(d.value)); };
+
+const updateGlossHint = () => {
+    const d = document.getElementById('tr-de'), h = document.getElementById('tr-gloss-hint');
+    if (!d || !h) return;
+    const n = cleanPhrase(d.value).split(' ').filter(Boolean).length;
+    h.innerText = n
+        ? `La frase alemana tiene ${n} palabra${n === 1 ? '' : 's'}: escribe ${n} significado${n === 1 ? '' : 's'} separados por comas (opcional).`
+        : 'Sirve para usar la frase en el ejercicio de traducir oraciones.';
+};
+
+const doTranslate = async () => {
+    const esEl = document.getElementById('tr-es'), msg = document.getElementById('tr-msg');
+    const btn = document.getElementById('tr-btn'), alts = document.getElementById('tr-alts');
+    const es = cleanPhrase(esEl && esEl.value);
+    if (!es) { msg.innerText = 'Escribe primero una frase en español.'; return; }
+    msg.innerText = ''; alts.innerHTML = ''; trAlts = [];
+    btn.innerText = 'Traduciendo...';
+    try {
+        const ctrl = new AbortController();
+        const timer = setTimeout(() => ctrl.abort(), 10000);
+        let url = 'https://api.mymemory.translated.net/get?q=' + encodeURIComponent(es) + '&langpair=es%7Cde';
+        if (MYMEMORY_EMAIL) url += '&de=' + encodeURIComponent(MYMEMORY_EMAIL);
+        const res = await fetch(url, { signal: ctrl.signal });
+        clearTimeout(timer);
+        const data = await res.json();
+        const main = decodeEntities(String((data.responseData && data.responseData.translatedText) || ''));
+        const status = Number(data.responseStatus);
+        if (/MYMEMORY WARNING/i.test(main) || status === 429) {
+            msg.innerText = 'Has llegado al límite diario del traductor. Inténtalo mañana o escribe tú la frase en alemán.';
+            return;
+        }
+        if (status !== 200 || !main) { msg.innerText = 'No se pudo traducir. Inténtalo de nuevo.'; return; }
+        const best = cleanPhrase(main);
+        document.getElementById('tr-de').value = best;
+        updateGlossHint();
+        const seen = new Set([best.toLowerCase()]);
+        (data.matches || []).slice().sort((a, b) => (Number(b.match) || 0) - (Number(a.match) || 0)).forEach(m => {
+            const t = cleanPhrase(decodeEntities(String(m.translation || '')));
+            if (t && !seen.has(t.toLowerCase()) && !/MYMEMORY WARNING/i.test(t) && trAlts.length < 3) { seen.add(t.toLowerCase()); trAlts.push(t); }
+        });
+        if (trAlts.length) {
+            alts.innerHTML = '<div class="song-hint" style="width:100%">Otras opciones:</div>' +
+                trAlts.map((t, i) => `<button class="tool-btn" onclick="useAlt(${i})">${esc(t)}</button>`).join('');
+        }
+        speak(best);
+    } catch (e) {
+        msg.innerText = 'No se pudo conectar con el traductor. Revisa tu conexión.';
+    } finally {
+        btn.innerText = 'TRADUCIR AL ALEMÁN';
+    }
+};
+const useAlt = (i) => {
+    const d = document.getElementById('tr-de');
+    if (d && trAlts[i]) { d.value = trAlts[i]; updateGlossHint(); }
+};
+
+const addMyPhrase = () => {
+    const msg = document.getElementById('tr-msg');
+    const es = cleanPhrase(document.getElementById('tr-es').value);
+    const de = cleanPhrase(document.getElementById('tr-de').value);
+    if (!es || !de) { msg.innerText = 'Escribe la frase en español y en alemán.'; return; }
+    if (myPhrases.length >= MAX_MY_PHRASES) { msg.innerText = `Has llegado al máximo de ${MAX_MY_PHRASES} frases.`; return; }
+    if (myPhrases.some(p => p.de.toLowerCase() === de.toLowerCase())) { msg.innerText = 'Esa frase ya está en tu lista.'; return; }
+    let gloss;
+    const raw = (document.getElementById('tr-gloss').value || '').trim();
+    if (raw) {
+        const n = de.split(' ').length;
+        const g = raw.split(',').map(cleanPhrase);
+        if (g.length !== n || g.some(x => !x)) {
+            msg.innerText = `La frase alemana tiene ${n} palabra${n === 1 ? '' : 's'}: escribe ${n} significado${n === 1 ? '' : 's'} separados por comas, o deja el campo vacío.`;
+            return;
+        }
+        gloss = g;
+    }
+    myPhrases.push({ de, es, gloss });
+    saveMyPhrases();
+    document.getElementById('tr-es').value = '';
+    document.getElementById('tr-de').value = '';
+    document.getElementById('tr-gloss').value = '';
+    document.getElementById('tr-alts').innerHTML = '';
+    updateGlossHint();
+    renderMyList();
+    updateUI();
+    msg.innerText = myPhrases.length >= 3 ? '✅ Añadida. Ya puedes practicar en ⭐ Mis frases.' : `✅ Añadida. Faltan ${3 - myPhrases.length} para poder practicar.`;
+};
+const removeMyPhrase = (i) => {
+    if (!myPhrases[i]) return;
+    if (typeof confirm === 'function' && !confirm('¿Borrar esta frase?')) return;
+    myPhrases.splice(i, 1);
+    saveMyPhrases();
+    renderMyList();
+    updateUI();
+};
+const renderMyList = () => {
+    const l = document.getElementById('tr-list'), c = document.getElementById('tr-count');
+    if (c) c.innerText = myPhrases.length;
+    if (!l) return;
+    l.innerHTML = myPhrases.length ? myPhrases.map((p, i) => `
+        <div class="my-item"><div><div class="de">${esc(p.de)}${p.gloss ? ' 🔤' : ''}</div><div class="es">${esc(p.es)}</div></div>
+        <div class="my-act"><button class="tool-btn" onclick="speak(myPhrases[${i}].de)">🔊</button>
+        <button class="tool-btn" onclick="removeMyPhrase(${i})">🗑️</button></div></div>`).join('')
+        : '<div class="song-empty">Aún no has guardado ninguna frase.</div>';
+};
+
 // INIT
 loadLocal();
 fetchCourseData();
+loadMyPhrases();
 </script>
 <script>
 // ===== EXTRAS: scroll a la lección actual, siguiente lección, tarjetas =====
