@@ -7,13 +7,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Modificar index.html
-        run: python3 aplicar_cambios.py
-      - name: Subir cambios
+            - name: Modificar index.html
         run: |
-          rm -f index.html.bak aplicar_cambios.py
-          git config user.name "github-actions"
-          git config user.email "github-actions@users.noreply.github.com"
-          git add -A
-          git commit -m "Scroll a la lección actual y tarjetas ES-DE"
-          git push
+          set +e
+          python3 aplicar_cambios.py > salida.txt 2>&1
+          code=$?
+          cat salida.txt
+          if [ $code -ne 0 ]; then echo "::error::$(tr '\n' ' ' < salida.txt | cut -c1-900)"; exit 1; fi
+          rm -f salida.txt
