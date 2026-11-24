@@ -115,6 +115,8 @@ main { flex: 1; overflow-y: auto; display: flex; flex-direction: column; align-i
 @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 75, 75, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(255, 75, 75, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 75, 75, 0); } }
 @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
 .shake { animation: shake 0.3s; }
+.mic-feedback { min-height: 24px; color: var(--text-dim); font-size: 0.9rem; text-align: center; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 6px; }
+.mini-spin { display: inline-block; width: 16px; height: 16px; border: 3px solid var(--border-color); border-top-color: var(--secondary-blue); border-radius: 50%; animation: spin 1s linear infinite; flex-shrink: 0; }
 </style>
 </head>
 <body>
@@ -662,24 +664,49 @@ matchState.lock = false;
 };
 
 // Speech & Typing Handlers
+// Aviso visual del estado de la voz (preparando / escuchando / procesando / tarda / error)
+let voiceBusy = false, voiceTimers = [];
+const clearVoiceTimers = () => { voiceTimers.forEach(clearTimeout); voiceTimers = []; };
+function startVoice(rec, o) {
+if (voiceBusy) return;
+voiceBusy = true;
+clearVoiceTimers();
+let finished = false, waitingStarted = false;
+const spin = '<span class="mini-spin"></span>';
+const say = (html) => { if (o.status) o.status.innerHTML = html; };
+const done = () => { finished = true; voiceBusy = false; clearVoiceTimers(); if (o.btn) { o.btn.classList.remove('listening'); o.btn.innerText = o.idleText; } };
+const waiting = () => {
+if (finished || waitingStarted) return;
+waitingStarted = true;
+if (o.btn) o.btn.innerText = '⏳ Procesando...';
+say(spin + 'Procesando tu voz...');
+voiceTimers.push(setTimeout(() => { if (!finished) say(spin + 'Está tardando un poco, ten paciencia 🙏'); }, 4000));
+voiceTimers.push(setTimeout(() => { if (!finished) { try { rec.abort(); } catch (e) {} done(); say('No he podido procesarlo. Inténtalo de nuevo o escribe la palabra.'); } }, 15000));
+};
+rec.onstart = () => { if (o.btn) { o.btn.classList.add('listening'); o.btn.innerText = '🔴 Escuchando... habla ahora'; } say(''); };
+rec.onspeechend = waiting;
+rec.onaudioend = waiting;
+rec.onresult = (e) => { if (finished) return; const text = e.results[0][0].transcript; done(); say(''); o.onText(text); };
+rec.onerror = (e) => {
+if (finished) return;
+done();
+say(e.error === 'not-allowed' ? 'Permite el micrófono para poder usar la voz.' : e.error === 'no-speech' ? 'No te he oído. Inténtalo de nuevo.' : 'Error con la voz. Inténtalo de nuevo o escribe.');
+};
+rec.onend = () => { if (!finished) { done(); say('No he oído nada. Inténtalo de nuevo.'); } };
+if (o.btn) o.btn.innerText = '🎙️ Activando micrófono...';
+say(spin + 'Activando el micrófono...');
+try { rec.start(); } catch (e) { done(); say('No se pudo iniciar el micrófono.'); }
+}
+
 const triggerSpeech = () => {
 if (!recognition) { alert("Navegador no soportado."); switchToTyping(); return; }
 const micBtn = document.getElementById('mic-btn');
 const resultDiv = document.getElementById('mic-result');
-micBtn.classList.add('listening');
-micBtn.innerText = "🔴 Escuchando...";
-resultDiv.innerText = "";
-recognition.onresult = (event) => {
-const res = event.results[0][0].transcript.toLowerCase();
+startVoice(recognition, { btn: micBtn, status: resultDiv, idleText: '🎤 Toca para hablar', onText: (t) => {
+const res = t.toLowerCase();
 resultDiv.innerText = `Dijiste: "${res}"`;
 checkSpeechResult(res);
-};
-recognition.onerror = (event) => {
-resultDiv.innerText = "Error. Intenta escribir.";
-resetMicBtn();
-};
-recognition.onend = () => resetMicBtn();
-try { recognition.start(); } catch(e) { recognition.stop(); recognition.start(); }
+} });
 };
 
 const resetMicBtn = () => {
@@ -943,7 +970,8 @@ input{user-select:text;-webkit-user-select:text}
 <input id="fc-in" class="text-input-fallback" style="margin-bottom:10px" placeholder="En alemán..." autocomplete="off" autocapitalize="off" spellcheck="false">
 <div class="feedback-msg" id="fc-fb"></div>
 <button class="btn-main" id="fc-btn">COMPROBAR</button>
-<button class="fc-mic" id="fc-mic">🎤 Decirlo en voz alta</button>`;
+<button class="fc-mic" id="fc-mic">🎤 Decirlo en voz alta</button>
+<div class="mic-feedback" id="fc-mic-status"></div>`;
     const inp = document.getElementById('fc-in'), btn = document.getElementById('fc-btn'), fb = document.getElementById('fc-fb');
     inp.oninput = () => { if (!checked) btn.classList.toggle('active', !!inp.value.trim()); };
     inp.onkeydown = e => { if (e.key === 'Enter') btn.onclick(); };
@@ -966,8 +994,7 @@ input{user-select:text;-webkit-user-select:text}
       const R = window.webkitSpeechRecognition || window.SpeechRecognition;
       if (!R) { alert('Tu navegador no soporta reconocimiento de voz.'); return; }
       const r = new R(); r.lang = 'de-DE';
-      r.onresult = e => { inp.value = e.results[0][0].transcript; inp.oninput(); };
-      try { r.start(); } catch (e) {}
+      startVoice(r, { btn: document.getElementById('fc-mic'), status: document.getElementById('fc-mic-status'), idleText: '🎤 Decirlo en voz alta', onText: (t) => { inp.value = t; inp.oninput(); } });
     };
     inp.focus();
   }
