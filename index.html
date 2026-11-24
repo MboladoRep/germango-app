@@ -3,27 +3,25 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Germango Pro 10.2 - Ultimate Edition</title>
+<title>Germango Pro 9.3 - Ultimate Edition</title>
 <!-- FAVICON GENERADO POR CÓDIGO (Búho SVG) -->
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦉</text></svg>">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root {
-    --primary-green: #58CC02;
-    --primary-green-dark: #46A302;
-    --secondary-blue: #1CB0F6;
-    --error-red: #FF4B4B;
-    --bg-dark: #131F24;
-    --card-dark: #1A2C32;
-    --border-color: #37464F;
-    --text-main: #FFFFFF;
-    --text-dim: #AFAFAF;
-    --bonus-gold: #FFC800;
+--primary-green: #58CC02;
+--primary-green-dark: #46A302;
+--secondary-blue: #1CB0F6;
+--error-red: #FF4B4B;
+--bg-dark: #131F24;
+--card-dark: #1A2C32;
+--border-color: #37464F;
+--text-main: #FFFFFF;
+--text-dim: #AFAFAF;
+--bonus-gold: #FFC800;
 }
-
 * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; }
 body { background-color: var(--bg-dark); color: var(--text-main); height: 100vh; height: 100dvh; display: flex; flex-direction: column; overflow: hidden; }
-
 /* Header */
 header { display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; border-bottom: 2px solid var(--border-color); background: var(--bg-dark); z-index: 100; flex-shrink: 0; }
 .logo { font-weight: 800; font-size: 1.2rem; color: var(--primary-green); cursor: pointer; display: flex; align-items: center; gap: 5px; }
@@ -31,13 +29,11 @@ header { display: flex; justify-content: space-between; align-items: center; pad
 .stat-box { display: flex; align-items: center; gap: 4px; font-weight: 700; background: var(--card-dark); padding: 4px 10px; border-radius: 8px; cursor: pointer; font-size: 0.9rem; transition: transform 0.1s; }
 .stat-box:active { transform: scale(0.95); }
 .stat-box.buyable { border: 1px solid var(--bonus-gold); }
-
 /* Main Layout */
 main { flex: 1; overflow-y: auto; display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 700px; margin: 0 auto; padding: 20px; }
 .screen { display: none; width: 100%; height: 100%; flex-direction: column; animation: fadeIn 0.3s; }
 .screen.active { display: flex; }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
 /* Map Screen */
 .map-wrapper { position: relative; width: 100%; padding: 20px 0 50px; display: flex; flex-direction: column; align-items: center; }
 .unit-container { display: flex; flex-direction: column; align-items: center; width: 100%; margin-bottom: 30px; }
@@ -56,26 +52,21 @@ main { flex: 1; overflow-y: auto; display: flex; flex-direction: column; align-i
 .lesson-node .icon { font-size: 1.5rem; }
 .lesson-node .lvl { font-size: 0.6rem; opacity: 0.7; }
 @keyframes bounce { 0%, 20%, 50%, 80%, 100% {transform: translateY(0);} 40% {transform: translateY(-8px);} 60% {transform: translateY(-4px);} }
-
 /* Global Progress */
 .global-progress-container { width: 100%; margin-bottom: 30px; background: var(--card-dark); padding: 12px; border-radius: 12px; border: 1px solid var(--border-color); }
 .gp-header { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 0.8rem; color: var(--text-dim); }
 .gp-bar { width: 100%; height: 6px; background: var(--border-color); border-radius: 3px; overflow: hidden; }
 .gp-fill { height: 100%; background: linear-gradient(90deg, var(--primary-green), var(--bonus-gold)); width: 0%; transition: width 0.5s; }
-
 /* Lesson Screen */
 .progress-bar { width: 100%; height: 8px; background: var(--border-color); border-radius: 4px; margin-bottom: 20px; display: flex; gap: 2px; overflow: hidden; }
 .progress-segment { flex: 1; background: transparent; transition: background 0.3s; border-radius: 4px; }
 .progress-segment.done { background: var(--primary-green); }
 .progress-segment.current { background: var(--text-dim); animation: pulse-segment 1s infinite; }
 @keyframes pulse-segment { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
-
 .lesson-content { flex: 1; display: flex; flex-direction: column; width: 100%; justify-content: center; overflow-y: auto; padding-bottom: 10px; }
 .prompt-text { text-align: center; font-size: 1rem; color: var(--text-dim); margin-bottom: 10px; }
 .main-text { text-align: center; font-size: 1.6rem; font-weight: 700; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 10px; }
 .main-text .emoji { font-size: 2rem; }
-@media (max-width: 420px) { .main-text { font-size: 1.3rem; } }
-
 /* Inputs */
 .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .opt-btn { background: var(--card-dark); border: 2px solid var(--border-color); color: var(--text-main); padding: 12px; border-radius: 12px; font-size: 0.95rem; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; position: relative; overflow: hidden; }
@@ -83,24 +74,18 @@ main { flex: 1; overflow-y: auto; display: flex; flex-direction: column; align-i
 .opt-btn.selected { border-color: var(--secondary-blue); background: rgba(28, 176, 246, 0.2); color: var(--secondary-blue); }
 .opt-btn.correct { border-color: var(--primary-green); background: rgba(88, 204, 2, 0.2); color: var(--primary-green); }
 .opt-btn.wrong { border-color: var(--error-red); background: rgba(255, 75, 75, 0.2); color: var(--error-red); }
-
 .sentence-area { min-height: 60px; border: 2px dashed var(--border-color); border-radius: 12px; padding: 10px; display: flex; flex-wrap: wrap; gap: 6px; align-content: center; justify-content: center; margin-bottom: 15px; }
 .token { background: #fff; color: #333; padding: 6px 12px; border-radius: 6px; font-weight: 700; font-size: 0.9rem; cursor: pointer; box-shadow: 0 2px 0 #aaa; transition: transform 0.1s; }
 .token:active { transform: translateY(2px); box-shadow: 0 0 0 #aaa; }
 .token.placed { opacity: 0.3; pointer-events: none; }
 .token.in-sentence { background: #f0f0f0; }
 .bank { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 15px; }
-
 .match-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
 .match-card { background: var(--card-dark); border: 2px solid var(--border-color); padding: 15px; border-radius: 12px; text-align: center; cursor: pointer; font-weight: 600; min-height: 70px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; font-size: 0.95rem; }
 .match-card.selected { border-color: var(--secondary-blue); background: rgba(28, 176, 246, 0.2); transform: scale(1.02); }
 .match-card.matched { border-color: var(--primary-green); background: rgba(88, 204, 2, 0.2); color: var(--primary-green); pointer-events: none; opacity: 0.6; transform: scale(0.95); }
-
 .audio-prompt-btn { background: var(--secondary-blue); border: none; border-radius: 50%; width: 70px; height: 70px; font-size: 2rem; cursor: pointer; margin: 0 auto 20px; display: block; color: white; box-shadow: 0 4px 0 #1899D6; transition: transform 0.1s; }
 .audio-prompt-btn:active { transform: translateY(4px); box-shadow: 0 0 0 #1899D6; }
-.speak-word-btn { background: var(--secondary-blue); border: none; border-bottom: 3px solid #1899D6; border-radius: 50%; width: 44px; height: 44px; font-size: 1.2rem; cursor: pointer; color: white; flex-shrink: 0; }
-.speak-word-btn:active { transform: translateY(3px); border-bottom-width: 0; }
-
 /* Speak UI specific styles */
 .speak-container { display: flex; flex-direction: column; align-items: center; width: 100%; gap: 10px; }
 .speak-btn { width: 100%; background: var(--secondary-blue); color: white; border: none; border-bottom: 4px solid #1899D6; padding: 15px; font-size: 1rem; font-weight: 700; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
@@ -108,85 +93,17 @@ main { flex: 1; overflow-y: auto; display: flex; flex-direction: column; align-i
 .listen-again-btn { background: transparent; border: 2px solid var(--border-color); color: var(--text-main); padding: 8px 16px; border-radius: 8px; font-size: 0.9rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s; }
 .listen-again-btn:active { background: rgba(255,255,255,0.1); }
 .write-mode-btn { background: transparent; border: none; color: var(--text-dim); text-decoration: underline; font-size: 0.8rem; cursor: pointer; margin-top: 5px; }
-.text-input-fallback { width: 100%; background: var(--card-dark); border: 2px solid var(--border-color); border-radius: 12px; padding: 12px; color: var(--text-main); font-size: 1rem; text-align: center; outline: none; user-select: text; -webkit-user-select: text; }
-.mic-feedback { min-height: 22px; font-size: 0.9rem; color: var(--text-dim); text-align: center; }
-
-/* Canciones */
-.songs-head { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
-.songs-head h2 { font-size: 1.3rem; }
-.back-btn { background: var(--card-dark); border: 2px solid var(--border-color); color: var(--text-main); border-radius: 10px; padding: 6px 14px; font-size: 1rem; cursor: pointer; }
-.back-btn:active { transform: scale(0.95); }
-.song-card { background: var(--card-dark); border: 2px solid var(--border-color); border-radius: 14px; padding: 14px 16px; margin-bottom: 10px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: transform 0.1s; }
-.song-card:active { transform: scale(0.98); }
-.song-card .ico { font-size: 1.8rem; }
-.song-card .t { font-weight: 700; }
-.song-card .a { font-size: 0.8rem; color: var(--text-dim); margin-top: 2px; }
-.song-artist { color: var(--text-dim); font-size: 0.9rem; margin: -8px 0 12px; }
-.song-empty { background: var(--card-dark); border: 2px dashed var(--border-color); border-radius: 12px; padding: 16px; color: var(--text-dim); font-size: 0.9rem; text-align: center; margin-bottom: 12px; }
-.video-wrap { position: relative; width: 100%; padding-top: 56.25%; border-radius: 12px; overflow: hidden; background: #000; margin-bottom: 10px; }
-.video-wrap iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
-.song-tools { display: flex; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
-.tool-btn { background: var(--card-dark); border: 2px solid var(--border-color); color: var(--text-main); border-radius: 10px; padding: 8px 12px; font-size: 0.85rem; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
-.tool-btn:active { transform: scale(0.97); }
-.song-hint { color: var(--text-dim); font-size: 0.8rem; margin-bottom: 10px; }
-.lyrics { padding-bottom: 30px; }
-.lyric-line { padding: 8px 10px; border-radius: 10px; cursor: pointer; transition: background 0.2s; }
-.lyric-line:active { background: rgba(255,255,255,0.06); }
-.lyric-line.playing { background: rgba(28, 176, 246, 0.15); }
-.lyric-line .de { font-weight: 700; font-size: 1.05rem; }
-.lyric-line .es { color: var(--text-dim); font-size: 0.9rem; margin-top: 2px; }
-.lyric-gap { height: 14px; }
-.de-sentence { flex-wrap: wrap; gap: 6px 10px; font-size: 1.4rem; }
-.de-word { border-bottom: 2px dotted var(--secondary-blue); cursor: pointer; padding: 0 2px; }
-.de-word.active { color: var(--secondary-blue); }
-.gloss-box { text-align: center; min-height: 40px; background: var(--card-dark); border-radius: 10px; padding: 10px; margin-bottom: 12px; font-size: 0.95rem; color: var(--text-dim); }
-.gloss-box b { color: var(--text-main); }
-.mine-card { width: 100%; background: var(--card-dark); border: 1px solid var(--bonus-gold); border-radius: 12px; padding: 12px; margin-bottom: 12px; }
-.mine-head { display: flex; justify-content: space-between; font-weight: 800; color: var(--bonus-gold); }
-.mine-sub { font-size: 0.8rem; color: var(--text-dim); margin: 4px 0 10px; }
-.tr-wrap { width: 100%; padding-bottom: 30px; }
-.tr-label { font-size: 0.85rem; color: var(--text-dim); margin: 12px 0 6px; display: flex; align-items: center; gap: 8px; }
-.tr-area { text-align: left; resize: none; font-family: inherit; }
-.tr-input { text-align: left; }
-.tr-alts { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
-.tr-gloss { margin: 10px 0; color: var(--text-dim); font-size: 0.85rem; }
-.tr-gloss summary { cursor: pointer; margin-bottom: 8px; }
-.tr-h { margin: 22px 0 10px; font-size: 1.1rem; }
-.my-item { display: flex; justify-content: space-between; align-items: center; gap: 10px; background: var(--card-dark); border: 1px solid var(--border-color); border-radius: 12px; padding: 10px 12px; margin-bottom: 8px; }
-.my-item .de { font-weight: 700; }
-.my-item .es { color: var(--text-dim); font-size: 0.85rem; margin-top: 2px; }
-.my-act { display: flex; gap: 6px; flex-shrink: 0; }
-a.btn-main { display: block; text-align: center; text-decoration: none; }
-.lesson-time { text-align: right; font-size: 0.8rem; color: var(--text-dim); margin-bottom: 6px; min-height: 14px; }
-.acct-bar { width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 10px; background: var(--card-dark); border: 1px solid var(--border-color); border-radius: 12px; padding: 10px 12px; margin-bottom: 12px; flex-wrap: wrap; }
-.acct-name { font-weight: 700; font-size: 0.9rem; word-break: break-all; }
-.acct-sub { font-size: 0.78rem; color: var(--text-dim); margin-top: 2px; }
-.acct-actions { display: flex; gap: 6px; flex-wrap: wrap; }
-.auth-form { width: 100%; max-width: 340px; display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
-.auth-msg { min-height: 20px; font-size: 0.85rem; color: var(--bonus-gold); text-align: center; }
-.pw-actions { width: 100%; max-width: 340px; display: flex; flex-direction: column; gap: 10px; }
-.pw-note { font-size: 0.78rem; color: var(--text-dim); }
-.donate-box { text-align: center; margin-top: 18px; color: var(--text-dim); font-size: 0.85rem; }
-.donate-btn { display: inline-block; margin-top: 8px; padding: 10px 18px; border: 2px solid var(--bonus-gold); border-radius: 12px; color: var(--bonus-gold); font-weight: 700; text-decoration: none; font-size: 0.95rem; }
-.donate-btn:active { transform: scale(0.97); }
-@media (max-width: 420px) {
-    .logo { font-size: 1rem; }
-    .stats { gap: 6px; }
-    .stat-box { padding: 4px 7px; font-size: 0.85rem; }
-}
-
+.text-input-fallback { width: 100%; background: var(--card-dark); border: 2px solid var(--border-color); border-radius: 12px; padding: 12px; color: var(--text-main); font-size: 1rem; text-align: center; outline: none; }
 /* Footer & Feedback */
 .footer-bar { margin-top: auto; width: 100%; padding-top: 15px; flex-shrink: 0; }
 .feedback-msg { min-height: 50px; border-radius: 10px; display: none; align-items: center; justify-content: center; font-weight: 700; margin-bottom: 10px; padding: 10px; flex-direction: column; font-size: 0.95rem; }
 .feedback-msg.show { display: flex; }
 .feedback-msg.correct { background: rgba(88, 204, 2, 0.2); color: var(--primary-green); border: 2px solid var(--primary-green); }
 .feedback-msg.wrong { background: rgba(255, 75, 75, 0.2); color: var(--error-red); border: 2px solid var(--error-red); }
-
 .btn-main { width: 100%; padding: 14px; border: none; border-bottom: 4px solid #2A3E45; border-radius: 12px; font-size: 0.9rem; font-weight: 700; text-transform: uppercase; cursor: pointer; background: #3D545C; color: #AFAFAF; pointer-events: none; transition: all 0.1s; }
 .btn-main.active { background: var(--primary-green); border-bottom-color: var(--primary-green-dark); color: white; pointer-events: all; }
 .btn-main.retry { background: var(--error-red); border-bottom-color: #D43939; color: white; pointer-events: all; }
 .btn-main.continue { background: var(--secondary-blue); border-bottom-color: #1899D6; color: white; pointer-events: all; }
-
 /* Overlays */
 .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.97); display: none; justify-content: center; align-items: center; z-index: 2000; flex-direction: column; text-align: center; padding: 20px; }
 .overlay.active { display: flex; }
@@ -201,374 +118,199 @@ a.btn-main { display: block; text-align: center; text-decoration: none; }
 </style>
 </head>
 <body>
-
 <header>
-    <div class="logo" onclick="showScreen('screen-map')"><span>🦉</span> GERMANGO</div>
-    <div class="stats">
-        <div class="stat-box buyable" onclick="openShop()"><span>❤️</span><span id="s-hearts">5</span><span id="s-heart-timer" style="font-size:0.7rem; color:var(--text-dim); font-weight:600;"></span></div>
-        <div class="stat-box"><span>💎</span><span id="s-gems">500</span></div>
-        <div class="stat-box"><span>🔥</span><span id="s-streak">0</span></div>
-        <div class="stat-box" onclick="openSongs()" title="Canciones"><span>🎵</span></div>
-    </div>
+<div class="logo" onclick="showScreen('screen-map')"><span>🦉</span> GERMANGO</div>
+<div class="stats">
+<div class="stat-box buyable" onclick="openShop()"><span>❤️</span><span id="s-hearts">5</span></div>
+<div class="stat-box"><span>💎</span><span id="s-gems">500</span></div>
+<div class="stat-box"><span>🔥</span><span id="s-streak">0</span></div>
+</div>
 </header>
-
 <main id="app">
-    <div id="screen-map" class="screen active"><div class="map-wrapper" id="map-container"><div class="loader"></div></div></div>
-
-    <div id="screen-songs" class="screen"><div id="songs-container"></div></div>
-
-    <div id="screen-translator" class="screen"><div id="translator-container" class="tr-wrap"></div></div>
-
-    <div id="screen-lesson" class="screen">
-        <div class="lesson-time" id="lesson-time"></div>
-        <div class="progress-bar" id="progress-bar"></div>
-        <div class="lesson-content" id="lesson-content"></div>
-        <div class="footer-bar">
-            <div class="feedback-msg" id="feedback-msg"><span id="msg-text"></span><span id="msg-sub" style="font-size:0.8rem; margin-top:4px; opacity:0.8"></span></div>
-            <button class="btn-main" id="btn-action" onclick="handleAction()">COMPROBAR</button>
-        </div>
-    </div>
-
-    <div id="screen-result" class="screen" style="justify-content: center; text-align: center;">
-        <div class="overlay-icon">🎉</div>
-        <h1 style="font-size: 1.8rem; margin-bottom: 10px;">¡Lección completada!</h1>
-        <p id="result-msg" style="color: var(--text-dim); margin-bottom: 20px;">+20 💎</p>
-        <button class="btn-main active" onclick="exitToMap()">CONTINUAR</button>
-        <div id="result-donate"></div>
-    </div>
-
-    <div id="overlay-gameover" class="overlay">
-        <div class="overlay-icon">💔</div>
-        <h2 style="margin-bottom:10px; font-size:1.5rem">Lección fallida</h2>
-        <p style="color: var(--text-dim); margin-bottom: 20px; font-size:0.9rem">Te has quedado sin vidas. Recuperas 1 cada 20 minutos.</p>
-        <button class="btn-main active" onclick="buyLivesRetry()">Comprar Vidas (50💎)</button>
-        <button class="btn-main" style="margin-top:10px; background:#333; border-bottom-color:#222; color:#aaa; pointer-events:all;" onclick="exitToMap()">VOLVER</button>
-    </div>
-
-    <div id="overlay-shop" class="overlay">
-        <h2 style="margin-bottom:10px">Tienda</h2>
-        <div style="background:var(--card-dark); padding:20px; border-radius:15px; margin-top:20px; cursor:pointer;" onclick="shopPurchase('hearts')">
-            <div style="font-size: 2rem;">❤️</div>
-            <div style="font-weight:700; margin-top:10px;">Recargar Vidas</div>
-            <div style="color: var(--bonus-gold); margin-top:5px;">50 💎</div>
-        </div>
-        <p id="shop-note" style="color: var(--text-dim); margin-top: 20px; font-size: 0.9rem;"></p>
-        <button class="btn-main" style="margin-top:30px; background:#333; border-bottom-color:#222; color:#aaa; pointer-events:all;" onclick="closeShop()">Cerrar</button>
-    </div>
-
-    <div id="overlay-paywall" class="overlay">
-        <div class="overlay-icon" id="pw-icon">⏱️</div>
-        <h2 id="pw-title" style="margin-bottom:8px; font-size:1.4rem"></h2>
-        <p id="pw-text" style="color: var(--text-dim); margin-bottom: 18px; max-width: 340px; font-size: 0.9rem;"></p>
-        <div class="pw-actions" id="pw-actions"></div>
-    </div>
-
-    <div id="overlay-auth" class="overlay">
-        <h2 id="auth-title" style="font-size:1.4rem">Crear cuenta</h2>
-        <p id="auth-sub" style="color: var(--text-dim); font-size: 0.85rem; margin-top: 6px; max-width: 340px;"></p>
-        <div class="auth-form">
-            <input type="email" id="auth-email" class="text-input-fallback" placeholder="Email" autocomplete="email" autocapitalize="off">
-            <input type="password" id="auth-pass" class="text-input-fallback" placeholder="Contraseña (mínimo 6 caracteres)" autocomplete="current-password">
-            <div class="auth-msg" id="auth-msg"></div>
-            <button class="btn-main active" id="auth-submit" onclick="submitAuth()">CREAR CUENTA</button>
-            <button class="write-mode-btn" id="auth-toggle" onclick="toggleAuthMode()">¿Ya tienes cuenta? Entrar</button>
-            <button class="write-mode-btn" onclick="closeAuth()">Cancelar</button>
-        </div>
-    </div>
+<div id="screen-map" class="screen active"><div class="map-wrapper" id="map-container"><div class="loader"></div></div></div>
+<div id="screen-lesson" class="screen">
+<div class="progress-bar" id="progress-bar"></div>
+<div class="lesson-content" id="lesson-content"></div>
+<div class="footer-bar">
+<div class="feedback-msg" id="feedback-msg"><span id="msg-text"></span><span id="msg-sub" style="font-size:0.8rem; margin-top:4px; opacity:0.8"></span></div>
+<button class="btn-main" id="btn-action" onclick="handleAction()">COMPROBAR</button>
+</div>
+</div>
+<div id="screen-result" class="screen" style="justify-content: center; text-align: center;">
+<div class="overlay-icon">🎉</div>
+<h1 style="font-size: 1.8rem; margin-bottom: 10px;">¡Lección completada!</h1>
+<p style="color: var(--text-dim); margin-bottom: 20px;">+20 XP 💎</p>
+<button class="btn-main active" onclick="exitToMap()">CONTINUAR</button>
+</div>
+<div id="overlay-gameover" class="overlay">
+<div class="overlay-icon">💔</div>
+<h2 style="margin-bottom:10px; font-size:1.5rem">Lección fallida</h2>
+<p style="color: var(--text-dim); margin-bottom: 20px; font-size:0.9rem">Te has quedado sin vidas.</p>
+<button class="btn-main active" onclick="buyLivesRetry()">Comprar Vidas (50💎)</button>
+<button class="btn-main" style="margin-top:10px; background:#333; border-bottom-color:#222; color:#aaa; pointer-events:all;" onclick="exitToMap()">VOLVER</button>
+</div>
+<div id="overlay-shop" class="overlay">
+<h2 style="margin-bottom:10px">Tienda</h2>
+<div style="background:var(--card-dark); padding:20px; border-radius:15px; margin-top:20px; cursor:pointer;" onclick="shopPurchase('hearts')">
+<div style="font-size: 2rem;">❤️</div>
+<div style="font-weight:700; margin-top:10px;">Recargar Vidas</div>
+<div style="color: var(--bonus-gold); margin-top:5px;">50 💎</div>
+</div>
+<button class="btn-main" style="margin-top:30px; background:#333; border-bottom-color:#222; color:#aaa; pointer-events:all;" onclick="closeShop()">Cerrar</button>
+</div>
 </main>
-
 <script>
 // --- CONFIGURACIÓN SUPABASE (OPCIONAL) ---
-const SUPABASE_URL = 'https://oscgttkcxpdzyfbmhibr.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_bEI-B6Z0EfnACKTP9o2rIw_fIKHIt6V';
+const SUPABASE_URL = 'https://eofolsrnycdiioobpihq.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVvZm9sc3JueWNkaWlvb2JwaWhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzMTE1NDgsImV4cCI6MjA4ODg4NzU0OH0.rIma6h2uA3vmUj-NxtYODKdwS9AZHk646awFiQsCFbA';
 let _supabase;
 if(SUPABASE_URL && SUPABASE_URL !== 'TU_URL') {
-    try { _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY); } catch(e) { console.log("Supabase init failed, using local engine."); }
+try { _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY); } catch(e) { console.log("Supabase init failed, using local engine."); }
 }
 
 // --- MOTOR DE DATOS DINÁMICO (BANCO MASIVO) ---
-const P = (de, es, gloss) => ({ de, es, gloss, emoji: '💬' });   // gloss: significado de cada palabra alemana, en orden
 const VOCAB = {
-    greetings: [
-        { de: 'Hallo', es: 'Hola', emoji: '👋' }, { de: 'Guten Morgen', es: 'Buenos días', emoji: '☀️' },
-        { de: 'Guten Tag', es: 'Buenas tardes', emoji: '🌤️' }, { de: 'Guten Abend', es: 'Buenas noches (saludo)', emoji: '🌙' },
-        { de: 'Tschüss', es: 'Adiós (informal)', emoji: '👋' }, { de: 'Auf Wiedersehen', es: 'Adiós (formal)', emoji: '🎩' },
-        { de: 'Danke', es: 'Gracias', emoji: '🙏' }, { de: 'Bitte', es: 'Por favor', emoji: '🙏' },
-        { de: 'Entschuldigung', es: 'Disculpa', emoji: '🤷' }, { de: 'Wie geht es dir?', es: '¿Cómo estás?', emoji: '🤔' }
-    ],
-    family: [
-        { de: 'der Vater', es: 'El padre', emoji: '👨' }, { de: 'die Mutter', es: 'La madre', emoji: '👩' },
-        { de: 'der Bruder', es: 'El hermano', emoji: '👦' }, { de: 'die Schwester', es: 'La hermana', emoji: '👧' },
-        { de: 'der Sohn', es: 'El hijo', emoji: '👦' }, { de: 'die Tochter', es: 'La hija', emoji: '👧' },
-        { de: 'die Oma', es: 'La abuela', emoji: '👵' }, { de: 'der Opa', es: 'El abuelo', emoji: '👴' },
-        { de: 'die Familie', es: 'La familia', emoji: '👨‍👩‍👧‍👦' }, { de: 'das Kind', es: 'El niño', emoji: '👶' }
-    ],
-    food: [
-        { de: 'der Apfel', es: 'La manzana', emoji: '🍎' }, { de: 'das Brot', es: 'El pan', emoji: '🍞' },
-        { de: 'das Wasser', es: 'El agua', emoji: '💧' }, { de: 'die Milch', es: 'La leche', emoji: '🥛' },
-        { de: 'der Käse', es: 'El queso', emoji: '🧀' }, { de: 'das Fleisch', es: 'La carne', emoji: '🥩' },
-        { de: 'der Fisch', es: 'El pescado', emoji: '🐟' }, { de: 'das Ei', es: 'El huevo', emoji: '🥚' },
-        { de: 'die Suppe', es: 'La sopa', emoji: '🍲' }, { de: 'der Salat', es: 'La ensalada', emoji: '🥗' },
-        { de: 'der Kuchen', es: 'El pastel', emoji: '🍰' }, { de: 'die Pizza', es: 'La pizza', emoji: '🍕' }
-    ],
-    animals: [
-        { de: 'der Hund', es: 'El perro', emoji: '🐕' }, { de: 'die Katze', es: 'El gato', emoji: '🐱' },
-        { de: 'der Vogel', es: 'El pájaro', emoji: '🐦' }, { de: 'der Fisch', es: 'El pez', emoji: '🐟' },
-        { de: 'das Pferd', es: 'El caballo', emoji: '🐴' }, { de: 'die Kuh', es: 'La vaca', emoji: '🐄' },
-        { de: 'das Schwein', es: 'El cerdo', emoji: '🐷' }, { de: 'das Schaf', es: 'La oveja', emoji: '🐑' },
-        { de: 'die Maus', es: 'El ratón', emoji: '🐭' }, { de: 'der Elefant', es: 'El elefante', emoji: '🐘' },
-        { de: 'der Löwe', es: 'El león', emoji: '🦁' }, { de: 'der Bär', es: 'El oso', emoji: '🐻' },
-        { de: 'der Wolf', es: 'El lobo', emoji: '🐺' }, { de: 'der Fuchs', es: 'El zorro', emoji: '🦊' }
-    ],
-    numbers: [
-        { de: 'eins', es: 'uno' }, { de: 'zwei', es: 'dos' }, { de: 'drei', es: 'tres' },
-        { de: 'vier', es: 'cuatro' }, { de: 'fünf', es: 'cinco' }, { de: 'sechs', es: 'seis' },
-        { de: 'sieben', es: 'siete' }, { de: 'acht', es: 'ocho' }, { de: 'neun', es: 'nueve' },
-        { de: 'zehn', es: 'diez' }, { de: 'elf', es: 'once' }, { de: 'zwölf', es: 'doce' },
-        { de: 'zwanzig', es: 'veinte' }, { de: 'hundert', es: 'cien' }
-    ],
-    time: [
-        { de: 'der Montag', es: 'Lunes' }, { de: 'der Dienstag', es: 'Martes' },
-        { de: 'der Mittwoch', es: 'Miércoles' }, { de: 'der Donnerstag', es: 'Jueves' },
-        { de: 'der Freitag', es: 'Viernes' }, { de: 'der Samstag', es: 'Sábado' },
-        { de: 'der Sonntag', es: 'Domingo' }, { de: 'Heute', es: 'Hoy' },
-        { de: 'Morgen', es: 'Mañana' }, { de: 'Gestern', es: 'Ayer' },
-        { de: 'die Uhr', es: 'El reloj' }, { de: 'die Zeit', es: 'El tiempo' }
-    ],
-    colors: [
-        { de: 'rot', es: 'rojo', emoji: '🔴' }, { de: 'blau', es: 'azul', emoji: '🔵' },
-        { de: 'grün', es: 'verde', emoji: '🟢' }, { de: 'gelb', es: 'amarillo', emoji: '🟡' },
-        { de: 'schwarz', es: 'negro', emoji: '⬛' }, { de: 'weiß', es: 'blanco', emoji: '⬜' },
-        { de: 'orange', es: 'naranja', emoji: '🟠' }, { de: 'rosa', es: 'rosa', emoji: '💗' },
-        { de: 'braun', es: 'marrón', emoji: '🟤' }, { de: 'grau', es: 'gris', emoji: '🩶' }
-    ],
-    verbs: [
-        { de: 'essen', es: 'comer', emoji: '🍽️' }, { de: 'trinken', es: 'beber', emoji: '🍺' },
-        { de: 'gehen', es: 'ir/caminar', emoji: '🚶' }, { de: 'kommen', es: 'venir', emoji: '🤚' },
-        { de: 'schlafen', es: 'dormir', emoji: '😴' }, { de: 'lesen', es: 'leer', emoji: '📖' },
-        { de: 'schreiben', es: 'escribir', emoji: '✍️' }, { de: 'sprechen', es: 'hablar', emoji: '🗣️' },
-        { de: 'hören', es: 'escuchar', emoji: '👂' }, { de: 'sehen', es: 'ver', emoji: '👀' },
-        { de: 'kaufen', es: 'comprar', emoji: '🛒' }, { de: 'verkaufen', es: 'vender', emoji: '🏷️' },
-        { de: 'laufen', es: 'correr', emoji: '🏃' }, { de: 'schwimmen', es: 'nadar', emoji: '🏊' }
-    ],
-    body: [
-        { de: 'der Kopf', es: 'La cabeza', emoji: '🗣️' }, { de: 'der Arm', es: 'El brazo', emoji: '💪' },
-        { de: 'das Bein', es: 'La pierna', emoji: '🦵' }, { de: 'die Hand', es: 'La mano', emoji: '✋' },
-        { de: 'der Fuß', es: 'El pie', emoji: '🦶' }, { de: 'das Auge', es: 'El ojo', emoji: '👁️' },
-        { de: 'die Nase', es: 'La nariz', emoji: '👃' }, { de: 'der Mund', es: 'La boca', emoji: '👄' },
-        { de: 'das Ohr', es: 'La oreja', emoji: '👂' }, { de: 'das Haar', es: 'El pelo', emoji: '💇' }
-    ],
-    house: [
-        { de: 'das Haus', es: 'La casa', emoji: '🏠' }, { de: 'die Tür', es: 'La puerta', emoji: '🚪' },
-        { de: 'das Fenster', es: 'La ventana', emoji: '🪟' }, { de: 'der Tisch', es: 'La mesa', emoji: '🪑' },
-        { de: 'der Stuhl', es: 'La silla', emoji: '🪑' }, { de: 'das Bett', es: 'La cama', emoji: '🛏️' },
-        { de: 'die Küche', es: 'La cocina', emoji: '🍳' }, { de: 'das Badezimmer', es: 'El baño', emoji: '🛁' },
-        { de: 'das Schlafzimmer', es: 'El dormitorio', emoji: '🛌' }, { de: 'der Garten', es: 'El jardín', emoji: '🌳' }
-    ],
-    weather: [
-        { de: 'die Sonne', es: 'El sol', emoji: '☀️' }, { de: 'der Regen', es: 'La lluvia', emoji: '🌧️' },
-        { de: 'der Schnee', es: 'La nieve', emoji: '❄️' }, { de: 'der Wind', es: 'El viento', emoji: '💨' },
-        { de: 'die Wolke', es: 'La nube', emoji: '☁️' }, { de: 'der Himmel', es: 'El cielo', emoji: '🌌' },
-        { de: 'kalt', es: 'frío', emoji: '🥶' }, { de: 'warm', es: 'cálido', emoji: '🌡️' },
-        { de: 'heiß', es: 'caluroso', emoji: '🥵' }, { de: 'das Wetter', es: 'El clima', emoji: '🌦️' }
-    ],
-    transport: [
-        { de: 'das Auto', es: 'El coche', emoji: '🚗' }, { de: 'der Zug', es: 'El tren', emoji: '🚆' },
-        { de: 'das Flugzeug', es: 'El avión', emoji: '✈️' }, { de: 'das Schiff', es: 'El barco', emoji: '🚢' },
-        { de: 'das Fahrrad', es: 'La bicicleta', emoji: '🚲' }, { de: 'der Bus', es: 'El autobús', emoji: '🚌' },
-        { de: 'die Straße', es: 'La calle', emoji: '🛣️' }, { de: 'die Brücke', es: 'El puente', emoji: '🌉' }
-    ],
-    professions: [
-        { de: 'der Arzt', es: 'El médico', emoji: '👨‍⚕️' }, { de: 'der Lehrer', es: 'El profesor', emoji: '👨‍🏫' },
-        { de: 'der Polizist', es: 'El policía', emoji: '👮' }, { de: 'der Koch', es: 'El cocinero', emoji: '👨‍🍳' },
-        { de: 'der Ingenieur', es: 'El ingeniero', emoji: '👷' }, { de: 'der Schüler', es: 'El estudiante', emoji: '👦' },
-        { de: 'der Fahrer', es: 'El conductor', emoji: '🚕' }, { de: 'der Musiker', es: 'El músico', emoji: '🎸' }
-    ],
-    // ---- FRASES COMPLETAS (las categorías que empiezan por "phrases" activan ordenar palabras) ----
-    phrases_basic: [
-        P('Ich heiße Anna', 'Me llamo Anna', ['yo', 'me llamo', 'Anna']),
-        P('Wie heißt du?', '¿Cómo te llamas?', ['cómo', 'te llamas', 'tú']),
-        P('Ich komme aus Spanien', 'Soy de España', ['yo', 'vengo', 'de', 'España']),
-        P('Ich bin müde', 'Estoy cansado', ['yo', 'soy / estoy', 'cansado']),
-        P('Ich habe einen Hund', 'Tengo un perro', ['yo', 'tengo', 'un', 'perro']),
-        P('Das ist meine Familie', 'Esta es mi familia', ['esto / esta', 'es', 'mi', 'familia']),
-        P('Ich spreche ein bisschen Deutsch', 'Hablo un poco de alemán', ['yo', 'hablo', 'un', 'poco', 'alemán']),
-        P('Freut mich', 'Encantado', ['alegra', 'me'])
-    ],
-    phrases_daily: [
-        P('Ich trinke Wasser', 'Bebo agua', ['yo', 'bebo', 'agua']),
-        P('Ich esse einen Apfel', 'Como una manzana', ['yo', 'como', 'un', 'manzana']),
-        P('Wir gehen nach Hause', 'Vamos a casa', ['nosotros', 'vamos', 'a / hacia', 'casa']),
-        P('Ich habe Hunger', 'Tengo hambre', ['yo', 'tengo', 'hambre']),
-        P('Ich habe Durst', 'Tengo sed', ['yo', 'tengo', 'sed']),
-        P('Das Essen ist gut', 'La comida está buena', ['el / la', 'comida', 'es / está', 'bueno']),
-        P('Ich möchte ein Brot', 'Quisiera un pan', ['yo', 'quisiera', 'un', 'pan']),
-        P('Es ist heute kalt', 'Hoy hace frío', ['(sujeto impersonal)', 'es / está', 'hoy', 'frío'])
-    ],
-    phrases_travel: [
-        P('Wo ist der Bahnhof?', '¿Dónde está la estación?', ['dónde', 'está', 'el', 'estación de tren']),
-        P('Ich möchte ein Ticket', 'Quisiera un billete', ['yo', 'quisiera', 'un', 'billete']),
-        P('Wie viel kostet das?', '¿Cuánto cuesta esto?', ['cómo', 'mucho', 'cuesta', 'esto']),
-        P('Sprechen Sie Englisch?', '¿Habla usted inglés?', ['habla', 'usted', 'inglés']),
-        P('Ich verstehe nicht', 'No entiendo', ['yo', 'entiendo', 'no']),
-        P('Können Sie mir helfen?', '¿Puede ayudarme?', ['puede', 'usted', 'me', 'ayudar']),
-        P('Wo ist die Toilette?', '¿Dónde está el baño?', ['dónde', 'está', 'la', 'baño / aseo']),
-        P('Die Rechnung, bitte', 'La cuenta, por favor', ['la', 'cuenta', 'por favor'])
-    ]
+greetings: [
+{ de: 'Hallo', es: 'Hola', emoji: '👋' }, { de: 'Guten Morgen', es: 'Buenos días', emoji: '☀️' },
+{ de: 'Guten Tag', es: 'Buenas tardes', emoji: '🌤️' }, { de: 'Guten Abend', es: 'Buenas noches (saludo)', emoji: '🌙' },
+{ de: 'Tschüss', es: 'Adiós (informal)', emoji: '👋' }, { de: 'Auf Wiedersehen', es: 'Adiós (formal)', emoji: '🎩' },
+{ de: 'Danke', es: 'Gracias', emoji: '🙏' }, { de: 'Bitte', es: 'Por favor', emoji: '🙏' },
+{ de: 'Entschuldigung', es: 'Disculpa', emoji: '🤷' }, { de: 'Wie geht es dir?', es: '¿Cómo estás?', emoji: '🤔' }
+],
+family: [
+{ de: 'der Vater', es: 'El padre', emoji: '👨' }, { de: 'die Mutter', es: 'La madre', emoji: '👩' },
+{ de: 'der Bruder', es: 'El hermano', emoji: '👦' }, { de: 'die Schwester', es: 'La hermana', emoji: '👧' },
+{ de: 'der Sohn', es: 'El hijo', emoji: '👦' }, { de: 'die Tochter', es: 'La hija', emoji: '👧' },
+{ de: 'die Oma', es: 'La abuela', emoji: '👵' }, { de: 'der Opa', es: 'El abuelo', emoji: '👴' },
+{ de: 'die Familie', es: 'La familia', emoji: '👨‍👩‍👧‍👦' }, { de: 'das Kind', es: 'El niño', emoji: '👶' }
+],
+food: [
+{ de: 'der Apfel', es: 'La manzana', emoji: '🍎' }, { de: 'das Brot', es: 'El pan', emoji: '🍞' },
+{ de: 'das Wasser', es: 'El agua', emoji: '💧' }, { de: 'die Milch', es: 'La leche', emoji: '🥛' },
+{ de: 'der Käse', es: 'El queso', emoji: '🧀' }, { de: 'das Fleisch', es: 'La carne', emoji: '🥩' },
+{ de: 'der Fisch', es: 'El pescado', emoji: '🐟' }, { de: 'das Ei', es: 'El huevo', emoji: '🥚' },
+{ de: 'die Suppe', es: 'La sopa', emoji: '🍲' }, { de: 'der Salat', es: 'La ensalada', emoji: '🥗' },
+{ de: 'der Kuchen', es: 'El pastel', emoji: '🍰' }, { de: 'die Pizza', es: 'La pizza', emoji: '🍕' }
+],
+animals: [
+{ de: 'der Hund', es: 'El perro', emoji: '🐕' }, { de: 'die Katze', es: 'El gato', emoji: '🐱' },
+{ de: 'der Vogel', es: 'El pájaro', emoji: '🐦' }, { de: 'der Fisch', es: 'El pez', emoji: '🐟' },
+{ de: 'das Pferd', es: 'El caballo', emoji: '🐴' }, { de: 'die Kuh', es: 'La vaca', emoji: '🐄' },
+{ de: 'das Schwein', es: 'El cerdo', emoji: '🐷' }, { de: 'das Schaf', es: 'La oveja', emoji: '🐑' },
+{ de: 'die Maus', es: 'El ratón', emoji: '🐭' }, { de: 'der Elefant', es: 'El elefante', emoji: '🐘' },
+{ de: 'der Löwe', es: 'El león', emoji: '🦁' }, { de: 'der Bär', es: 'El oso', emoji: '🐻' },
+{ de: 'der Wolf', es: 'El lobo', emoji: '🐺' }, { de: 'der Fuchs', es: 'El zorro', emoji: '🦊' }
+],
+numbers: [
+{ de: 'eins', es: 'uno' }, { de: 'zwei', es: 'dos' }, { de: 'drei', es: 'tres' },
+{ de: 'vier', es: 'cuatro' }, { de: 'fünf', es: 'cinco' }, { de: 'sechs', es: 'seis' },
+{ de: 'sieben', es: 'siete' }, { de: 'acht', es: 'ocho' }, { de: 'neun', es: 'nueve' },
+{ de: 'zehn', es: 'diez' }, { de: 'elf', es: 'once' }, { de: 'zwölf', es: 'doce' },
+{ de: 'zwanzig', es: 'veinte' }, { de: 'hundert', es: 'cien' }
+],
+time: [
+{ de: 'der Montag', es: 'Lunes' }, { de: 'der Dienstag', es: 'Martes' },
+{ de: 'der Mittwoch', es: 'Miércoles' }, { de: 'der Donnerstag', es: 'Jueves' },
+{ de: 'der Freitag', es: 'Viernes' }, { de: 'der Samstag', es: 'Sábado' },
+{ de: 'der Sonntag', es: 'Domingo' }, { de: 'Heute', es: 'Hoy' },
+{ de: 'Morgen', es: 'Mañana' }, { de: 'Gestern', es: 'Ayer' },
+{ de: 'die Uhr', es: 'El reloj' }, { de: 'die Zeit', es: 'El tiempo' }
+],
+colors: [
+{ de: 'rot', es: 'rojo', emoji: '🔴' }, { de: 'blau', es: 'azul', emoji: '🔵' },
+{ de: 'grün', es: 'verde', emoji: '🟢' }, { de: 'gelb', es: 'amarillo', emoji: '🟡' },
+{ de: 'schwarz', es: 'negro', emoji: '⬛' }, { de: 'weiß', es: 'blanco', emoji: '⬜' },
+{ de: 'orange', es: 'naranja', emoji: '🟠' }, { de: 'rosa', es: 'rosa', emoji: '💗' },
+{ de: 'braun', es: 'marrón', emoji: '🟤' }, { de: 'grau', es: 'gris', emoji: '🩶' }
+],
+verbs: [
+{ de: 'essen', es: 'comer', emoji: '🍽️' }, { de: 'trinken', es: 'beber', emoji: '🍺' },
+{ de: 'gehen', es: 'ir/caminar', emoji: '🚶' }, { de: 'kommen', es: 'venir', emoji: '🤚' },
+{ de: 'schlafen', es: 'dormir', emoji: '😴' }, { de: 'lesen', es: 'leer', emoji: '📖' },
+{ de: 'schreiben', es: 'escribir', emoji: '✍️' }, { de: 'sprechen', es: 'hablar', emoji: '🗣️' },
+{ de: 'hören', es: 'escuchar', emoji: '👂' }, { de: 'sehen', es: 'ver', emoji: '👀' },
+{ de: 'kaufen', es: 'comprar', emoji: '🛒' }, { de: 'verkaufen', es: 'vender', emoji: '🏷️' },
+{ de: 'laufen', es: 'correr', emoji: '🏃' }, { de: 'schwimmen', es: 'nadar', emoji: '🏊' }
+],
+body: [
+{ de: 'der Kopf', es: 'La cabeza', emoji: '🗣️' }, { de: 'der Arm', es: 'El brazo', emoji: '💪' },
+{ de: 'das Bein', es: 'La pierna', emoji: '🦵' }, { de: 'die Hand', es: 'La mano', emoji: '✋' },
+{ de: 'der Fuß', es: 'El pie', emoji: '🦶' }, { de: 'das Auge', es: 'El ojo', emoji: '👁️' },
+{ de: 'die Nase', es: 'La nariz', emoji: '👃' }, { de: 'der Mund', es: 'La boca', emoji: '👄' },
+{ de: 'das Ohr', es: 'La oreja', emoji: '👂' }, { de: 'das Haar', es: 'El pelo', emoji: '💇' }
+],
+house: [
+{ de: 'das Haus', es: 'La casa', emoji: '🏠' }, { de: 'die Tür', es: 'La puerta', emoji: '🚪' },
+{ de: 'das Fenster', es: 'La ventana', emoji: '🪟' }, { de: 'der Tisch', es: 'La mesa', emoji: '🪑' },
+{ de: 'der Stuhl', es: 'La silla', emoji: '🪑' }, { de: 'das Bett', es: 'La cama', emoji: '🛏️' },
+{ de: 'die Küche', es: 'La cocina', emoji: '🍳' }, { de: 'das Badezimmer', es: 'El baño', emoji: '🛁' },
+{ de: 'das Schlafzimmer', es: 'El dormitorio', emoji: '🛌' }, { de: 'der Garten', es: 'El jardín', emoji: '🌳' }
+],
+weather: [
+{ de: 'die Sonne', es: 'El sol', emoji: '☀️' }, { de: 'der Regen', es: 'La lluvia', emoji: '🌧️' },
+{ de: 'der Schnee', es: 'La nieve', emoji: '❄️' }, { de: 'der Wind', es: 'El viento', emoji: '💨' },
+{ de: 'die Wolke', es: 'La nube', emoji: '☁️' }, { de: 'der Himmel', es: 'El cielo', emoji: '🌌' },
+{ de: 'kalt', es: 'frío', emoji: '🥶' }, { de: 'warm', es: 'cálido', emoji: '🌡️' },
+{ de: 'heiß', es: 'caluroso', emoji: '🥵' }, { de: 'das Wetter', es: 'El clima', emoji: '🌦️' }
+],
+transport: [
+{ de: 'das Auto', es: 'El coche', emoji: '🚗' }, { de: 'der Zug', es: 'El tren', emoji: '🚆' },
+{ de: 'das Flugzeug', es: 'El avión', emoji: '✈️' }, { de: 'das Schiff', es: 'El barco', emoji: '🚢' },
+{ de: 'das Fahrrad', es: 'La bicicleta', emoji: '🚲' }, { de: 'der Bus', es: 'El autobús', emoji: '🚌' },
+{ de: 'die Straße', es: 'La calle', emoji: '🛣️' }, { de: 'die Brücke', es: 'El puente', emoji: '🌉' }
+],
+professions: [
+{ de: 'der Arzt', es: 'El médico', emoji: '👨‍⚕️' }, { de: 'der Lehrer', es: 'El profesor', emoji: '👨‍🏫' },
+{ de: 'der Polizist', es: 'El policía', emoji: '👮' }, { de: 'der Koch', es: 'El cocinero', emoji: '👨‍🍳' },
+{ de: 'der Ingenieur', es: 'El ingeniero', emoji: '👷' }, { de: 'der Schüler', es: 'El estudiante', emoji: '👦' },
+{ de: 'der Fahrer', es: 'El conductor', emoji: '🚕' }, { de: 'der Musiker', es: 'El músico', emoji: '🎸' }
+]
 };
 
-// CAMBIO: copia el array antes de barajar (antes mutaba VOCAB)
-const getRandom = (arr, n) => [...arr].sort(() => 0.5 - Math.random()).slice(0, n);
+const getRandom = (arr, n) => arr.sort(() => 0.5 - Math.random()).slice(0, n);
 const getRandomItem = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
-// --- Ejercicio "traducir oración": tokens de la frase en español ---
-const PROPER = ['Anna', 'España'];   // nombres propios (mantienen la mayúscula)
-const esTokens = (es) => es.replace(/[¿?¡!.,;:]/g, '').split(' ').filter(Boolean)
-    .map((w, i) => (i === 0 && !PROPER.includes(w)) ? w.toLowerCase() : w);
-const canTranslate = (i) => Array.isArray(i.gloss) && i.gloss.length === i.de.split(' ').length && esTokens(i.es).length >= 2;
-
-// Peso de cada palabra: las que más fallas (y las nuevas) salen más a menudo
-const wordWeight = (w) => {
-    const st = state.stats[w];
-    if (!st) return 2;
-    return 1 + 2 * Math.max(0, st.ko - st.ok);
-};
-function pickWeighted(arr) {
-    let pool = arr.filter(i => !lessonUsed.has(i.de));   // no repetir dentro de la lección
-    if (pool.length === 0) pool = arr;
-    const total = pool.reduce((a, i) => a + wordWeight(i.de), 0);
-    let r = Math.random() * total;
-    for (const i of pool) { r -= wordWeight(i.de); if (r <= 0) return i; }
-    return pool[pool.length - 1];
+function generateQuestion(type, categoryKey) {
+const category = VOCAB[categoryKey];
+if (!category) return null;
+const item = getRandomItem(category);
+let wrongOptions = category.filter(i => i.de !== item.de);
+if (wrongOptions.length < 3) wrongOptions = Object.values(VOCAB).flat();
+const distractors = getRandom(wrongOptions, 3).map(i => i.es);
+const options = [item.es, ...distractors].sort(() => 0.5 - Math.random());
+switch(type) {
+case 'choice':
+return { type: 'choice', prompt: `¿Qué significa "${item.de}"?`, text: item.de, options: options, correct: item.es, emoji: item.emoji || '❓' };
+case 'audio':
+return { type: 'audio', prompt: 'Escucha y selecciona el significado', audioText: item.de, options: options, correct: item.es, emoji: '🔊' };
+case 'match':
+const matchItems = getRandom(category, 4);
+return { type: 'match', prompt: 'Relaciona las parejas', pairs: matchItems.map(i => [i.de, i.es]) };
+case 'speak':
+return { type: 'speak', prompt: 'Di esto en alemán:', text: item.de, meaning: item.es, emoji: item.emoji || '🗣️' };
+case 'wordbank':
+const words = getRandom(category, 3);
+return { type: 'wordbank', prompt: 'Ordena las palabras (concepto)', text: words.map(w => w.de).join(' + '), words: words.map(w => w.de).sort(() => 0.5 - Math.random()), correct: words.map(w => w.de) };
+default:
+return null;
 }
-
-function generateQuestion(type, categoryKey, forcedItem) {
-    const category = VOCAB[categoryKey];
-    if (!category) return null;
-
-    let pool = category;
-    if (type === 'translate') {
-        pool = category.filter(i => canTranslate(i) && !lessonUsed.has(i.de));   // sin repetir frases en la lección
-        if (!pool.length) return null;   // sin frases con ayuda disponibles: se omite este ejercicio
-    }
-    const item = forcedItem || pickWeighted(pool);
-    lessonUsed.add(item.de);
-    let wrongOptions = category.filter(i => i.de !== item.de);
-    if (wrongOptions.length < 3) wrongOptions = Object.values(VOCAB).flat().filter(i => i.de !== item.de && i.es !== item.es);
-
-    const distractors = getRandom(wrongOptions, 3).map(i => i.es);
-    const options = [item.es, ...distractors].sort(() => 0.5 - Math.random());
-
-    switch(type) {
-        case 'choice':
-            return {
-                type: 'choice',
-                prompt: `¿Qué significa "${item.de}"?`,
-                text: item.de,
-                options: options,
-                correct: item.es,
-                emoji: item.emoji || '❓',
-                word: item.de
-            };
-        case 'audio':
-            return {
-                type: 'audio',
-                prompt: 'Escucha y selecciona el significado',
-                audioText: item.de,
-                options: options,
-                correct: item.es,
-                emoji: '🔊',
-                word: item.de
-            };
-        case 'match':
-            const matchItems = getRandom(category, 4);
-            return {
-                type: 'match',
-                prompt: 'Relaciona las parejas',
-                pairs: matchItems.map(i => [i.de, i.es])
-            };
-        case 'speak':
-            return {
-                type: 'speak',
-                prompt: 'Di esto en alemán:',
-                text: item.de,
-                meaning: item.es,
-                emoji: item.emoji || '🗣️',
-                word: item.de
-            };
-        case 'translate': {
-            const ans = esTokens(item.es);
-            const ansLow = ans.map(w => w.toLowerCase());
-            const poolWords = [...new Set(
-                Object.entries(VOCAB).filter(([k]) => k.startsWith('phrases'))
-                    .flatMap(([, items]) => items.flatMap(i => esTokens(i.es)))
-                    .filter(w => w === w.toLowerCase() && !ansLow.includes(w))
-            )];
-            const bank = [...ans, ...getRandom(poolWords, 3)].sort(() => 0.5 - Math.random());
-            return {
-                type: 'translate',
-                prompt: 'Traduce al español:',
-                text: item.de,
-                gloss: item.gloss,
-                words: bank,
-                correct: ans,
-                answer: item.es,
-                word: item.de
-            };
-        }
-        case 'wordbank':
-            if (categoryKey.startsWith('phrases')) {
-                const ws = item.de.split(' ');
-                let shuffled = [...ws], tries = 0;
-                do { shuffled.sort(() => 0.5 - Math.random()); tries++; }
-                while (ws.length > 1 && shuffled.join(' ') === ws.join(' ') && tries < 10);
-                return {
-                    type: 'wordbank',
-                    prompt: 'Ordena la frase en alemán:',
-                    text: item.es,
-                    emoji: '🧩',
-                    words: shuffled,
-                    correct: ws,
-                    word: item.de
-                };
-            }
-            const words = getRandom(category, 3);
-            return {
-                type: 'wordbank',
-                prompt: 'Ordena las palabras (concepto)',
-                text: words.map(w => w.de).join(' + '),
-                words: words.map(w => w.de).sort(() => 0.5 - Math.random()),
-                correct: words.map(w => w.de)
-            };
-        default:
-            return null;
-    }
 }
 
 const COURSE_STRUCTURE = [
-    { id: 'u1', title: 'Fundamentos', subtitle: 'Saludos y Familia', lessons: ['greetings', 'family', 'greetings'] },
-    { id: 'u2', title: 'Comida y Bebida', subtitle: 'En el restaurante', lessons: ['food', 'food', 'verbs'] },
-    { id: 'p1', title: 'Mis primeras frases', subtitle: 'Preséntate', lessons: ['phrases_basic', 'phrases_basic', 'phrases_basic'] },
-    { id: 'u3', title: 'Números y Tiempo', subtitle: 'Calendario', lessons: ['numbers', 'time', 'time'] },
-    { id: 'u4', title: 'Animales', subtitle: 'Naturaleza', lessons: ['animals', 'animals', 'animals'] },
-    { id: 'u5', title: 'Acciones', subtitle: 'Verbos básicos', lessons: ['verbs', 'colors', 'verbs'] },
-    { id: 'p2', title: 'Frases del día a día', subtitle: 'Hablar de lo cotidiano', lessons: ['phrases_daily', 'phrases_daily', 'phrases_daily'] },
-    { id: 'u6', title: 'El Cuerpo', subtitle: 'Anatomía', lessons: ['body', 'body', 'verbs'] },
-    { id: 'u7', title: 'La Casa', subtitle: 'Hogar dulce hogar', lessons: ['house', 'house', 'house'] },
-    { id: 'u8', title: 'Clima y Naturaleza', subtitle: 'El tiempo', lessons: ['weather', 'weather', 'body'] },
-    { id: 'p3', title: 'De viaje', subtitle: 'Frases para sobrevivir', lessons: ['phrases_travel', 'phrases_travel', 'phrases_travel'] },
-    { id: 'u9', title: 'Transporte', subtitle: 'Movilidad', lessons: ['transport', 'transport', 'numbers'] },
-    { id: 'u10', title: 'Profesiones', subtitle: 'El trabajo', lessons: ['professions', 'professions', 'verbs'] }
+{ id: 'u1', title: 'Fundamentos', subtitle: 'Saludos y Familia', lessons: ['greetings', 'family', 'greetings'] },
+{ id: 'u2', title: 'Comida y Bebida', subtitle: 'En el restaurante', lessons: ['food', 'food', 'verbs'] },
+{ id: 'u3', title: 'Números y Tiempo', subtitle: 'Calendario', lessons: ['numbers', 'time', 'time'] },
+{ id: 'u4', title: 'Animales', subtitle: 'Naturaleza', lessons: ['animals', 'animals', 'animals'] },
+{ id: 'u5', title: 'Acciones', subtitle: 'Verbos básicos', lessons: ['verbs', 'colors', 'verbs'] },
+{ id: 'u6', title: 'El Cuerpo', subtitle: 'Anatomía', lessons: ['body', 'body', 'verbs'] },
+{ id: 'u7', title: 'La Casa', subtitle: 'Hogar dulce hogar', lessons: ['house', 'house', 'house'] },
+{ id: 'u8', title: 'Clima y Naturaleza', subtitle: 'El tiempo', lessons: ['weather', 'weather', 'body'] },
+{ id: 'u9', title: 'Transporte', subtitle: 'Movilidad', lessons: ['transport', 'transport', 'numbers'] },
+{ id: 'u10', title: 'Profesiones', subtitle: 'El trabajo', lessons: ['professions', 'professions', 'verbs'] }
 ];
 
 // --- STATE & DOM ---
-let state = { hearts: 5, gems: 500, streak: 0, completed: [], currentQ: 0, answers: [], selected: null, checking: false,
-              stats: {}, lastDay: null, heartsAt: null };
-const MAX_HEARTS = 5;
-const HEART_MS = 20 * 60 * 1000;   // 1 vida cada 20 minutos
-let lessonUsed = new Set();
-let account = { user: null, plan: 'anon' };   // plan: 'anon' | 'free' | 'premium'
-let usage = { day: '', sec: 0 };               // segundos jugados hoy (en este dispositivo)
+let state = { hearts: 5, gems: 500, streak: 0, completed: [], currentQ: 0, answers: [], selected: null, checking: false };
 let currentLessonData = null;
 let recognition = null;
 let matchState = { first: null, second: null, lock: false, solved: [] };
@@ -576,1321 +318,678 @@ let DB = { units: [] };
 let audioCtx = null;
 
 const DOM = {
-    hearts: document.getElementById('s-hearts'),
-    gems: document.getElementById('s-gems'),
-    streak: document.getElementById('s-streak'),
-    mapContainer: document.getElementById('map-container'),
-    lessonContent: document.getElementById('lesson-content'),
-    progressBar: document.getElementById('progress-bar'),
-    feedbackMsg: document.getElementById('feedback-msg'),
-    msgText: document.getElementById('msg-text'),
-    msgSub: document.getElementById('msg-sub'),
-    btnAction: document.getElementById('btn-action'),
-    screenLesson: document.getElementById('screen-lesson'),
-    overlayGameover: document.getElementById('overlay-gameover'),
-    overlayShop: document.getElementById('overlay-shop'),
-    overlayPaywall: document.getElementById('overlay-paywall'),
-    overlayAuth: document.getElementById('overlay-auth')
+hearts: document.getElementById('s-hearts'),
+gems: document.getElementById('s-gems'),
+streak: document.getElementById('s-streak'),
+mapContainer: document.getElementById('map-container'),
+lessonContent: document.getElementById('lesson-content'),
+progressBar: document.getElementById('progress-bar'),
+feedbackMsg: document.getElementById('feedback-msg'),
+msgText: document.getElementById('msg-text'),
+msgSub: document.getElementById('msg-sub'),
+btnAction: document.getElementById('btn-action'),
+screenLesson: document.getElementById('screen-lesson'),
+overlayGameover: document.getElementById('overlay-gameover'),
+overlayShop: document.getElementById('overlay-shop')
 };
 
 // --- SOUND ENGINE ---
 function initAudio() { if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
-// Fanfarria al acertar: arpegio ascendente Do-Mi-Sol + acorde final brillante con destellos
-function playVictory() {
-    const t0 = audioCtx.currentTime;
-    const tone = (freq, start, dur, wave, vol) => {
-        const o = audioCtx.createOscillator(), g = audioCtx.createGain();
-        o.type = wave;
-        o.frequency.setValueAtTime(freq, t0 + start);
-        g.gain.setValueAtTime(0.0001, t0 + start);
-        g.gain.exponentialRampToValueAtTime(vol, t0 + start + 0.015);
-        g.gain.exponentialRampToValueAtTime(0.0001, t0 + start + dur);
-        o.connect(g); g.connect(audioCtx.destination);
-        o.start(t0 + start); o.stop(t0 + start + dur + 0.05);
-    };
-    [[523.25, 0], [659.25, 0.09], [783.99, 0.18]].forEach(([f, st]) => {
-        tone(f, st, 0.22, 'triangle', 0.14);
-        tone(f * 2, st, 0.15, 'sine', 0.04);
-    });
-    [1046.5, 1318.5, 1568].forEach(f => tone(f, 0.30, 0.7, 'triangle', 0.10));  // acorde de Do mayor
-    tone(523.25, 0.30, 0.7, 'sine', 0.10);                                       // base grave
-    tone(2093, 0.34, 0.35, 'sine', 0.04);                                        // destellos
-    tone(2637, 0.42, 0.30, 'sine', 0.03);
-}
-
 function playSound(type) {
-    initAudio();
-    if (audioCtx.state === 'suspended') audioCtx.resume();
-    if (type === 'victory') { playVictory(); return; }
-    const osc = audioCtx.createOscillator();
-    const gainNode = audioCtx.createGain();
-    osc.connect(gainNode);
-    gainNode.connect(audioCtx.destination);
-
-    if (type === 'correct') {
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(600, audioCtx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(900, audioCtx.currentTime + 0.1);
-        gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
-        osc.start();
-        osc.stop(audioCtx.currentTime + 0.2);
-    } else if (type === 'wrong') {
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(200, audioCtx.currentTime);
-        osc.frequency.linearRampToValueAtTime(150, audioCtx.currentTime + 0.2);
-        gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-        osc.start();
-        osc.stop(audioCtx.currentTime + 0.3);
-    } else if (type === 'win') {
-        osc.type = 'sine';
-        const now = audioCtx.currentTime;
-        osc.frequency.setValueAtTime(523.25, now);
-        osc.frequency.setValueAtTime(659.25, now + 0.1);
-        osc.frequency.setValueAtTime(783.99, now + 0.2);
-        gainNode.gain.setValueAtTime(0.1, now);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
-        osc.start();
-        osc.stop(now + 0.5);
-    }
+initAudio();
+if (audioCtx.state === 'suspended') audioCtx.resume();
+const osc = audioCtx.createOscillator();
+const gainNode = audioCtx.createGain();
+osc.connect(gainNode);
+gainNode.connect(audioCtx.destination);
+if (type === 'correct') {
+osc.type = 'sine';
+osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+osc.frequency.exponentialRampToValueAtTime(900, audioCtx.currentTime + 0.1);
+gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+osc.start();
+osc.stop(audioCtx.currentTime + 0.2);
+} else if (type === 'wrong') {
+osc.type = 'sawtooth';
+osc.frequency.setValueAtTime(200, audioCtx.currentTime);
+osc.frequency.linearRampToValueAtTime(150, audioCtx.currentTime + 0.2);
+gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+osc.start();
+osc.stop(audioCtx.currentTime + 0.3);
+} else if (type === 'win') {
+osc.type = 'sine';
+const now = audioCtx.currentTime;
+osc.frequency.setValueAtTime(523.25, now);
+osc.frequency.setValueAtTime(659.25, now + 0.1);
+osc.frequency.setValueAtTime(783.99, now + 0.2);
+gainNode.gain.setValueAtTime(0.1, now);
+gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+osc.start();
+osc.stop(now + 0.5);
+}
 }
 
 // --- STORAGE & DATA INIT ---
 const save = () => { try { localStorage.setItem('germango_v92', JSON.stringify(state)); } catch (e) {} };
 const loadLocal = () => {
-    try {
-        const d = localStorage.getItem('germango_v92');
-        if (d) {
-            const p = JSON.parse(d);
-            state.hearts = p.hearts ?? 5;
-            state.gems = p.gems ?? 500;
-            state.streak = p.streak ?? 0;
-            state.completed = p.completed ?? [];
-            state.stats = p.stats ?? {};
-            state.lastDay = p.lastDay ?? null;
-            state.heartsAt = p.heartsAt ?? null;
-        }
-    } catch (e) {}
-    regenHearts();
-    checkStreakExpiry();
-    updateUI();
-};
-
-// ============================================================
-// --- ESTADÍSTICAS (REPASO), RACHA POR DÍAS Y VIDAS ---
-// ============================================================
-const recordResult = (w, ok) => {
-    const st = state.stats[w] || { ok: 0, ko: 0 };
-    if (ok) st.ok++; else st.ko++;
-    state.stats[w] = st;
-};
-const recordMatch = (a, b, ok) => {
-    if (!a || !b || a === b) return;
-    [a, b].forEach(c => { if (c.dataset.de === '1') recordResult(c.innerText, ok); });
-    save();
-};
-const weakness = (w) => { const st = state.stats[w]; return st ? st.ko - st.ok : 0; };
-function weakWords() {
-    const out = [];
-    Object.entries(VOCAB).forEach(([key, items]) => {
-        items.forEach(i => { if (weakness(i.de) > 0) out.push({ item: i, key }); });
-    });
-    return out.sort((x, y) => weakness(y.item.de) - weakness(x.item.de));
+try {
+const d = localStorage.getItem('germango_v92');
+if (d) {
+const p = JSON.parse(d);
+state.hearts = p.hearts ?? 5;
+state.gems = p.gems ?? 500;
+state.streak = p.streak ?? 0;
+state.completed = p.completed ?? [];
 }
-
-const dayStr = (d = new Date()) =>
-    `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-const yesterdayStr = () => { const d = new Date(); d.setDate(d.getDate() - 1); return dayStr(d); };
-const checkStreakExpiry = () => {
-    if (!state.lastDay) return;
-    if (state.lastDay !== dayStr() && state.lastDay !== yesterdayStr()) state.streak = 0;
-};
-const registerPractice = () => {
-    const today = dayStr();
-    if (state.lastDay === today) return;
-    state.streak = (state.lastDay === yesterdayStr()) ? state.streak + 1 : 1;
-    state.lastDay = today;
-};
-
-const regenHearts = () => {
-    if (state.hearts >= MAX_HEARTS) { state.heartsAt = null; return false; }
-    const now = Date.now();
-    if (!state.heartsAt) { state.heartsAt = now; return false; }
-    const gained = Math.floor((now - state.heartsAt) / HEART_MS);
-    if (gained <= 0) return false;
-    state.hearts = Math.min(MAX_HEARTS, state.hearts + gained);
-    state.heartsAt = state.hearts >= MAX_HEARTS ? null : state.heartsAt + gained * HEART_MS;
-    save();
-    return true;
-};
-const heartTimerText = () => {
-    if (state.hearts >= MAX_HEARTS || !state.heartsAt) return '';
-    const left = Math.max(0, HEART_MS - (Date.now() - state.heartsAt));
-    const m = Math.floor(left / 60000), sec = Math.floor((left % 60000) / 1000);
-    return `${m}:${String(sec).padStart(2, '0')}`;
-};
-const loseHeart = () => {
-    if (state.hearts >= MAX_HEARTS) state.heartsAt = Date.now();
-    state.hearts = Math.max(0, state.hearts - 1);
-};
-const refillHearts = () => { state.hearts = MAX_HEARTS; state.heartsAt = null; };
-const shopNoteText = () => {
-    const t = heartTimerText();
-    return t ? `Próxima vida en ${t}` : 'Tienes todas las vidas';
-};
-const tickHearts = () => {
-    const streakBefore = state.streak;
-    checkStreakExpiry();
-    const changed = regenHearts() || state.streak !== streakBefore;
-    if (changed) { save(); updateUI(); }
-    const el = document.getElementById('s-heart-timer');
-    if (el) el.innerText = heartTimerText();
-    const note = document.getElementById('shop-note');
-    if (note && DOM.overlayShop.classList.contains('active')) note.innerText = shopNoteText();
+} catch (e) {}
+updateUI();
 };
 
 function buildCourseMap() {
-    return COURSE_STRUCTURE.map((u, uIndex) => {
-        return {
-            id: u.id,
-            title: u.title,
-            subtitle: u.subtitle,
-            order_index: uIndex,
-            lessons: u.lessons.map((catKey, lIndex) => {
-                return {
-                    id: `${u.id}-l${lIndex}`,
-                    icon: lIndex === 0 ? '📘' : (lIndex === 1 ? '📗' : '📙'),
-                    order_index: lIndex,
-                    category: catKey,
-                    questions: []
-                };
-            })
-        };
-    });
+return COURSE_STRUCTURE.map((u, uIndex) => {
+return {
+id: u.id,
+title: u.title,
+subtitle: u.subtitle,
+order_index: uIndex,
+lessons: u.lessons.map((catKey, lIndex) => {
+return {
+id: `${u.id}-l${lIndex}`,
+icon: lIndex === 0 ? '📘' : (lIndex === 1 ? '📗' : '📙'),
+order_index: lIndex,
+category: catKey,
+questions: []
+};
+})
+};
+});
 }
 
 async function fetchCourseData() {
-    DB.units = buildCourseMap();
-    renderMap();
+DB.units = buildCourseMap();
+renderMap();
 }
 
 // --- UI ---
 const updateUI = () => {
-    DOM.hearts.innerText = state.hearts;
-    DOM.gems.innerText = state.gems;
-    const ht = document.getElementById('s-heart-timer');
-    if (ht) ht.innerText = heartTimerText();
-    DOM.streak.innerText = state.streak;
-    renderMap();
+DOM.hearts.innerText = state.hearts;
+DOM.gems.innerText = state.gems;
+DOM.streak.innerText = state.streak;
+renderMap();
 };
 
 const showScreen = (id) => {
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-    // al salir de Canciones se vacía el contenedor para que el vídeo deje de sonar
-    if (id !== 'screen-songs') {
-        const sc = document.getElementById('songs-container');
-        if (sc) sc.innerHTML = '';
-    }
+document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+document.getElementById(id).classList.add('active');
 };
 
-const openShop = () => {
-    const note = document.getElementById('shop-note');
-    if (note) note.innerText = shopNoteText();
-    DOM.overlayShop.classList.add('active');
-};
+const openShop = () => { DOM.overlayShop.classList.add('active'); };
 const closeShop = () => { DOM.overlayShop.classList.remove('active'); };
 
 const buyLivesRetry = () => {
-    if(state.gems >= 50) {
-        state.gems -= 50; refillHearts(); save(); updateUI();
-        DOM.overlayGameover.classList.remove('active');
-        startLesson(currentLessonData);
-    } else { alert("No tienes suficientes gemas."); }
+if(state.gems >= 50) {
+state.gems -= 50; state.hearts = 5; save(); updateUI();
+DOM.overlayGameover.classList.remove('active');
+startLesson(currentLessonData);
+} else { alert("No tienes suficientes gemas."); }
 };
 
 const shopPurchase = (item) => {
-    if (item === 'hearts') {
-        if (state.hearts >= MAX_HEARTS) { alert("Ya tienes todas las vidas"); return; }
-        if (state.gems >= 50) { state.gems -= 50; refillHearts(); playSound('correct'); save(); updateUI(); closeShop(); }
-        else { alert("Gemas insuficientes"); playSound('wrong'); }
-    }
+if (item === 'hearts') {
+if (state.gems >= 50) { state.gems -= 50; state.hearts = 5; playSound('correct'); save(); updateUI(); closeShop(); }
+else { alert("Gemas insuficientes"); playSound('wrong'); }
+}
 };
 
 // --- MAP RENDERER ---
 const renderMap = () => {
-    if(DB.units.length === 0) return;
-    DOM.mapContainer.innerHTML = '';
-
-    const allLessons = DB.units.flatMap(u => u.lessons);
-    const totalLessons = allLessons.length;
-    const progressPercent = totalLessons > 0 ? (state.completed.length / totalLessons) * 100 : 0;
-
-    let gpHtml = `
-        <div class="global-progress-container">
-            <div class="gp-header"><span>Progreso Global</span><span>${Math.round(progressPercent)}%</span></div>
-            <div class="gp-bar"><div class="gp-fill" style="width: ${progressPercent}%"></div></div>
-        </div>
-    `;
-    DOM.mapContainer.innerHTML += accountBarHtml() + mineCardHtml() + gpHtml;
-
-    let globalIndex = 0;
-
-    DB.units.forEach((unit) => {
-        const unitDiv = document.createElement('div');
-        unitDiv.className = 'unit-container';
-
-        const header = document.createElement('div');
-        header.className = 'unit-header';
-        header.innerHTML = `<div class="unit-title">${unit.title}</div><div class="unit-sub">${unit.subtitle}</div>`;
-        unitDiv.appendChild(header);
-
-        const lessonsRow = document.createElement('div');
-        lessonsRow.className = 'lessons-row';
-
-        unit.lessons.forEach((les) => {
-            const node = document.createElement('div');
-            node.className = 'lesson-node';
-            if (globalIndex === 0) node.classList.add('first-node');
-
-            const isDone = state.completed.includes(les.id);
-            const prevLesson = globalIndex > 0 ? allLessons[globalIndex - 1] : null;
-            const prevDone = prevLesson ? state.completed.includes(prevLesson.id) : false;
-            const isUnlocked = (globalIndex === 0) || prevDone;
-
-            if (isDone) {
-                node.classList.add('completed');
-                node.innerHTML = `<span class="icon">✓</span>`;
-            } else if (isUnlocked) {
-                node.classList.add('current');
-                node.innerHTML = `<span class="icon">${les.icon}</span>`;
-            } else {
-                node.classList.add('locked');
-                node.innerHTML = `<span class="icon">🔒</span>`;
-            }
-
-            if (!node.classList.contains('locked')) node.onclick = () => startLesson(les);
-            lessonsRow.appendChild(node);
-            globalIndex++;
-        });
-
-        unitDiv.appendChild(lessonsRow);
-        DOM.mapContainer.appendChild(unitDiv);
-    });
-    DOM.mapContainer.insertAdjacentHTML('beforeend', donateHtml());
-};
-
-// ============================================================
-// --- CANCIONES ---
-// ============================================================
-// CÓMO AÑADIR UNA CANCIÓN: copia un bloque { ... } de la lista y rellénalo.
-//  - youtube: el ID del vídeo (o pega la URL completa, también vale)
-//  - lines:   cada línea es ['alemán', 'español']; usa null para separar estrofas
-// Nota: las letras de canciones actuales tienen derechos de autor. Los vídeos se pueden
-// incrustar sin problema; para las letras, valora usar fragmentos cortos o tu propia traducción.
-const SONGS = [
-    {
-        title: 'Alle meine Entchen',
-        artist: 'Canción popular infantil (dominio público)',
-        youtube: '',   // ← pega aquí el ID o la URL del vídeo de YouTube
-        lines: [
-            ['Alle meine Entchen', 'Todos mis patitos'],
-            ['Schwimmen auf dem See,', 'nadan en el lago,'],
-            ['Schwimmen auf dem See,', 'nadan en el lago,'],
-            ['Köpfchen in das Wasser,', 'cabecita en el agua,'],
-            ['Schwänzchen in die Höh.', 'colita hacia arriba.'],
-            null,
-            ['Alle meine Täubchen', 'Todas mis palomitas'],
-            ['Gurren auf dem Dach,', 'arrullan en el tejado,'],
-            ['Gurren auf dem Dach,', 'arrullan en el tejado,'],
-            ['Fliegt eins in die Lüfte,', 'si una vuela por el aire,'],
-            ['Fliegen alle nach.', 'todas la siguen.']
-        ]
-    },
-    {
-        title: 'Hänschen klein',
-        artist: 'Canción popular infantil (dominio público)',
-        youtube: '',   // ← pega aquí el ID o la URL del vídeo de YouTube
-        lines: [
-            ['Hänschen klein', 'Hänschen pequeño'],
-            ['Ging allein', 'se fue solo'],
-            ['In die weite Welt hinein.', 'al ancho mundo.'],
-            ['Stock und Hut', 'Bastón y sombrero'],
-            ['Steht ihm gut,', 'le sientan bien,'],
-            ['Ist gar wohlgemut.', 'va de muy buen ánimo.'],
-            null,
-            ['Aber Mama weint so sehr,', 'Pero mamá llora tanto,'],
-            ['Hat ja nun kein Hänschen mehr!', '¡ya no tiene a su Hänschen!'],
-            ['Da besinnt sich das Kind,', 'Entonces el niño recapacita,'],
-            ['Kehrt nach Haus geschwind.', 'y vuelve a casa enseguida.']
-        ]
-    },
-    {
-        title: 'Eins Zwei Polizei',
-        artist: 'Mo-Do',
-        youtube: 'https://www.youtube.com/watch?v=dSy2DcATYUo',
-        lines: [
-            // Rima tradicional alemana para contar (de dominio público)
-            ['Eins, zwei, Polizei', 'Uno, dos, policía'],
-            ['Drei, vier, Grenadier', 'tres, cuatro, granadero'],
-            ['Fünf, sechs, alte Hex\'', 'cinco, seis, vieja bruja'],
-            ['Sieben, acht – gute Nacht!', 'siete, ocho, ¡buenas noches!']
-            // Para añadir más líneas (por ejemplo el estribillo), sigue este formato:
-            // , null, ['línea en alemán', 'traducción al español']
-        ]
-    }
-];
-
-let songTrans = true;   // mostrar traducción
-const esc = (t) => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-const ytId = (v) => {
-    const m = String(v || '').match(/(?:v=|youtu\.be\/|embed\/|shorts\/)([\w-]{11})/);
-    return m ? m[1] : String(v || '').trim().replace(/[^\w-]/g, '');
-};
-
-const openSongs = () => {
-    if ('speechSynthesis' in window) window.speechSynthesis.cancel();
-    showScreen('screen-songs');
-    renderSongList();
-};
-
-const renderSongList = () => {
-    const c = document.getElementById('songs-container');
-    if (!c) return;
-    let html = `<div class="songs-head"><button class="back-btn" onclick="showScreen('screen-map')">←</button><h2>🎵 Canciones</h2></div>`;
-    if (SONGS.length === 0) html += `<div class="song-empty">Aún no hay canciones. Añádelas en la lista SONGS del código.</div>`;
-    SONGS.forEach((s, i) => {
-        html += `<div class="song-card" onclick="openSong(${i})"><span class="ico">🎵</span>
-            <div><div class="t">${esc(s.title)}</div><div class="a">${esc(s.artist || '')}</div></div></div>`;
-    });
-    c.innerHTML = html;
-};
-
-const lyricsHtml = (si) => !(SONGS[si].lines && SONGS[si].lines.length)
-  ? '<div class="song-empty">📝 Todavía no hay letra: añádela en el campo <b>lines</b> de esta canción.</div>'
-  : SONGS[si].lines.map((l, li) => {
-    if (!l) return '<div class="lyric-gap"></div>';
-    const es = (songTrans && l[1]) ? `<div class="es">${esc(l[1])}</div>` : '';
-    return `<div class="lyric-line" onclick="speakLyric(this, ${si}, ${li})"><div class="de">${esc(l[0])}</div>${es}</div>`;
-}).join('');
-
-const openSong = (i) => {
-    const s = SONGS[i];
-    const c = document.getElementById('songs-container');
-    if (!s || !c) return;
-    const id = ytId(s.youtube);
-    let html = `<div class="songs-head"><button class="back-btn" onclick="renderSongList()">←</button><h2>${esc(s.title)}</h2></div>`;
-    if (s.artist) html += `<div class="song-artist">${esc(s.artist)}</div>`;
-    if (id) {
-        html += `<div class="video-wrap"><iframe src="https://www.youtube-nocookie.com/embed/${id}?rel=0&playsinline=1"
-            title="${esc(s.title)}" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            allowfullscreen></iframe></div>`;
-    } else {
-        html += `<div class="song-empty">🎬 Falta el vídeo: añade el ID o la URL de YouTube en el campo <b>youtube</b> de esta canción.</div>`;
-    }
-    html += `<div class="song-tools">`;
-    if (id) html += `<a class="tool-btn" href="https://www.youtube.com/watch?v=${id}" target="_blank" rel="noopener">▶ Abrir en YouTube</a>`;
-    html += `<button class="tool-btn" id="trans-btn" onclick="toggleTrans(${i})">${songTrans ? '👁️ Ocultar traducción' : '👁️ Mostrar traducción'}</button></div>
-        <div class="song-hint">Toca una línea para escuchar cómo se pronuncia.</div>
-        <div class="lyrics" id="lyrics">${lyricsHtml(i)}</div>`;
-    c.innerHTML = html;
-    window.scrollTo(0, 0);
-};
-
-const toggleTrans = (i) => {
-    songTrans = !songTrans;
-    const l = document.getElementById('lyrics');
-    if (l) l.innerHTML = lyricsHtml(i);   // el vídeo no se recarga
-    const b = document.getElementById('trans-btn');
-    if (b) b.innerText = songTrans ? '👁️ Ocultar traducción' : '👁️ Mostrar traducción';
-};
-
-const speakLyric = (el, si, li) => {
-    document.querySelectorAll('.lyric-line.playing').forEach(e => e.classList.remove('playing'));
-    el.classList.add('playing');
-    speak(SONGS[si].lines[li][0]);
-};
-
-// ============================================================
-// --- APOYO / DONACIONES ---
-// ============================================================
-// Pega aquí tu enlace de Ko-fi, Buy Me a Coffee o PayPal.me (debe empezar por https://).
-// Si lo dejas vacío, el botón no se muestra.
-const DONATE_URL = 'https://www.paypal.me/MiguelBolado';
-const donateHtml = () => /^https:\/\//.test(DONATE_URL)
-    ? `<div class="donate-box">Germango es gratis. Si te gusta, puedes apoyarlo:<br>
-       <a class="donate-btn" href="${esc(DONATE_URL)}" target="_blank" rel="noopener">☕ Invítame a un café</a></div>`
-    : '';
-
-// ============================================================
-// --- CUENTAS, TIEMPO GRATIS Y PREMIUM ---
-// ============================================================
-// CONFIGURACIÓN (cámbiala a tu gusto)
-const FREE_ANON_MIN = 15;    // minutos gratis al día SIN cuenta
-const FREE_USER_MIN = 30;    // minutos gratis al día CON cuenta (total, incluye los anteriores)
-const PAY_AMOUNT = 5;        // precio del pago único en € (más adelante: suscripción)
-const PAY_URL = 'https://www.paypal.me/MiguelBolado/' + PAY_AMOUNT + 'EUR';
-const PAY_PRICE = PAY_AMOUNT + ' €';
-
-const fmt = (sec) => `${Math.floor(sec / 60)}:${String(Math.floor(sec % 60)).padStart(2, '0')}`;
-const allowedSec = () => account.plan === 'premium' ? Infinity
-    : (account.plan === 'free' ? FREE_USER_MIN : FREE_ANON_MIN) * 60;
-const remainingSec = () => Math.max(0, allowedSec() - usage.sec);
-const timeExceeded = () => account.plan !== 'premium' && remainingSec() <= 0;
-
-const loadUsage = () => {
-    usage = { day: dayStr(), sec: 0 };
-    try {
-        const u = JSON.parse(localStorage.getItem('germango_usage'));
-        if (u && u.day === dayStr() && Number.isFinite(u.sec)) usage = u;
-    } catch (e) {}
-};
-const saveUsage = () => { try { localStorage.setItem('germango_usage', JSON.stringify(usage)); } catch (e) {} };
-
-const updateTimeBar = () => {
-    const premium = account.plan === 'premium';
-    const a = document.getElementById('acct-time');
-    if (a) a.innerText = premium ? 'sin límite de tiempo' : `⏱ ${fmt(remainingSec())} gratis hoy`;
-    const l = document.getElementById('lesson-time');
-    if (l) l.innerText = premium ? '' : `⏱ ${fmt(remainingSec())}`;
-};
-
-// cuenta el tiempo solo mientras hay una lección en pantalla y la pestaña está visible
-const tickPlay = () => {
-    if (usage.day !== dayStr()) { usage = { day: dayStr(), sec: 0 }; saveUsage(); }
-    const playing = document.visibilityState === 'visible' && DOM.screenLesson.classList.contains('active');
-    if (playing && account.plan !== 'premium') {
-        usage.sec++;
-        if (usage.sec % 5 === 0) saveUsage();
-    }
-    updateTimeBar();
-};
-
-const planLabel = () => account.plan === 'premium' ? '⭐ Premium' : (account.plan === 'free' ? 'Cuenta gratis' : 'Invitado');
-const accountBarHtml = () => {
-    const who = account.user ? esc(account.user.email) : 'Invitado';
-    let right = '';
-    if (account.plan === 'anon') {
-        right = `<button class="tool-btn" onclick="openAuth('register')">Crear cuenta</button>
-                 <button class="tool-btn" onclick="openAuth('login')">Entrar</button>`;
-    } else {
-        right = (account.plan === 'free' ? `<button class="tool-btn" onclick="showPaywall()">⭐ Premium</button>` : '')
-              + `<button class="tool-btn" onclick="signOut()">Salir</button>`;
-    }
-    return `<div class="acct-bar"><div><div class="acct-name">${who}</div>
-        <div class="acct-sub">${planLabel()} · <span id="acct-time"></span></div></div>
-        <div class="acct-actions">${right}</div></div>`;
-};
-
-// --- Supabase: sesión y plan (el plan solo lo puedes cambiar tú desde el panel de Supabase) ---
-const refreshAccount = async () => {
-    let next = { user: null, plan: 'anon' };
-    if (_supabase) {
-        try {
-            const { data } = await _supabase.auth.getSession();
-            const user = data && data.session ? data.session.user : null;
-            if (user) {
-                let plan = 'free';
-                try {
-                    const r = await _supabase.from('profiles').select('plan').eq('id', user.id).maybeSingle();
-                    if (r.data && r.data.plan === 'premium') plan = 'premium';
-                } catch (e) {}
-                next = { user, plan };
-            }
-        } catch (e) {}
-    }
-    account = next;
-    updateUI();
-    updateTimeBar();
-};
-
-const signOut = async () => {
-    try { if (_supabase) await _supabase.auth.signOut(); } catch (e) {}
-    await refreshAccount();
-};
-
-// --- Registro / inicio de sesión ---
-let authMode = 'register';
-const setAuthMode = (m) => {
-    authMode = m;
-    const reg = m === 'register';
-    document.getElementById('auth-title').innerText = reg ? 'Crear cuenta gratis' : 'Entrar';
-    document.getElementById('auth-sub').innerText = reg
-        ? `Con una cuenta consigues ${FREE_USER_MIN - FREE_ANON_MIN} minutos más al día.` : '';
-    document.getElementById('auth-submit').innerText = reg ? 'CREAR CUENTA' : 'ENTRAR';
-    document.getElementById('auth-toggle').innerText = reg ? '¿Ya tienes cuenta? Entrar' : '¿No tienes cuenta? Crear una';
-    document.getElementById('auth-msg').innerText = '';
-};
-const openAuth = (m) => { setAuthMode(m || 'register'); DOM.overlayAuth.classList.add('active'); };
-const closeAuth = () => DOM.overlayAuth.classList.remove('active');
-const toggleAuthMode = () => setAuthMode(authMode === 'register' ? 'login' : 'register');
-
-const authErrorText = (err) => {
-    const m = String((err && err.message) || '');
-    if (/invalid login/i.test(m)) return 'Email o contraseña incorrectos.';
-    if (/already registered/i.test(m)) return 'Ese email ya tiene cuenta: pulsa "Entrar".';
-    if (/not confirmed/i.test(m)) return 'Confirma tu email (revisa tu correo) y vuelve a entrar.';
-    if (/at least/i.test(m)) return 'La contraseña debe tener al menos 6 caracteres.';
-    if (/rate limit/i.test(m)) return 'Demasiados intentos. Espera un momento.';
-    return m || 'No se pudo completar la operación.';
-};
-
-const submitAuth = async () => {
-    const email = (document.getElementById('auth-email').value || '').trim();
-    const pass = document.getElementById('auth-pass').value || '';
-    const msg = document.getElementById('auth-msg');
-    if (!_supabase) { msg.innerText = 'El servicio de cuentas no está disponible ahora mismo.'; return; }
-    if (!/^\S+@\S+\.\S+$/.test(email)) { msg.innerText = 'Escribe un email válido.'; return; }
-    if (pass.length < 6) { msg.innerText = 'La contraseña debe tener al menos 6 caracteres.'; return; }
-    msg.innerText = 'Un momento...';
-    try {
-        if (authMode === 'register') {
-            const { data, error } = await _supabase.auth.signUp({ email, password: pass });
-            if (error) { msg.innerText = authErrorText(error); return; }
-            if (!data.session) {   // el proyecto exige confirmar el email
-                setAuthMode('login');
-                msg.innerText = '📧 Te hemos enviado un correo para confirmar tu cuenta. Confírmalo y pulsa "Entrar".';
-                return;
-            }
-        } else {
-            const { error } = await _supabase.auth.signInWithPassword({ email, password: pass });
-            if (error) { msg.innerText = authErrorText(error); return; }
-        }
-        closeAuth(); closePaywall();
-        await refreshAccount();
-    } catch (e) { msg.innerText = 'Error de conexión. Inténtalo de nuevo.'; }
-};
-
-// --- Muro de pago ---
-const closePaywall = () => DOM.overlayPaywall.classList.remove('active');
-const checkPaid = async (btn) => {
-    if (btn) btn.innerText = 'Comprobando...';
-    await refreshAccount();
-    if (account.plan === 'premium') { closePaywall(); alert('¡Premium activado! Gracias por apoyar Germango ⭐'); }
-    else showPaywall(true);
-};
-const showPaywall = (notYet) => {
-    const set = (id, v) => { document.getElementById(id).innerHTML = v; };
-    const exceeded = timeExceeded();
-    if (account.plan === 'anon') {
-        set('pw-icon', '⏱️');
-        set('pw-title', 'Has agotado tu tiempo gratis de hoy');
-        set('pw-text', `Llevas ${FREE_ANON_MIN} minutos jugando. Crea una cuenta gratis y consigue ${FREE_USER_MIN - FREE_ANON_MIN} minutos más hoy.`);
-        set('pw-actions', `
-            <button class="btn-main continue" onclick="openAuth('register')">CREAR CUENTA GRATIS</button>
-            <button class="btn-main" style="background:#333; border-bottom-color:#222; color:#aaa; pointer-events:all;" onclick="openAuth('login')">YA TENGO CUENTA</button>
-            <button class="write-mode-btn" onclick="closePaywall()">Volver mañana</button>`);
-    } else {
-        set('pw-icon', exceeded ? '⏱️' : '⭐');
-        set('pw-title', exceeded ? 'Tiempo gratis agotado' : 'Germango Premium');
-        set('pw-text', `${exceeded ? `Has usado tus ${FREE_USER_MIN} minutos gratis de hoy. ` : ''}Con Premium juegas sin límite de tiempo. Pago único de <b>${PAY_PRICE}</b> (más adelante será una suscripción).`);
-        const email = account.user ? esc(account.user.email) : '';
-        set('pw-actions', `
-            <a class="btn-main continue" href="${esc(PAY_URL)}" target="_blank" rel="noopener">⭐ DESBLOQUEAR PREMIUM (${PAY_PRICE})</a>
-            <div class="pw-note">En la nota del pago escribe tu email: <b>${email}</b>.<br>Activamos tu cuenta en cuanto recibamos el pago (por ahora de forma manual).${notYet === true ? '<br><span style="color:var(--bonus-gold)">Todavía no aparece activado. Puede tardar un poco.</span>' : ''}</div>
-            <button class="btn-main active" onclick="checkPaid(this)">YA HE PAGADO: COMPROBAR</button>
-            <button class="write-mode-btn" onclick="closePaywall()">${exceeded ? 'Volver mañana' : 'Cerrar'}</button>`);
-    }
-    DOM.overlayPaywall.classList.add('active');
-};
-
-// ============================================================
-// --- TRADUCTOR (ES → DE) Y "MIS FRASES" ---
-// ============================================================
-const MAX_PHRASE_LEN = 120;
-const MAX_MY_PHRASES = 200;
-const MYMEMORY_EMAIL = '';   // opcional: poner un email sube el límite diario gratuito del traductor (MyMemory)
-let myPhrases = [];          // [{ de, es, gloss? }] guardadas en este dispositivo
-let trAlts = [];
-
-// Limpia el texto para que sea seguro en el HTML de la app (sin < > & " \ $) y las comillas simples pasan a ’
-const cleanPhrase = (t) => String(t || '')
-    .replace(/['‘`´]/g, '’')
-    .replace(/[<>&"\\$\r\n\t]/g, ' ')
-    .replace(/\s+/g, ' ').trim().slice(0, MAX_PHRASE_LEN);
-const decodeEntities = (t) => {
-    try { const x = document.createElement('textarea'); x.innerHTML = t; return x.value || t; } catch (e) { return t; }
-};
-
-const syncMyPhrases = () => {
-    VOCAB.phrases_mine = myPhrases.map(p => ({ de: p.de, es: p.es, gloss: p.gloss, emoji: '💬' }));
-};
-const loadMyPhrases = () => {
-    try {
-        const a = JSON.parse(localStorage.getItem('germango_myphrases'));
-        if (Array.isArray(a)) {
-            myPhrases = a.map(p => ({
-                de: cleanPhrase(p && p.de), es: cleanPhrase(p && p.es),
-                gloss: (p && Array.isArray(p.gloss)) ? p.gloss.map(cleanPhrase) : undefined
-            })).filter(p => p.de && p.es).slice(0, MAX_MY_PHRASES);
-        }
-    } catch (e) {}
-    syncMyPhrases();
-    updateUI();
-};
-const saveMyPhrases = () => {
-    try { localStorage.setItem('germango_myphrases', JSON.stringify(myPhrases)); } catch (e) {}
-    syncMyPhrases();
-};
-
-// --- tarjeta del mapa ---
-const mineCardHtml = () => {
-    const n = myPhrases.length;
-    return `<div class="mine-card"><div class="mine-head"><span>⭐ Mis frases</span><span>${n}</span></div>
-        <div class="mine-sub">${n >= 3 ? 'Practica las frases que has guardado.' : 'Traduce y guarda frases (mínimo 3) para practicarlas.'}</div>
-        <div class="acct-actions"><button class="tool-btn" onclick="startMine()">▶ Practicar</button>
-        <button class="tool-btn" onclick="openTranslator()">🌐 Traductor</button></div></div>`;
-};
-const startMine = () => {
-    if (myPhrases.length < 3) {
-        openTranslator();
-        const m = document.getElementById('tr-msg');
-        if (m) m.innerText = 'Añade al menos 3 frases para poder practicarlas.';
-        return;
-    }
-    startLesson({ id: 'mine', category: 'phrases_mine', icon: '⭐' });
-};
-
-// --- pantalla del traductor ---
-const openTranslator = () => {
-    const c = document.getElementById('translator-container');
-    if (!c) return;
-    showScreen('screen-translator');
-    c.innerHTML = `
-        <div class="songs-head"><button class="back-btn" onclick="showScreen('screen-map')">←</button><h2>🌐 Traductor</h2></div>
-        <div class="tr-label">Español</div>
-        <textarea id="tr-es" class="text-input-fallback tr-area" rows="2" maxlength="${MAX_PHRASE_LEN}" placeholder="Escribe una frase en español..."></textarea>
-        <button class="btn-main active" id="tr-btn" style="margin-top:10px" onclick="doTranslate()">TRADUCIR AL ALEMÁN</button>
-        <div class="tr-alts" id="tr-alts"></div>
-        <div class="tr-label">Alemán <button class="tool-btn" onclick="speakTr()">🔊 Escuchar</button></div>
-        <input type="text" id="tr-de" class="text-input-fallback tr-input" maxlength="${MAX_PHRASE_LEN}" oninput="updateGlossHint()" placeholder="La traducción aparecerá aquí (puedes corregirla)" autocomplete="off" autocapitalize="off">
-        <details class="tr-gloss"><summary>Opcional: significado palabra por palabra</summary>
-            <input type="text" id="tr-gloss" class="text-input-fallback tr-input" placeholder="yo, me llamo, Anna" autocomplete="off">
-            <div class="song-hint" id="tr-gloss-hint" style="margin-top:6px">Sirve para usar la frase en el ejercicio de traducir oraciones.</div>
-        </details>
-        <div class="auth-msg" id="tr-msg"></div>
-        <button class="btn-main continue" onclick="addMyPhrase()">➕ AÑADIR A MIS FRASES</button>
-        <div class="song-hint" style="margin-top:10px">⚠️ Las traducciones automáticas pueden tener errores: revisa la frase antes de añadirla. El texto se envía a un servicio externo (MyMemory) para traducirlo. También puedes escribir tú mismo la frase en alemán.</div>
-        <h3 class="tr-h">Mis frases (<span id="tr-count">0</span>)</h3>
-        <div id="tr-list"></div>`;
-    renderMyList();
-};
-
-const speakTr = () => { const d = document.getElementById('tr-de'); if (d && d.value.trim()) speak(cleanPhrase(d.value)); };
-
-const updateGlossHint = () => {
-    const d = document.getElementById('tr-de'), h = document.getElementById('tr-gloss-hint');
-    if (!d || !h) return;
-    const n = cleanPhrase(d.value).split(' ').filter(Boolean).length;
-    h.innerText = n
-        ? `La frase alemana tiene ${n} palabra${n === 1 ? '' : 's'}: escribe ${n} significado${n === 1 ? '' : 's'} separados por comas (opcional).`
-        : 'Sirve para usar la frase en el ejercicio de traducir oraciones.';
-};
-
-const doTranslate = async () => {
-    const esEl = document.getElementById('tr-es'), msg = document.getElementById('tr-msg');
-    const btn = document.getElementById('tr-btn'), alts = document.getElementById('tr-alts');
-    const es = cleanPhrase(esEl && esEl.value);
-    if (!es) { msg.innerText = 'Escribe primero una frase en español.'; return; }
-    msg.innerText = ''; alts.innerHTML = ''; trAlts = [];
-    btn.innerText = 'Traduciendo...';
-    try {
-        const ctrl = new AbortController();
-        const timer = setTimeout(() => ctrl.abort(), 10000);
-        let url = 'https://api.mymemory.translated.net/get?q=' + encodeURIComponent(es) + '&langpair=es%7Cde';
-        if (MYMEMORY_EMAIL) url += '&de=' + encodeURIComponent(MYMEMORY_EMAIL);
-        const res = await fetch(url, { signal: ctrl.signal });
-        clearTimeout(timer);
-        const data = await res.json();
-        const main = decodeEntities(String((data.responseData && data.responseData.translatedText) || ''));
-        const status = Number(data.responseStatus);
-        if (/MYMEMORY WARNING/i.test(main) || status === 429) {
-            msg.innerText = 'Has llegado al límite diario del traductor. Inténtalo mañana o escribe tú la frase en alemán.';
-            return;
-        }
-        if (status !== 200 || !main) { msg.innerText = 'No se pudo traducir. Inténtalo de nuevo.'; return; }
-        const best = cleanPhrase(main);
-        document.getElementById('tr-de').value = best;
-        updateGlossHint();
-        // otras traducciones posibles
-        const seen = new Set([best.toLowerCase()]);
-        (data.matches || []).slice().sort((a, b) => (Number(b.match) || 0) - (Number(a.match) || 0)).forEach(m => {
-            const t = cleanPhrase(decodeEntities(String(m.translation || '')));
-            if (t && !seen.has(t.toLowerCase()) && !/MYMEMORY WARNING/i.test(t) && trAlts.length < 3) { seen.add(t.toLowerCase()); trAlts.push(t); }
-        });
-        if (trAlts.length) {
-            alts.innerHTML = '<div class="song-hint" style="width:100%">Otras opciones:</div>' +
-                trAlts.map((t, i) => `<button class="tool-btn" onclick="useAlt(${i})">${esc(t)}</button>`).join('');
-        }
-        speak(best);
-    } catch (e) {
-        msg.innerText = 'No se pudo conectar con el traductor. Revisa tu conexión.';
-    } finally {
-        btn.innerText = 'TRADUCIR AL ALEMÁN';
-    }
-};
-const useAlt = (i) => {
-    const d = document.getElementById('tr-de');
-    if (d && trAlts[i]) { d.value = trAlts[i]; updateGlossHint(); }
-};
-
-// --- guardar / borrar ---
-const addMyPhrase = () => {
-    const msg = document.getElementById('tr-msg');
-    const es = cleanPhrase(document.getElementById('tr-es').value);
-    const de = cleanPhrase(document.getElementById('tr-de').value);
-    if (!es || !de) { msg.innerText = 'Escribe la frase en español y en alemán.'; return; }
-    if (myPhrases.length >= MAX_MY_PHRASES) { msg.innerText = `Has llegado al máximo de ${MAX_MY_PHRASES} frases.`; return; }
-    if (myPhrases.some(p => p.de.toLowerCase() === de.toLowerCase())) { msg.innerText = 'Esa frase ya está en tu lista.'; return; }
-    let gloss;
-    const raw = (document.getElementById('tr-gloss').value || '').trim();
-    if (raw) {
-        const n = de.split(' ').length;
-        const g = raw.split(',').map(cleanPhrase);
-        if (g.length !== n || g.some(x => !x)) {
-            msg.innerText = `La frase alemana tiene ${n} palabra${n === 1 ? '' : 's'}: escribe ${n} significado${n === 1 ? '' : 's'} separados por comas, o deja el campo vacío.`;
-            return;
-        }
-        gloss = g;
-    }
-    myPhrases.push({ de, es, gloss });
-    saveMyPhrases();
-    document.getElementById('tr-es').value = '';
-    document.getElementById('tr-de').value = '';
-    document.getElementById('tr-gloss').value = '';
-    document.getElementById('tr-alts').innerHTML = '';
-    updateGlossHint();
-    renderMyList();
-    updateUI();
-    msg.innerText = myPhrases.length >= 3 ? '✅ Añadida. Ya puedes practicar en ⭐ Mis frases.' : `✅ Añadida. Faltan ${3 - myPhrases.length} para poder practicar.`;
-};
-const removeMyPhrase = (i) => {
-    if (!myPhrases[i]) return;
-    if (typeof confirm === 'function' && !confirm('¿Borrar esta frase?')) return;
-    myPhrases.splice(i, 1);
-    saveMyPhrases();
-    renderMyList();
-    updateUI();
-};
-const renderMyList = () => {
-    const l = document.getElementById('tr-list'), c = document.getElementById('tr-count');
-    if (c) c.innerText = myPhrases.length;
-    if (!l) return;
-    l.innerHTML = myPhrases.length ? myPhrases.map((p, i) => `
-        <div class="my-item"><div><div class="de">${esc(p.de)}${p.gloss ? ' 🔤' : ''}</div><div class="es">${esc(p.es)}</div></div>
-        <div class="my-act"><button class="tool-btn" onclick="speak(myPhrases[${i}].de)">🔊</button>
-        <button class="tool-btn" onclick="removeMyPhrase(${i})">🗑️</button></div></div>`).join('')
-        : '<div class="song-empty">Aún no has guardado ninguna frase.</div>';
+if(DB.units.length === 0) return;
+DOM.mapContainer.innerHTML = '';
+const allLessons = DB.units.flatMap(u => u.lessons);
+const totalLessons = allLessons.length;
+const progressPercent = totalLessons > 0 ? (state.completed.length / totalLessons) * 100 : 0;
+let gpHtml = `
+<div class="global-progress-container">
+<div class="gp-header"><span>Progreso Global</span><span>${Math.round(progressPercent)}%</span></div>
+<div class="gp-bar"><div class="gp-fill" style="width: ${progressPercent}%"></div></div>
+</div>
+`;
+DOM.mapContainer.innerHTML += gpHtml;
+let globalIndex = 0;
+DB.units.forEach((unit) => {
+const unitDiv = document.createElement('div');
+unitDiv.className = 'unit-container';
+const header = document.createElement('div');
+header.className = 'unit-header';
+header.innerHTML = `<div class="unit-title">${unit.title}</div><div class="unit-sub">${unit.subtitle}</div>`;
+unitDiv.appendChild(header);
+const lessonsRow = document.createElement('div');
+lessonsRow.className = 'lessons-row';
+unit.lessons.forEach((les) => {
+const node = document.createElement('div');
+node.className = 'lesson-node';
+if (globalIndex === 0) node.classList.add('first-node');
+const isDone = state.completed.includes(les.id);
+const prevLesson = globalIndex > 0 ? allLessons[globalIndex - 1] : null;
+const prevDone = prevLesson ? state.completed.includes(prevLesson.id) : false;
+const isUnlocked = (globalIndex === 0) || prevDone;
+if (isDone) {
+node.classList.add('completed');
+node.innerHTML = `<span class="icon">✓</span>`;
+} else if (isUnlocked) {
+node.classList.add('current');
+node.innerHTML = `<span class="icon">${les.icon}</span>`;
+} else {
+node.classList.add('locked');
+node.innerHTML = `<span class="icon">🔒</span>`;
+}
+if (!node.classList.contains('locked')) node.onclick = () => startLesson(les);
+lessonsRow.appendChild(node);
+globalIndex++;
+});
+unitDiv.appendChild(lessonsRow);
+DOM.mapContainer.appendChild(unitDiv);
+});
 };
 
 // --- LESSON LOGIC ---
 const startLesson = (les) => {
-    if (timeExceeded()) { showPaywall(); return; }   // se acabó el tiempo gratis de hoy
-    regenHearts();
-    if (state.hearts <= 0) { openShop(); return; }   // sin vidas: tienda / esperar
-
-    lessonUsed = new Set();
-    const category = les.category || 'greetings';
-    const isPhrases = category.startsWith('phrases');
-    const qTypes = isPhrases
-        ? ['choice', 'translate', 'audio', 'wordbank', 'translate', 'speak']
-        : ['choice', 'choice', 'match', 'audio', 'speak'];
-
-    const generatedQuestions = qTypes.map(qType => generateQuestion(qType, category)).filter(q => q);
-
-    // REPASO: una pregunta de las palabras que más fallas (de cualquier unidad)
-    const weak = weakWords().filter(w => !lessonUsed.has(w.item.de)).slice(0, 5);
-    if (weak.length && generatedQuestions.length > 1) {
-        const w = getRandomItem(weak);
-        const rq = generateQuestion('choice', w.key, w.item);
-        const ri = Math.max(0, qTypes.lastIndexOf('choice'));   // sustituye una pregunta de tipo "choice"
-        if (rq) { rq.prompt = '🔁 Repaso: ' + rq.prompt; generatedQuestions[ri] = rq; }
-    }
-
-    currentLessonData = { ...les, questions: generatedQuestions };
-    state.currentQ = 0; state.checking = false; state.selected = null; state.answers = [];
-    matchState = { first: null, second: null, lock: false, solved: [] };
-
-    DOM.overlayGameover.classList.remove('active');
-    showScreen('screen-lesson');
-    renderProgress();
-    renderQ();
+const qTypes = ['choice', 'choice', 'match', 'audio', 'speak'];
+const category = les.category || 'greetings';
+const generatedQuestions = qTypes.map(qType => generateQuestion(qType, category)).filter(q => q);
+currentLessonData = { ...les, questions: generatedQuestions };
+state.currentQ = 0; state.checking = false; state.selected = null; state.answers = [];
+matchState = { first: null, second: null, lock: false, solved: [] };
+DOM.overlayGameover.classList.remove('active');
+showScreen('screen-lesson');
+renderProgress();
+renderQ();
 };
 
 const renderProgress = () => {
-    DOM.progressBar.innerHTML = '';
-    currentLessonData.questions.forEach((_, i) => {
-        const seg = document.createElement('div');
-        seg.className = 'progress-segment';
-        if (i < state.currentQ) seg.classList.add('done');
-        else if (i === state.currentQ) seg.classList.add('current');
-        DOM.progressBar.appendChild(seg);
-    });
+DOM.progressBar.innerHTML = '';
+currentLessonData.questions.forEach((_, i) => {
+const seg = document.createElement('div');
+seg.className = 'progress-segment';
+if (i < state.currentQ) seg.classList.add('done');
+else if (i === state.currentQ) seg.classList.add('current');
+DOM.progressBar.appendChild(seg);
+});
 };
 
 const renderQ = () => {
-    // CAMBIO: al cambiar de pregunta, cortar micrófono y voz que sigan activos
-    try { if (recognition) recognition.abort(); } catch (e) {}
-    listening = false;
-    if ('speechSynthesis' in window) window.speechSynthesis.cancel();
-
-    const q = currentLessonData.questions[state.currentQ];
-    if(!q) return finishLesson();
-
-    DOM.feedbackMsg.className = 'feedback-msg';
-    DOM.btnAction.className = 'btn-main'; DOM.btnAction.innerText = 'COMPROBAR';
-    DOM.btnAction.classList.remove('active');
-
-    const c = DOM.lessonContent;
-    let html = `<div class="prompt-text">${q.prompt}</div>`;
-    const emojiHtml = q.emoji ? `<span class="emoji">${q.emoji}</span>` : '';
-
-    if (q.type === 'choice' || q.type === 'audio') {
-        if (q.type === 'audio') {
-            html += `<button class="audio-prompt-btn" onclick="speak('${q.audioText || q.text}')">🔊</button>`;
-            setTimeout(() => speak(q.audioText || q.text), 300);
-        } else {
-            html += `<div class="main-text">${emojiHtml} ${q.text}
-                <button class="speak-word-btn" onclick="speak('${q.text}')">🔊</button></div>`;
-            setTimeout(() => speak(q.text), 300);
-        }
-        html += `<div class="options-grid">`;
-        q.options.forEach((o) => {
-            html += `<button class="opt-btn" onclick="selectChoice(this, '${o.replace(/'/g, "\\'")}')">${o}</button>`;
-        });
-        html += `</div>`;
-    }
-    else if (q.type === 'speak') {
-        html += `<div class="main-text">${emojiHtml} ${q.text}</div>
-        <div class="speak-container" id="speak-ui">
-            <button class="listen-again-btn" onclick="speak('${q.text}')"><span>🔊</span> Escuchar de nuevo</button>
-            <button class="speak-btn" id="mic-btn" onclick="triggerSpeech()">🎤 Toca para hablar</button>
-            <button class="write-mode-btn" onclick="switchToTyping()">No puedo usar el micrófono</button>
-            <div class="mic-feedback" id="mic-result"></div>
-        </div>`;
-        setTimeout(() => speak(q.text), 300);
-    }
-    else if (q.type === 'translate') {
-        const chips = q.text.split(' ').map((w, i) =>
-            `<span class="de-word" onclick="showGloss(${i})">${esc(w)}</span>`).join(' ');
-        html += `<button class="audio-prompt-btn" onclick="speak('${q.text}')">🔊</button>
-        <div class="main-text de-sentence">${chips}</div>
-        <div class="gloss-box" id="gloss-box">👆 Toca una palabra para ver su significado</div>
-        <div class="sentence-area" id="sentence-area" onclick="clearLastWord()"></div>
-        <div class="bank" id="bank-area">`;
-        q.words.forEach(w => {
-            html += `<div class="token" data-w="${esc(w)}" onclick="addWord(this)">${esc(w)}</div>`;
-        });
-        html += `</div>`;
-        setTimeout(() => speak(q.text), 300);
-    }
-    else if (q.type === 'wordbank') {
-        html += `<div class="main-text">${emojiHtml} ${q.text}</div>
-        <div class="sentence-area" id="sentence-area" onclick="clearLastWord()"></div>
-        <div class="bank" id="bank-area">`;
-        q.words.forEach(w => {
-            html += `<div class="token" data-w="${w}" onclick="addWord(this)">${w}</div>`;
-        });
-        html += `</div>`;
-    }
-    else if (q.type === 'match') {
-        html += `<div class="match-grid" id="match-grid">`;
-        const cards = [];
-        q.pairs.forEach((p, i) => { cards.push({id: i, val: p[0], de: true}); cards.push({id: i, val: p[1], de: false}); });
-        cards.sort(() => Math.random() - 0.5);
-        cards.forEach(card => {
-            html += `<div class="match-card" data-id="${card.id}" data-de="${card.de ? 1 : 0}" onclick="selectMatch(this, ${card.id})">${card.val}</div>`;
-        });
-        html += `</div>`;
-    }
-
-    c.innerHTML = html;
-    // CAMBIO: el reconocimiento ya no se crea aquí; se crea en triggerSpeech()
+const q = currentLessonData.questions[state.currentQ];
+if(!q) return finishLesson();
+DOM.feedbackMsg.className = 'feedback-msg';
+DOM.btnAction.className = 'btn-main'; DOM.btnAction.innerText = 'COMPROBAR';
+DOM.btnAction.classList.remove('active');
+const c = DOM.lessonContent;
+let html = `<div class="prompt-text">${q.prompt}</div>`;
+const emojiHtml = q.emoji ? `<span class="emoji">${q.emoji}</span>` : '';
+if (q.type === 'choice' || q.type === 'audio') {
+if (q.type === 'audio') {
+html += `<button class="audio-prompt-btn" onclick="speak('${q.audioText || q.text}')">🔊</button>`;
+setTimeout(() => speak(q.audioText || q.text), 300);
+} else {
+html += `<div class="main-text">${emojiHtml} ${q.text}</div>`;
+}
+html += `<div class="options-grid">`;
+q.options.forEach((o) => {
+html += `<button class="opt-btn" onclick="selectChoice(this, '${o.replace(/'/g, "\\'")}')">${o}</button>`;
+});
+html += `</div>`;
+}
+else if (q.type === 'speak') {
+html += `<div class="main-text">${emojiHtml} ${q.text}</div>
+<div class="speak-container" id="speak-ui">
+<button class="listen-again-btn" onclick="speak('${q.text}')"><span>🔊</span> Escuchar de nuevo</button>
+<button class="speak-btn" id="mic-btn" onclick="triggerSpeech()">🎤 Toca para hablar</button>
+<button class="write-mode-btn" onclick="switchToTyping()">No puedo usar el micrófono</button>
+<div class="mic-feedback" id="mic-result"></div>
+</div>`;
+setTimeout(() => speak(q.text), 300);
+}
+else if (q.type === 'wordbank') {
+html += `<div class="main-text">${emojiHtml} ${q.text}</div>
+<div class="sentence-area" id="sentence-area" onclick="clearLastWord()"></div>
+<div class="bank" id="bank-area">`;
+q.words.forEach(w => {
+html += `<div class="token" data-w="${w}" onclick="addWord(this)">${w}</div>`;
+});
+html += `</div>`;
+}
+else if (q.type === 'match') {
+html += `<div class="match-grid" id="match-grid">`;
+const cards = [];
+q.pairs.forEach((p, i) => { cards.push({id: i, val: p[0]}); cards.push({id: i, val: p[1]}); });
+cards.sort(() => Math.random() - 0.5);
+cards.forEach(card => {
+html += `<div class="match-card" data-id="${card.id}" onclick="selectMatch(this, ${card.id})">${card.val}</div>`;
+});
+html += `</div>`;
+}
+c.innerHTML = html;
+if (q.type === 'speak' && 'webkitSpeechRecognition' in window) {
+recognition = new webkitSpeechRecognition();
+recognition.lang = 'de-DE';
+recognition.continuous = false;
+recognition.interimResults = false;
+}
 };
 
 // --- INPUT HANDLERS ---
 const selectChoice = (el, val) => {
-    if (state.checking) return;
-    document.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('selected'));
-    el.classList.add('selected');
-    state.selected = val;
-    DOM.btnAction.classList.add('active');
-};
-
-// Muestra el significado de una palabra alemana de la frase (y la pronuncia)
-const showGloss = (i) => {
-    const q = currentLessonData && currentLessonData.questions[state.currentQ];
-    if (!q || q.type !== 'translate') return;
-    const clean = q.text.split(' ')[i].replace(/[¿?¡!.,;:]/g, '');
-    document.querySelectorAll('.de-word').forEach((e, k) => e.classList.toggle('active', k === i));
-    const box = document.getElementById('gloss-box');
-    if (box) box.innerHTML = `<b>${esc(clean)}</b> → ${esc((q.gloss && q.gloss[i]) || '—')}`;
-    speak(clean);
+if (state.checking) return;
+document.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('selected'));
+el.classList.add('selected');
+state.selected = val;
+DOM.btnAction.classList.add('active');
 };
 
 const addWord = (el) => {
-    if (state.checking || el.classList.contains('placed')) return;
-    el.classList.add('placed');
-    state.answers.push(el.dataset.w);
-    renderSentence();
+if (state.checking || el.classList.contains('placed')) return;
+el.classList.add('placed');
+state.answers.push(el.dataset.w);
+renderSentence();
 };
 
 const clearLastWord = () => {
-    if (state.checking || state.answers.length === 0) return;
-    const w = state.answers.pop();
-    const btn = document.querySelector(`.token[data-w="${w}"].placed`);
-    if(btn) btn.classList.remove('placed');
-    renderSentence();
+if (state.checking || state.answers.length === 0) return;
+const w = state.answers.pop();
+const btn = document.querySelector(`.token[data-w="${w}"].placed`);
+if(btn) btn.classList.remove('placed');
+renderSentence();
 };
 
 const removeSpecificWord = (index) => {
-    const w = state.answers[index];
-    const btn = document.querySelector(`.token[data-w="${w}"].placed`);
-    if(btn) btn.classList.remove('placed');
-    state.answers.splice(index, 1);
-    renderSentence();
+const w = state.answers[index];
+const btn = document.querySelector(`.token[data-w="${w}"].placed`);
+if(btn) btn.classList.remove('placed');
+state.answers.splice(index, 1);
+renderSentence();
 };
 
 const renderSentence = () => {
-    const area = document.getElementById('sentence-area');
-    if(!area) return;
-    area.innerHTML = '';
-    state.answers.forEach((w, i) => {
-        const s = document.createElement('div');
-        s.className = 'token in-sentence';
-        s.innerText = w;
-        s.onclick = (e) => { e.stopPropagation(); removeSpecificWord(i); };
-        area.appendChild(s);
-    });
-    state.selected = state.answers.length > 0 ? state.answers.join(' ') : null;
-    if (state.answers.length > 0) DOM.btnAction.classList.add('active');
-    else DOM.btnAction.classList.remove('active');
+const area = document.getElementById('sentence-area');
+if(!area) return;
+area.innerHTML = '';
+state.answers.forEach((w, i) => {
+const s = document.createElement('div');
+s.className = 'token in-sentence';
+s.innerText = w;
+s.onclick = (e) => { e.stopPropagation(); removeSpecificWord(i); };
+area.appendChild(s);
+});
+if (state.answers.length > 0) DOM.btnAction.classList.add('active');
+else DOM.btnAction.classList.remove('active');
 };
 
 const selectMatch = (el, id) => {
-    if (matchState.lock || el.classList.contains('matched') || state.checking) return;
-    el.classList.add('selected');
-    if (el.dataset.de === '1') speak(el.innerText);
-
-    if (!matchState.first) {
-        matchState.first = el;
-    } else {
-        matchState.second = el;
-        if (matchState.first.dataset.id === matchState.second.dataset.id && matchState.first !== matchState.second) {
-            recordMatch(matchState.first, matchState.second, true);
-            matchState.first.classList.add('matched');
-            matchState.second.classList.add('matched');
-            matchState.solved.push(id);
-            matchState.first = null;
-            matchState.second = null;
-            matchState.lock = false;
-
-            const total = currentLessonData.questions[state.currentQ].pairs.length;
-            if (matchState.solved.length === total) {
-                state.selected = "MATCH_COMPLETE";
-                handleAction();
-            } else {
-                playSound('correct');
-            }
-        } else {
-            matchState.lock = true;
-            recordMatch(matchState.first, matchState.second, false);
-            playSound('wrong');
-            setTimeout(() => {
-                if(matchState.first) matchState.first.classList.remove('selected');
-                if(matchState.second) matchState.second.classList.remove('selected');
-                matchState.first = null;
-                matchState.second = null;
-                matchState.lock = false;
-            }, 600);
-        }
-    }
-};
-
-// ============================================================
-// --- VOZ: RECONOCIMIENTO ("TOCA PARA HABLAR") ---
-// ============================================================
-const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-let listening = false;
-
-// Dígitos que el reconocedor devuelve en lugar de la palabra alemana
-// (ya normalizados: sin tildes ni ß)
-const NUM_DE = {
-    '1': 'eins', '2': 'zwei', '3': 'drei', '4': 'vier', '5': 'funf', '6': 'sechs',
-    '7': 'sieben', '8': 'acht', '9': 'neun', '10': 'zehn', '11': 'elf', '12': 'zwolf',
-    '20': 'zwanzig', '100': 'hundert'
-};
-const ARTICLES = ['der', 'die', 'das'];
-
-// minúsculas, sin ß/tildes/diéresis ni signos de puntuación
-const normalize = (s) => (s || '').toLowerCase()
-    .replace(/ß/g, 'ss')
-    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z0-9 ]/g, ' ')
-    .replace(/\s+/g, ' ').trim();
-
-// distancia de Levenshtein y similitud 0..1
-const lev = (a, b) => {
-    const d = Array.from({ length: a.length + 1 }, (_, i) => [i, ...Array(b.length).fill(0)]);
-    for (let j = 1; j <= b.length; j++) d[0][j] = j;
-    for (let i = 1; i <= a.length; i++) {
-        for (let j = 1; j <= b.length; j++) {
-            d[i][j] = Math.min(d[i-1][j] + 1, d[i][j-1] + 1, d[i-1][j-1] + (a[i-1] === b[j-1] ? 0 : 1));
-        }
-    }
-    return d[a.length][b.length];
-};
-const similarity = (a, b) => (!a && !b) ? 1 : 1 - lev(a, b) / Math.max(a.length, b.length);
-
-// ¿lo que dijo el usuario coincide con el texto objetivo?
-function speechMatches(spoken, target) {
-    const t = normalize(target);
-    const s = normalize(spoken).split(' ').map(w => NUM_DE[w] ?? w).join(' ');
-    const strip = (x) => x.split(' ').filter(w => !ARTICLES.includes(w)).join(' ') || x;
-    // acepta con o sin artículo ("Vater" vale como "der Vater")
-    return similarity(s, t) >= 0.8 || similarity(strip(s), strip(t)) >= 0.8;
+if (matchState.lock || el.classList.contains('matched') || state.checking) return;
+el.classList.add('selected');
+if (!matchState.first) {
+matchState.first = el;
+} else {
+matchState.second = el;
+if (matchState.first.dataset.id === matchState.second.dataset.id && matchState.first !== matchState.second) {
+matchState.first.classList.add('matched');
+matchState.second.classList.add('matched');
+matchState.solved.push(id);
+matchState.first = null;
+matchState.second = null;
+matchState.lock = false;
+const total = currentLessonData.questions[state.currentQ].pairs.length;
+if (matchState.solved.length === total) {
+state.selected = "MATCH_COMPLETE";
+handleAction();
+} else {
+playSound('correct');
 }
-
-const showMicMsg = (msg) => {
-    const r = document.getElementById('mic-result');
-    if (r) r.innerText = msg;
+} else {
+matchState.lock = true;
+playSound('wrong');
+setTimeout(() => {
+if(matchState.first) matchState.first.classList.remove('selected');
+if(matchState.second) matchState.second.classList.remove('selected');
+matchState.first = null;
+matchState.second = null;
+matchState.lock = false;
+}, 600);
+}
+}
 };
 
-const setMic = (on) => {
-    const b = document.getElementById('mic-btn');
-    if (!b) return;
-    b.classList.toggle('listening', on);
-    b.innerText = on ? '🔴 Escuchando... (toca para parar)' : '🎤 Toca para hablar';
-};
-
+// Speech & Typing Handlers
 const triggerSpeech = () => {
-    if (!SR) {
-        showMicMsg('Tu navegador no soporta voz. Prueba Chrome, Edge o Safari, o escribe.');
-        return switchToTyping();
-    }
-    // segundo toque mientras escucha = parar
-    if (listening) { try { recognition.stop(); } catch (e) {} return; }
+if (!recognition) { alert("Navegador no soportado."); switchToTyping(); return; }
+const micBtn = document.getElementById('mic-btn');
+const resultDiv = document.getElementById('mic-result');
+micBtn.classList.add('listening');
+micBtn.innerText = "🔴 Escuchando...";
+resultDiv.innerText = "";
+recognition.onresult = (event) => {
+const res = event.results[0][0].transcript.toLowerCase();
+resultDiv.innerText = `Dijiste: "${res}"`;
+checkSpeechResult(res);
+};
+recognition.onerror = (event) => {
+resultDiv.innerText = "Error. Intenta escribir.";
+resetMicBtn();
+};
+recognition.onend = () => resetMicBtn();
+try { recognition.start(); } catch(e) { recognition.stop(); recognition.start(); }
+};
 
-    const q = currentLessonData.questions[state.currentQ];
-
-    // que la app no se escuche a sí misma
-    if ('speechSynthesis' in window) window.speechSynthesis.cancel();
-
-    state.selected = null;
-    DOM.btnAction.classList.remove('active');
-    showMicMsg('');
-
-    recognition = new SR();
-    recognition.lang = 'de-DE';
-    recognition.continuous = false;
-    recognition.interimResults = false;
-    recognition.maxAlternatives = 5;
-
-    recognition.onstart = () => { listening = true; setMic(true); };
-
-    recognition.onresult = (e) => {
-        const alts = Array.from(e.results[0]).map(a => a.transcript);
-        const ok = alts.find(a => speechMatches(a, q.text));
-        state.selected = ok || alts[0];
-        DOM.btnAction.classList.add('active');
-        if (ok) {
-            showMicMsg(`Dijiste: "${alts[0]}" ✅`);
-            // acierto: comprobar automáticamente (si el usuario no lo hizo ya)
-            setTimeout(() => { if (!state.checking) handleAction(); }, 500);
-        } else {
-            showMicMsg(`Dijiste: "${alts[0]}" — inténtalo otra vez 🎤`);
-        }
-    };
-
-    recognition.onerror = (e) => {
-        const msgs = {
-            'not-allowed': 'Permiso de micrófono denegado. Actívalo en los ajustes del navegador.',
-            'service-not-allowed': 'El navegador bloquea el reconocimiento de voz.',
-            'no-speech': 'No te he oído. Acércate al micrófono e inténtalo de nuevo.',
-            'audio-capture': 'No se detecta ningún micrófono.',
-            'network': 'Sin conexión: el reconocimiento de voz necesita internet.',
-            'aborted': ''
-        };
-        showMicMsg(msgs[e.error] ?? `Error: ${e.error}`);
-    };
-
-    recognition.onend = () => { listening = false; setMic(false); };
-
-    // pequeña pausa para que el audio de la síntesis se corte del todo
-    setTimeout(() => {
-        try { recognition.start(); }
-        catch (err) { showMicMsg('No se pudo iniciar el micrófono. Inténtalo de nuevo.'); listening = false; setMic(false); }
-    }, 250);
+const resetMicBtn = () => {
+const micBtn = document.getElementById('mic-btn');
+if(micBtn) {
+micBtn.classList.remove('listening');
+micBtn.innerText = "🎤 Toca para hablar";
+}
 };
 
 const switchToTyping = () => {
-    const container = document.getElementById('speak-ui');
-    if (!container) return;
-    try { if (recognition) recognition.abort(); } catch (e) {}
-    listening = false;
-    container.innerHTML = `
-        <input type="text" class="text-input-fallback" id="write-input" placeholder="Escribe aquí..." oninput="checkTypingResult()" autocomplete="off" autocapitalize="off">
-        <button class="write-mode-btn" style="margin-top:10px; color:var(--secondary-blue);" onclick="speak(currentLessonData.questions[state.currentQ].text)">🔊 Repetir audio</button>
-    `;
-    document.getElementById('write-input').focus();
+const container = document.getElementById('speak-ui');
+if (!container) return;
+container.innerHTML = `
+<input type="text" class="text-input-fallback" id="write-input" placeholder="Escribe aquí..." oninput="checkTypingResult()">
+<button class="write-mode-btn" style="margin-top:10px; color:var(--secondary-blue);" onclick="speak(currentLessonData.questions[state.currentQ].text)">🔊 Repetir audio</button>
+`;
+document.getElementById('write-input').focus();
 };
 
 const checkTypingResult = () => {
-    const input = document.getElementById('write-input');
-    if(!input) return;
-    const val = input.value.trim();
-    if (val.length > 0) {
-        state.selected = val;
-        DOM.btnAction.classList.add('active');
-    } else {
-        state.selected = null;
-        DOM.btnAction.classList.remove('active');
-    }
+const input = document.getElementById('write-input');
+if(!input) return;
+const val = input.value.toLowerCase().trim();
+if (val.length > 0) {
+state.selected = val;
+DOM.btnAction.classList.add('active');
+} else {
+DOM.btnAction.classList.remove('active');
+}
+};
+
+const checkSpeechResult = (spokenText) => {
+const target = currentLessonData.questions[state.currentQ].text.toLowerCase();
+const targetWords = target.replace(/[^a-zA-Z0-9äöüß ]/g, "").split(" ");
+const spokenWords = spokenText.replace(/[^a-zA-Z0-9äöüß ]/g, "").split(" ");
+let matchCount = 0;
+targetWords.forEach(tw => { if (spokenWords.includes(tw)) matchCount++; });
+if (matchCount / targetWords.length >= 0.8 || spokenText.includes(target)) {
+state.selected = spokenText;
+DOM.btnAction.classList.add('active');
+if (spokenText === target) handleAction();
+} else {
+state.selected = spokenText;
+DOM.btnAction.classList.add('active');
+}
 };
 
 // --- FLOW CONTROL ---
 const handleAction = () => {
-    const q = currentLessonData.questions[state.currentQ];
-    const txt = document.getElementById('msg-text');
-    const sub = document.getElementById('msg-sub');
-
-    if (DOM.btnAction.innerText === 'COMPROBAR') {
-        if (!state.selected && matchState.solved.length === 0) return;
-        state.checking = true;
-        try { if (recognition) recognition.abort(); } catch (e) {}
-
-        let isCorrect = false;
-        if (q.type === 'choice' || q.type === 'audio') isCorrect = state.selected === q.correct;
-        else if (q.type === 'match') isCorrect = matchState.solved.length === q.pairs.length;
-        else if (q.type === 'wordbank' || q.type === 'translate') isCorrect = JSON.stringify(state.answers) === JSON.stringify(q.correct);
-        else if (q.type === 'speak') {
-            // CAMBIO: comparación tolerante (puntuación, tildes, números, artículos)
-            isCorrect = speechMatches(state.selected || '', q.text);
-        }
-
-        // estadísticas por palabra (alimentan el repaso)
-        if (q.word && q.type !== 'match') { recordResult(q.word, isCorrect); save(); }
-
-        if (isCorrect) {
-            playSound('victory');
-            txt.innerText = "¡Excelente!";
-
-            let feedbackSub = "";
-            if (q.type === 'speak' && q.meaning) {
-                feedbackSub = `${q.text} = ${q.meaning}`;
-            } else if (q.type === 'audio') {
-                feedbackSub = `${q.audioText} = ${q.correct}`;
-            } else if (q.type === 'wordbank' && q.word) {
-                feedbackSub = q.word;
-                setTimeout(() => speak(q.word), 200);
-            } else if (q.type === 'translate') {
-                feedbackSub = `${q.text} = ${q.answer}`;
-                setTimeout(() => speak(q.text), 200);
-            }
-            sub.innerText = feedbackSub;
-
-            DOM.feedbackMsg.className = "feedback-msg show correct";
-            DOM.btnAction.innerText = "CONTINUAR";
-            DOM.btnAction.className = "btn-main continue";
-        } else {
-            playSound('wrong');
-            txt.innerText = "Incorrecto";
-            let cText = q.correct || q.text;
-            if (q.type === 'wordbank') cText = q.correct.join(" ");
-            if (q.type === 'translate') cText = q.answer;
-            if (q.type === 'audio') cText = q.correct;
-            sub.innerText = `Correcto: ${cText}`;
-            DOM.feedbackMsg.className = "feedback-msg show wrong";
-            DOM.screenLesson.classList.add('shake');
-            setTimeout(() => DOM.screenLesson.classList.remove('shake'), 300);
-            loseHeart(); updateUI(); save();
-            DOM.btnAction.innerText = "CONTINUAR";
-            DOM.btnAction.className = "btn-main retry";
-
-            if (q.type === 'choice' || q.type === 'audio') {
-                document.querySelectorAll('.opt-btn').forEach(b => {
-                    if(b.innerText.includes(q.correct)) b.classList.add('correct');
-                    if(b.classList.contains('selected')) b.classList.add('wrong');
-                });
-            }
-        }
-    } else {
-        if (state.hearts <= 0) {
-            DOM.overlayGameover.classList.add('active');
-            return;
-        }
-        state.currentQ++;
-        state.checking = false;
-        state.selected = null;
-        state.answers = [];
-        matchState = { first: null, second: null, lock: false, solved: [] };
-
-        if (state.currentQ >= currentLessonData.questions.length) finishLesson();
-        else { renderProgress(); renderQ(); }
-    }
+const q = currentLessonData.questions[state.currentQ];
+const txt = document.getElementById('msg-text');
+const sub = document.getElementById('msg-sub');
+if (DOM.btnAction.innerText === 'COMPROBAR') {
+if (!state.selected && matchState.solved.length === 0) return;
+state.checking = true;
+let isCorrect = false;
+if (q.type === 'choice' || q.type === 'audio') isCorrect = state.selected === q.correct;
+else if (q.type === 'match') isCorrect = matchState.solved.length === q.pairs.length;
+else if (q.type === 'wordbank') isCorrect = JSON.stringify(state.answers) === JSON.stringify(q.correct);
+else if (q.type === 'speak') {
+const said = (state.selected || "").toLowerCase();
+const target = q.text.toLowerCase();
+const targetWords = target.split(" ");
+const allPresent = targetWords.every(w => said.includes(w));
+if (said === target || allPresent) isCorrect = true;
+}
+if (isCorrect) {
+playSound('correct');
+txt.innerText = "¡Excelente!";
+// LÓGICA DE FEEDBACK MEJORADA
+let feedbackSub = "";
+if (q.type === 'speak' && q.meaning) {
+feedbackSub = `${q.text} = ${q.meaning}`;
+} else if (q.type === 'audio') {
+// Mostramos Alemán y Español
+feedbackSub = `${q.audioText} = ${q.correct}`;
+}
+sub.innerText = feedbackSub;
+DOM.feedbackMsg.className = "feedback-msg show correct";
+DOM.btnAction.innerText = "CONTINUAR";
+DOM.btnAction.className = "btn-main continue";
+} else {
+playSound('wrong');
+txt.innerText = "Incorrecto";
+let cText = q.correct || q.text;
+if (q.type === 'wordbank') cText = q.correct.join(" ");
+if (q.type === 'audio') cText = q.correct;
+sub.innerText = `Correcto: ${cText}`;
+DOM.feedbackMsg.className = "feedback-msg show wrong";
+DOM.screenLesson.classList.add('shake');
+setTimeout(() => DOM.screenLesson.classList.remove('shake'), 300);
+state.hearts--; updateUI(); save();
+DOM.btnAction.innerText = "CONTINUAR";
+DOM.btnAction.className = "btn-main retry";
+if (q.type === 'choice' || q.type === 'audio') {
+document.querySelectorAll('.opt-btn').forEach(b => {
+if(b.innerText.includes(q.correct)) b.classList.add('correct');
+if(b.classList.contains('selected')) b.classList.add('wrong');
+});
+}
+}
+} else {
+if (state.hearts <= 0) {
+DOM.overlayGameover.classList.add('active');
+return;
+}
+state.currentQ++;
+state.checking = false;
+state.selected = null;
+state.answers = [];
+matchState = { first: null, second: null, lock: false, solved: [] };
+if (state.currentQ >= currentLessonData.questions.length) finishLesson();
+else { renderProgress(); renderQ(); }
+}
 };
 
 const finishLesson = () => {
-    playSound('win');
-    registerPractice();   // racha: +1 por día practicado
-    const isMine = currentLessonData.category === 'phrases_mine';   // práctica repetible: no cuenta como lección del mapa
-    const firstTime = !isMine && !state.completed.includes(currentLessonData.id);
-    if (firstTime) {
-        state.completed.push(currentLessonData.id);
-        state.gems += 20;
-    }
-    save();
-    updateUI();
-    const rd = document.getElementById('result-donate');
-    if (rd) rd.innerHTML = state.completed.length >= 3 ? donateHtml() : '';   // solo tras 3 lecciones
-    const rm = document.getElementById('result-msg');
-    if (rm) rm.innerText = `${firstTime ? '+20 💎' : 'Lección repasada 🔁'} · 🔥 ${state.streak} ${state.streak === 1 ? 'día' : 'días'}`;
-    for(let i=0; i<50; i++) createConfetti();
-    showScreen('screen-result');
+playSound('win');
+if (!state.completed.includes(currentLessonData.id)) {
+state.completed.push(currentLessonData.id);
+state.gems += 20;
+state.streak++;
+save();
+updateUI();
+}
+for(let i=0; i<50; i++) createConfetti();
+showScreen('screen-result');
 };
 
-const exitToMap = () => {
-    showScreen('screen-map');
-    if (timeExceeded()) showPaywall();
-};
+const exitToMap = () => { showScreen('screen-map'); };
 
 // --- UTILS ---
-// CAMBIO: elige una voz alemana si el dispositivo la tiene
 function speak(t) {
-    if (!('speechSynthesis' in window)) return;
-    try {
-        window.speechSynthesis.cancel();
-        const u = new SpeechSynthesisUtterance(t);
-        u.lang = 'de-DE';
-        u.rate = 0.9;
-        const v = window.speechSynthesis.getVoices().find(v => v.lang && v.lang.toLowerCase().startsWith('de'));
-        if (v) u.voice = v;
-        window.speechSynthesis.speak(u);
-    } catch(e) {}
+if (!('speechSynthesis' in window)) return;
+try {
+window.speechSynthesis.cancel();
+const u = new SpeechSynthesisUtterance(t);
+u.lang='de-DE';
+u.rate = 0.9;
+window.speechSynthesis.speak(u);
+} catch(e) {}
 }
 
 function createConfetti() {
-    const c=document.createElement('div');
-    c.className='confetti';
-    c.style.left=Math.random()*100+'vw';
-    c.style.background=['#58CC02','#FFC800','#1CB0F6'][Math.floor(Math.random()*3)];
-    document.body.appendChild(c);
-    setTimeout(()=>c.remove(), 3000);
+const c=document.createElement('div');
+c.className='confetti';
+c.style.left=Math.random()*100+'vw';
+c.style.background=['#58CC02','#FFC800','#1CB0F6'][Math.floor(Math.random()*3)];
+document.body.appendChild(c);
+setTimeout(()=>c.remove(), 3000);
 }
 
 // INIT
 loadLocal();
 fetchCourseData();
-setInterval(tickHearts, 1000);
-document.addEventListener('visibilitychange', tickHearts);
-loadUsage();
-loadMyPhrases();
-setInterval(tickPlay, 1000);
-refreshAccount();
-if (_supabase) _supabase.auth.onAuthStateChange(() => setTimeout(refreshAccount, 0));
 </script>
-    <script src="extras.js"></script>
+<script>
+// ===== EXTRAS: scroll a la lección actual, siguiente lección, tarjetas =====
+/* Germango extras v2: scroll a la lección actual, botón "Siguiente lección",
+   tarjetas ES -> DE dentro del mapa (nodo 🃏 de repaso por unidad) y como modo aparte (🃏 de la cabecera). */
+(function () {
+  const st = document.createElement('style');
+  st.textContent = `
+input{user-select:text;-webkit-user-select:text}
+.fc-deck{position:relative;width:100%;height:150px;margin:10px 0 18px}
+.fc-card{position:absolute;inset:0;background:var(--card-dark);border:2px solid var(--border-color);border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;transition:transform .35s,opacity .35s}
+.fc-l1{transform:translateY(8px) scale(.96);opacity:.7}
+.fc-l2{transform:translateY(16px) scale(.92);opacity:.4}
+.fc-top{z-index:3;font-size:1.6rem;font-weight:700}
+.fc-ok{transform:translateX(120%) rotate(15deg);opacity:0;border-color:var(--primary-green)}
+.fc-bad{animation:shake .3s;border-color:var(--error-red)}
+.fc-mic{width:100%;margin-top:12px;padding:14px;min-height:50px;font-size:1.1rem;font-weight:700;color:var(--text-main);background:var(--card-dark);border:2px solid var(--border-color);border-radius:12px;cursor:pointer;touch-action:manipulation}
+.fc-mic:active{background:rgba(255,255,255,.1)}
+.card-node.ready{border-color:var(--bonus-gold);box-shadow:0 0 12px rgba(255,200,0,.35)}
+.card-node.card-done{border-color:var(--primary-green);background:rgba(88,204,2,.1)}`;
+  document.head.appendChild(st);
+
+  /* 1) Al volver al mapa, centrar la lección actual */
+  const goCurrent = () => requestAnimationFrame(() => {
+    const n = document.querySelector('.lesson-node.current');
+    if (n) n.scrollIntoView({ block: 'center', behavior: 'smooth' });
+  });
+  const mapEl = document.getElementById('screen-map');
+  new MutationObserver(() => { if (mapEl.classList.contains('active')) goCurrent(); })
+    .observe(mapEl, { attributes: true, attributeFilter: ['class'] });
+  goCurrent();
+
+  /* 2) Botón "Siguiente lección" en la pantalla de resultado */
+  const res = document.getElementById('screen-result');
+  const old = res.querySelector('button');
+  old.textContent = 'VOLVER AL MAPA';
+  const nextBtn = document.createElement('button');
+  nextBtn.className = 'btn-main active';
+  nextBtn.style.marginBottom = '10px';
+  nextBtn.textContent = 'SIGUIENTE LECCIÓN';
+  nextBtn.onclick = () => {
+    const n = document.querySelector('.lesson-node.current');
+    if (n && state.hearts > 0) n.click(); else exitToMap();
+  };
+  res.insertBefore(nextBtn, old);
+
+  /* 3) Tarjetas */
+  const LABELS = { greetings: 'Saludos', family: 'Familia', food: 'Comida', animals: 'Animales', numbers: 'Números', time: 'Tiempo', colors: 'Colores', verbs: 'Verbos', body: 'Cuerpo', house: 'Casa', weather: 'Clima', transport: 'Transporte', professions: 'Profesiones' };
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const norm = s => s.toLowerCase().replace(/[.,!?¿¡]/g, '').replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue').replace(/ß/g, 'ss').replace(/\s+/g, ' ').trim();
+
+  const DONE_KEY = 'germango_cards_done';
+  const getDone = () => { try { return JSON.parse(localStorage.getItem(DONE_KEY)) || []; } catch (e) { return []; } };
+  const markDone = id => { try { const d = getDone(); if (!d.includes(id)) { d.push(id); localStorage.setItem(DONE_KEY, JSON.stringify(d)); } } catch (e) {} };
+
+  const scr = document.createElement('div');
+  scr.id = 'screen-cards';
+  scr.className = 'screen';
+  document.getElementById('app').appendChild(scr);
+
+  let deck = [], checked = false, lastOk = false;
+
+  /* Modo aparte: elegir tema */
+  function picker() {
+    showScreen('screen-cards');
+    scr.innerHTML = '<h2 style="text-align:center;margin-bottom:6px">🃏 Tarjetas</h2><p style="text-align:center;color:var(--text-dim);margin-bottom:15px">Elige un tema</p><div class="options-grid">' +
+      Object.keys(VOCAB).map(k => `<button class="opt-btn" data-k="${k}">${LABELS[k] || k}</button>`).join('') + '</div>';
+    scr.querySelectorAll('[data-k]').forEach(b => { b.onclick = () => start({ pool: VOCAB[b.dataset.k] }); });
+  }
+
+  /* En el mapa: nodo de repaso al final de cada unidad (se abre al completar sus 3 lecciones) */
+  const poolOf = unit => {
+    const seen = new Set(), out = [];
+    unit.lessons.forEach(l => { if (!seen.has(l.category)) { seen.add(l.category); out.push(...VOCAB[l.category]); } });
+    return out;
+  };
+  function addCardNodes() {
+    document.querySelectorAll('#map-container .unit-container').forEach((uc, i) => {
+      const unit = DB.units[i], row = uc.querySelector('.lessons-row');
+      if (!unit || !row || row.querySelector('.card-node')) return;
+      const unlocked = unit.lessons.every(l => state.completed.includes(l.id));
+      const done = getDone().includes(unit.id);
+      const n = document.createElement('div');
+      n.className = 'lesson-node card-node ' + (!unlocked ? 'locked' : done ? 'card-done' : 'ready');
+      n.innerHTML = unlocked ? '<span class="icon">🃏</span><span class="lvl">Repaso</span>' : '<span class="icon">🔒</span>';
+      if (unlocked) n.onclick = () => start({ pool: poolOf(unit), unitId: unit.id });
+      row.appendChild(n);
+    });
+  }
+  new MutationObserver(addCardNodes).observe(document.getElementById('map-container'), { childList: true });
+  addCardNodes();
+
+  function start(src) {
+    deck = [...src.pool].sort(() => Math.random() - 0.5).slice(0, 8).map(i => ({ es: i.es, de: i.de, emoji: i.emoji || '' }));
+    showScreen('screen-cards');
+    render(src);
+  }
+
+  function render(src) {
+    if (!deck.length) return finish(src);
+    const t = deck[0];
+    checked = false;
+    scr.innerHTML = `<div style="text-align:center;color:var(--text-dim);margin-bottom:10px">Tarjetas restantes: ${deck.length}</div>
+<div class="fc-deck">${deck.length > 2 ? '<div class="fc-card fc-l2"></div>' : ''}${deck.length > 1 ? '<div class="fc-card fc-l1"></div>' : ''}<div class="fc-card fc-top" id="fc-top"><span style="font-size:2.2rem">${esc(t.emoji)}</span><span>${esc(t.es)}</span></div></div>
+<input id="fc-in" class="text-input-fallback" style="margin-bottom:10px" placeholder="En alemán..." autocomplete="off" autocapitalize="off" spellcheck="false">
+<div class="feedback-msg" id="fc-fb"></div>
+<button class="btn-main" id="fc-btn">COMPROBAR</button>
+<button class="fc-mic" id="fc-mic">🎤 Decirlo en voz alta</button>`;
+    const inp = document.getElementById('fc-in'), btn = document.getElementById('fc-btn'), fb = document.getElementById('fc-fb');
+    inp.oninput = () => { if (!checked) btn.classList.toggle('active', !!inp.value.trim()); };
+    inp.onkeydown = e => { if (e.key === 'Enter') btn.onclick(); };
+    btn.onclick = () => {
+      if (checked) { const d = deck.shift(); if (!lastOk) deck.push(d); render(src); return; }
+      const v = inp.value.trim();
+      if (!v) return;
+      const a = norm(v), c = norm(t.de);
+      lastOk = a === c || a === c.replace(/^(der|die|das) /, '');
+      checked = true;
+      document.getElementById('fc-top').classList.add(lastOk ? 'fc-ok' : 'fc-bad');
+      fb.className = 'feedback-msg show ' + (lastOk ? 'correct' : 'wrong');
+      fb.innerHTML = `<span>${lastOk ? '¡Excelente!' : 'Incorrecto'}</span><span style="font-size:.8rem;opacity:.8">${esc(t.de)}</span>`;
+      playSound(lastOk ? 'correct' : 'wrong');
+      if (lastOk) speak(t.de);
+      btn.textContent = 'CONTINUAR';
+      btn.className = 'btn-main ' + (lastOk ? 'continue' : 'retry');
+    };
+    document.getElementById('fc-mic').onclick = () => {
+      const R = window.webkitSpeechRecognition || window.SpeechRecognition;
+      if (!R) { alert('Tu navegador no soporta reconocimiento de voz.'); return; }
+      const r = new R(); r.lang = 'de-DE';
+      r.onresult = e => { inp.value = e.results[0][0].transcript; inp.oninput(); };
+      try { r.start(); } catch (e) {}
+    };
+    inp.focus();
+  }
+
+  function finish(src) {
+    const first = src.unitId && !getDone().includes(src.unitId);
+    const gems = first ? 15 : 5;
+    if (src.unitId) markDone(src.unitId);
+    state.gems += gems; save(); updateUI(); playSound('win');
+    scr.innerHTML = `<div style="text-align:center;font-size:4rem;margin-top:30px">🎉</div>
+<h2 style="text-align:center;margin:10px 0">¡Tarjetas completadas!</h2>
+<p style="text-align:center;color:var(--text-dim);margin-bottom:20px">+${gems} 💎</p>
+<button class="btn-main active" id="fc-again">OTRO MAZO</button>
+<button class="btn-main active" style="margin-top:10px" id="fc-map">VOLVER AL MAPA</button>`;
+    document.getElementById('fc-again').onclick = () => start(src);
+    document.getElementById('fc-map').onclick = () => showScreen('screen-map');
+  }
+
+  /* Botón 🃏 en la cabecera: modo aparte */
+  document.querySelector('.stats').insertAdjacentHTML('afterbegin', '<div class="stat-box" id="open-cards" title="Tarjetas">🃏</div>');
+  document.getElementById('open-cards').onclick = picker;
+})();
+</script>
 </body>
 </html>
