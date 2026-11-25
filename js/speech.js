@@ -34,7 +34,8 @@ const isSpeechMatch = (spoken, target) => {
 
 const resetMicBtn = () => {
   const micBtn = document.getElementById('mic-btn');
-  if (micBtn) { micBtn.classList.remove('listening'); micBtn.innerText = '🎤 Toca para hablar'; }
+  if (micBtn) { micBtn.classList.remove('listening');     micBtn.innerText = '🎤 Toca para hablar';
+    micBtn.setAttribute('aria-pressed', 'false'); }
 };
 
 const triggerSpeech = () => {
@@ -47,38 +48,51 @@ const triggerSpeech = () => {
     switchToTyping();
     return;
   }
-  if (isListening) { try { recognition.stop(); } catch (e) {} return; }
+  if (isListening && recognition) { try { recognition.stop(); } catch (e) {} return; }
 
   try { window.speechSynthesis.cancel(); } catch (e) {}   // libera el audio antes de grabar (iOS)
 
   const target = currentLessonData.questions[state.currentQ].text;
-  recognition = new SpeechRec();
-  recognition.lang = 'de-DE';
-  recognition.continuous = false;
-  recognition.interimResults = false;
-  recognition.maxAlternatives = 3;
+  const activeRecognition = new SpeechRec();
+  recognition = activeRecognition;
+  activeRecognition.lang = 'de-DE';
+  activeRecognition.continuous = false;
+  activeRecognition.interimResults = false;
+  activeRecognition.maxAlternatives = 3;
 
-  recognition.onstart = () => {
+  activeRecognition.onstart = () => {
+    if (recognition !== activeRecognition) return;
     isListening = true;
     micBtn.classList.add('listening');
     micBtn.innerText = '🔴 Escuchando... (toca para parar)';
+    micBtn.setAttribute('aria-pressed', 'true');
     resultDiv.innerText = '';
   };
-  recognition.onresult = (ev) => {
+  activeRecognition.onresult = (ev) => {
+    if (recognition !== activeRecognition || state.checking) return;
     const alts = Array.from(ev.results[0]).map(a => a.transcript);
     const best = alts.find(a => isSpeechMatch(a, target)) || alts[0];
     resultDiv.innerText = `Dijiste: "${best}"`;
     checkSpeechResult(best);
   };
-  recognition.onerror = (ev) => {
+  activeRecognition.onerror = (ev) => {
+    if (recognition !== activeRecognition) return;
     const msg = SPEECH_ERRORS[ev.error];
     if (msg !== '') resultDiv.innerText = msg || `Error de voz (${ev.error}). Prueba a escribir.`;
   };
-  recognition.onend = () => { isListening = false; resetMicBtn(); };
+  activeRecognition.onend = () => {
+    if (recognition !== activeRecognition) return;
+    isListening = false;
+    resetMicBtn();
+  };
 
-  try { recognition.start(); }
+  try { activeRecognition.start(); }
   catch (e) {
-    isListening = false; resetMicBtn();
+    if (recognition === activeRecognition) {
+      recognition = null;
+      isListening = false;
+    }
+    resetMicBtn();
     resultDiv.innerText = 'No se pudo iniciar el micrófono. Prueba a escribir.';
   }
 };
@@ -87,6 +101,7 @@ const checkSpeechResult = (spokenText) => {
   if (state.checking) return;
   const target = currentLessonData.questions[state.currentQ].text;
   state.selected = spokenText;
+  DOM.btnAction.disabled = false;
   DOM.btnAction.classList.add('active');
   if (isSpeechMatch(spokenText, target)) handleAction();   // acierto: comprueba solo
 };
@@ -94,10 +109,14 @@ const checkSpeechResult = (spokenText) => {
 const switchToTyping = () => {
   const container = document.getElementById('speak-ui');
   if (!container) return;
-  try { if (recognition) recognition.abort(); } catch (e) {}
+  const activeRecognition = recognition;
+  recognition = null;
+  isListening = false;
+  try { if (activeRecognition) activeRecognition.abort(); } catch (e) {}
   container.innerHTML = `
+    <label class="sr-only" for="write-input">Escribe la palabra en alemán</label>
     <input type="text" class="text-input-fallback" id="write-input" placeholder="Escribe aquí..." autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" oninput="checkTypingResult()">
-<button class="no-mic-btn" onclick="speak(currentLessonData.questions[state.currentQ].text)">🔊 Repetir audio</button>  `;
+<button type="button" class="no-mic-btn" onclick="speak(currentLessonData.questions[state.currentQ].text)">🔊 Repetir audio</button>  `;
   document.getElementById('write-input').focus();
 };
 
@@ -105,6 +124,6 @@ const checkTypingResult = () => {
   const input = document.getElementById('write-input');
   if (!input) return;
   const val = input.value.trim();
-  if (val.length > 0) { state.selected = val; DOM.btnAction.classList.add('active'); }
-  else { state.selected = null; DOM.btnAction.classList.remove('active'); }
+  if (val.length > 0) { state.selected = val; DOM.btnAction.disabled = false; DOM.btnAction.classList.add('active'); }
+  else { state.selected = null; DOM.btnAction.disabled = true; DOM.btnAction.classList.remove('active'); }
 };
