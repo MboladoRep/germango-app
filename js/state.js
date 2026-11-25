@@ -27,11 +27,15 @@ const loadLocal = () => {
   try {
     const d = localStorage.getItem('germango_v92');
     if (d) {
-      const p = JSON.parse(d);
-      state.hearts = p.hearts ?? 5;
-      state.gems = p.gems ?? 500;
-      state.streak = p.streak ?? 0;
-      state.completed = p.completed ?? [];
+      const saved = JSON.parse(d);
+      const toSafeInt = (value, fallback, max = Number.MAX_SAFE_INTEGER) => {
+        const number = Number(value);
+        return Number.isFinite(number) ? Math.min(max, Math.max(0, Math.floor(number))) : fallback;
+      };
+      state.hearts = toSafeInt(saved.hearts, 5, 5);
+      state.gems = toSafeInt(saved.gems, 500);
+      state.streak = toSafeInt(saved.streak, 0);
+      state.completed = Array.isArray(saved.completed) ? [...new Set(saved.completed.filter(id => typeof id === 'string'))] : [];
     }
   } catch (e) {}
   updateUI();
