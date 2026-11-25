@@ -37,8 +37,7 @@ function playSound(type) {
   }
 }
 
-function speak(t) {
- let deVoice = null;
+let deVoice = null;
 function loadVoices() {
   if (!('speechSynthesis' in window)) return;
   const v = speechSynthesis.getVoices();
@@ -54,6 +53,6 @@ function speak(t) {
     u.lang = 'de-DE';
     if (deVoice) u.voice = deVoice;
     u.rate = 0.9;
-    setTimeout(() => window.speechSynthesis.speak(u), 50);   // pausa necesaria en iOS tras cancel()
+    setTimeout(() => window.speechSynthesis.speak(u), 50);
   } catch (e) {}
 }
