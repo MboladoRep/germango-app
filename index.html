@@ -88,12 +88,13 @@ main { flex: 1; overflow-y: auto; display: flex; flex-direction: column; align-i
 .audio-prompt-btn:active { transform: translateY(4px); box-shadow: 0 0 0 #1899D6; }
 /* Speak UI specific styles */
 .speak-container { display: flex; flex-direction: column; align-items: center; width: 100%; gap: 10px; }
-.speak-btn { width: 100%; background: var(--secondary-blue); color: white; border: none; border-bottom: 4px solid #1899D6; padding: 15px; font-size: 1rem; font-weight: 700; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
+.speak-btn { width: 100%; min-height: 58px; background: var(--secondary-blue); color: white; border: none; border-bottom: 4px solid #1899D6; padding: 16px; font-size: 1.05rem; font-weight: 700; border-radius: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; touch-action: manipulation; }
 .speak-btn.listening { background: var(--error-red); border-bottom-color: #D43939; animation: pulse 1.5s infinite; }
-.listen-again-btn { background: transparent; border: 2px solid var(--border-color); color: var(--text-main); padding: 8px 16px; border-radius: 8px; font-size: 0.9rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s; }
+.listen-again-btn { background: var(--card-dark); border: 2px solid var(--border-color); color: var(--text-main); min-height: 46px; padding: 10px 18px; border-radius: 12px; font-size: 0.95rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s; touch-action: manipulation; }
 .listen-again-btn:active { background: rgba(255,255,255,0.1); }
-.write-mode-btn { background: transparent; border: none; color: var(--text-dim); text-decoration: underline; font-size: 0.8rem; cursor: pointer; margin-top: 5px; }
-.text-input-fallback { width: 100%; background: var(--card-dark); border: 2px solid var(--border-color); border-radius: 12px; padding: 12px; color: var(--text-main); font-size: 1rem; text-align: center; outline: none; }
+.write-mode-btn { width: 100%; min-height: 56px; background: var(--card-dark); border: 2px solid var(--border-color); color: var(--text-main); border-radius: 14px; padding: 14px 18px; font-size: 1.02rem; font-weight: 700; cursor: pointer; margin-top: 4px; display: flex; align-items: center; justify-content: center; gap: 8px; touch-action: manipulation; }
+.write-mode-btn:active { transform: scale(0.98); background: rgba(255,255,255,0.08); }
+.text-input-fallback { width: 100%; min-height: 52px; background: var(--card-dark); border: 2px solid var(--border-color); border-radius: 12px; padding: 12px; color: var(--text-main); font-size: 16px; text-align: center; outline: none; }
 /* Footer & Feedback */
 .footer-bar { margin-top: auto; width: 100%; padding-top: 15px; flex-shrink: 0; }
 .feedback-msg { min-height: 50px; border-radius: 10px; display: none; align-items: center; justify-content: center; font-weight: 700; margin-bottom: 10px; padding: 10px; flex-direction: column; font-size: 0.95rem; }
@@ -643,7 +644,7 @@ html += `<div class="main-text">${emojiHtml} ${q.text}</div>
 <div class="speak-container" id="speak-ui">
 <button class="listen-again-btn" onclick="speak('${q.text}')"><span>🔊</span> Escuchar de nuevo</button>
 <button class="speak-btn" id="mic-btn" onclick="triggerSpeech()">🎤 Toca para hablar</button>
-<button class="write-mode-btn" onclick="switchToTyping()">No puedo usar el micrófono</button>
+<button class="write-mode-btn" onclick="switchToTyping()">⌨️ No puedo usar el micrófono</button>
 <div class="mic-feedback" id="mic-result"></div>
 </div>`;
 setTimeout(() => speak(q.text), 300);
@@ -682,12 +683,7 @@ html += `<div class="match-card" data-id="${card.id}" onclick="selectMatch(this,
 html += `</div>`;
 }
 c.innerHTML = html;
-if (q.type === 'speak' && 'webkitSpeechRecognition' in window) {
-recognition = new webkitSpeechRecognition();
-recognition.lang = 'de-DE';
-recognition.continuous = false;
-recognition.interimResults = false;
-}
+
 };
 
 // --- INPUT HANDLERS ---
@@ -782,95 +778,182 @@ matchState.lock = false;
 };
 
 // Speech & Typing Handlers
-// Aviso visual del estado de la voz (preparando / escuchando / procesando / tarda / error)
-let voiceBusy = false, voiceTimers = [];
+const DIGIT_DE = { '0':'null','1':'eins','2':'zwei','3':'drei','4':'vier','5':'fünf','6':'sechs','7':'sieben','8':'acht','9':'neun','10':'zehn','11':'elf','12':'zwölf','20':'zwanzig','100':'hundert' };
+const normSpeechDE = (s, fold = false) => {
+  let out = String(s || '').toLowerCase()
+    .replace(/geht['’]s/g, 'geht es').replace(/wie['’]s/g, 'wie es')
+    .replace(/[.,!?¿¡;:"'‘’`´\-()]/g, ' ').replace(/ß/g, 'ss').replace(/\s+/g, ' ').trim();
+  if (fold) out = out.replace(/ä/g, 'a').replace(/ö/g, 'o').replace(/ü/g, 'u');
+  return out.split(' ').filter(Boolean).map(w => DIGIT_DE[w] || w).join(' ');
+};
+const isSpeechMatchDE = (said, target) => {
+  const a = normSpeechDE(said, true), b = normSpeechDE(target, true);
+  if (!a || !b) return false;
+  if (a === b || normSpeechDE(said) === normSpeechDE(target)) return true;
+  const tw = b.split(' '), sw = a.split(' ');
+  const hits = tw.filter(w => sw.includes(w)).length;
+  return tw.every(w => sw.includes(w)) || (tw.length >= 2 && hits / tw.length >= 0.8);
+};
+
+let voiceBusy = false, voiceTimers = [], activeVoiceRec = null, voiceListening = false;
 const clearVoiceTimers = () => { voiceTimers.forEach(clearTimeout); voiceTimers = []; };
+
 function startVoice(rec, o) {
-if (voiceBusy) return;
-voiceBusy = true;
-clearVoiceTimers();
-let finished = false, waitingStarted = false;
-const spin = '<span class="mini-spin"></span>';
-const say = (html) => { if (o.status) o.status.innerHTML = html; };
-const done = () => { finished = true; voiceBusy = false; clearVoiceTimers(); if (o.btn) { o.btn.classList.remove('listening'); o.btn.innerText = o.idleText; } };
-const waiting = () => {
-if (finished || waitingStarted) return;
-waitingStarted = true;
-if (o.btn) o.btn.innerText = '⏳ Procesando...';
-say(spin + 'Procesando tu voz...');
-voiceTimers.push(setTimeout(() => { if (!finished) say(spin + 'Está tardando un poco, ten paciencia 🙏'); }, 4000));
-voiceTimers.push(setTimeout(() => { if (!finished) { try { rec.abort(); } catch (e) {} done(); say('No he podido procesarlo. Inténtalo de nuevo o escribe la palabra.'); } }, 15000));
-};
-rec.onstart = () => { if (o.btn) { o.btn.classList.add('listening'); o.btn.innerText = '🔴 Escuchando... habla ahora'; } say(''); };
-rec.onspeechend = waiting;
-rec.onaudioend = waiting;
-rec.onresult = (e) => { if (finished) return; const text = e.results[0][0].transcript; done(); say(''); o.onText(text); };
-rec.onerror = (e) => {
-if (finished) return;
-done();
-say(e.error === 'not-allowed' ? 'Permite el micrófono para poder usar la voz.' : e.error === 'no-speech' ? 'No te he oído. Inténtalo de nuevo.' : 'Error con la voz. Inténtalo de nuevo o escribe.');
-};
-rec.onend = () => { if (!finished) { done(); say('No he oído nada. Inténtalo de nuevo.'); } };
-if (o.btn) o.btn.innerText = '🎙️ Activando micrófono...';
-say(spin + 'Activando el micrófono...');
-try { rec.start(); } catch (e) { done(); say('No se pudo iniciar el micrófono.'); }
+  if (voiceBusy) {
+    if (activeVoiceRec && voiceListening) { try { activeVoiceRec.stop(); } catch (e) {} }
+    else if (activeVoiceRec) { try { activeVoiceRec.abort(); } catch (e) {} }
+    return;
+  }
+  const R = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!rec && !R) { if (o.status) o.status.innerText = 'Tu navegador no soporta voz. Usa el botón de escribir.'; return; }
+  if ('speechSynthesis' in window) { try { window.speechSynthesis.cancel(); } catch (e) {} }
+
+  // En iPhone es clave crear una instancia nueva en cada toque
+  const r = R ? new R() : rec;
+  r.lang = 'de-DE';
+  r.continuous = false;
+  r.interimResults = true;
+  r.maxAlternatives = 5;
+
+  voiceBusy = true;
+  voiceListening = false;
+  activeVoiceRec = r;
+  clearVoiceTimers();
+
+  let finished = false, started = false, waitingStarted = false, latestAlts = [];
+  const spin = '<span class="mini-spin"></span>';
+  const say = (html) => { if (o.status) o.status.innerHTML = html; };
+  const done = () => {
+    finished = true; voiceBusy = false; voiceListening = false; activeVoiceRec = null;
+    clearVoiceTimers();
+    if (o.btn) { o.btn.classList.remove('listening'); o.btn.innerText = o.idleText; }
+  };
+  const deliver = (alts) => {
+    done(); say('');
+    const target = o.target || '';
+    const best = (target && alts.find(a => isSpeechMatchDE(a, target))) || alts[0] || '';
+    o.onText(best);
+  };
+  const waiting = () => {
+    if (finished || waitingStarted) return;
+    waitingStarted = true; voiceListening = false;
+    if (o.btn) { o.btn.classList.remove('listening'); o.btn.innerText = '⏳ Procesando...'; }
+    say(spin + 'Procesando tu voz...');
+    voiceTimers.push(setTimeout(() => { if (!finished) say(spin + 'Está tardando un poco, ten paciencia 🙏'); }, 3500));
+    voiceTimers.push(setTimeout(() => {
+      if (!finished) {
+        try { r.abort(); } catch (e) {}
+        if (latestAlts.length) deliver(latestAlts);
+        else { done(); say('No he podido procesarlo. Inténtalo de nuevo o escribe abajo.'); }
+      }
+    }, 10000));
+  };
+
+  r.onstart = () => {
+    if (finished) return;
+    started = true; voiceListening = true;
+    if (o.btn) { o.btn.classList.add('listening'); o.btn.innerText = '🔴 Escuchando... toca para terminar'; }
+    say('');
+    voiceTimers.push(setTimeout(() => {
+      if (!finished && !waitingStarted) { try { r.stop(); } catch (e) {} waiting(); }
+    }, 11000));
+  };
+  r.onspeechend = waiting;
+  r.onaudioend = waiting;
+  r.onresult = (e) => {
+    if (finished) return;
+    const alts = []; let isFinal = false;
+    for (let i = 0; i < e.results.length; i++) {
+      if (e.results[i].isFinal) isFinal = true;
+      for (let k = 0; k < e.results[i].length; k++) {
+        const t = (e.results[i][k].transcript || '').trim();
+        if (t && !alts.includes(t)) alts.push(t);
+      }
+    }
+    if (alts.length) latestAlts = alts;
+    if (isFinal && alts.length) { try { r.stop(); } catch (e) {} deliver(alts); }
+    else if (alts.length) say('🎙️ "' + alts[0] + '"');
+  };
+  r.onerror = (e) => {
+    if (finished) return;
+    if ((e.error === 'no-speech' || e.error === 'aborted') && latestAlts.length) { deliver(latestAlts); return; }
+    done();
+    const msgs = {
+      'not-allowed': 'Permite el micrófono en Safari o pulsa el botón de escribir.',
+      'service-not-allowed': 'Activa el Dictado en Ajustes de iPhone o pulsa escribir.',
+      'no-speech': 'No te he oído. Acerca el móvil e inténtalo de nuevo.',
+      'audio-capture': 'No se detecta micrófono. Cierra otras apps de audio.',
+      'network': 'El dictado necesita conexión a internet.'
+    };
+    say(msgs[e.error] || 'Error con la voz. Inténtalo de nuevo o escribe.');
+  };
+  r.onend = () => {
+    if (finished) return;
+    if (latestAlts.length) deliver(latestAlts);
+    else { done(); say('No he oído nada. Inténtalo de nuevo o escribe.'); }
+  };
+
+  voiceTimers.push(setTimeout(() => {
+    if (!finished && !started) {
+      try { r.abort(); } catch (e) {}
+      done(); say('El micrófono tardó en activarse en iPhone. Prueba otra vez o escribe.');
+    }
+  }, 5500));
+
+  if (o.btn) o.btn.innerText = '🎙️ Activando micrófono...';
+  say(spin + 'Activando el micrófono...');
+  try { r.start(); } catch (e) { done(); say('No se pudo iniciar el micrófono.'); }
 }
 
 const triggerSpeech = () => {
-if (!recognition) { alert("Navegador no soportado."); switchToTyping(); return; }
-const micBtn = document.getElementById('mic-btn');
-const resultDiv = document.getElementById('mic-result');
-startVoice(recognition, { btn: micBtn, status: resultDiv, idleText: '🎤 Toca para hablar', onText: (t) => {
-const res = t.toLowerCase();
-resultDiv.innerText = `Dijiste: "${res}"`;
-checkSpeechResult(res);
-} });
+  const R = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!R) {
+    const resultDiv = document.getElementById('mic-result');
+    if (resultDiv) resultDiv.innerText = 'Tu navegador no soporta voz aquí. Usa el botón de escribir.';
+    return;
+  }
+  const micBtn = document.getElementById('mic-btn');
+  const resultDiv = document.getElementById('mic-result');
+  const target = currentLessonData.questions[state.currentQ].text;
+  startVoice(null, {
+    btn: micBtn, status: resultDiv, target, idleText: '🎤 Toca para hablar',
+    onText: (t) => {
+      const res = t.toLowerCase();
+      resultDiv.innerText = `Dijiste: "${res}"`;
+      checkSpeechResult(res);
+    }
+  });
 };
 
 const resetMicBtn = () => {
-const micBtn = document.getElementById('mic-btn');
-if(micBtn) {
-micBtn.classList.remove('listening');
-micBtn.innerText = "🎤 Toca para hablar";
-}
+  const micBtn = document.getElementById('mic-btn');
+  if (micBtn) { micBtn.classList.remove('listening'); micBtn.innerText = '🎤 Toca para hablar'; }
 };
 
 const switchToTyping = () => {
-const container = document.getElementById('speak-ui');
-if (!container) return;
-container.innerHTML = `
-<input type="text" class="text-input-fallback" id="write-input" placeholder="Escribe aquí..." oninput="checkTypingResult()">
-<button class="write-mode-btn" style="margin-top:10px; color:var(--secondary-blue);" onclick="speak(currentLessonData.questions[state.currentQ].text)">🔊 Repetir audio</button>
+  if (activeVoiceRec) { try { activeVoiceRec.abort(); } catch (e) {} }
+  const container = document.getElementById('speak-ui');
+  if (!container) return;
+  container.innerHTML = `
+<input type="text" class="text-input-fallback" id="write-input" placeholder="Escribe aquí..." autocomplete="off" autocapitalize="off" oninput="checkTypingResult()">
+<button class="write-mode-btn" style="color:var(--secondary-blue);" onclick="speak(currentLessonData.questions[state.currentQ].text)">🔊 Repetir audio</button>
 `;
-document.getElementById('write-input').focus();
+  document.getElementById('write-input').focus();
 };
 
 const checkTypingResult = () => {
-const input = document.getElementById('write-input');
-if(!input) return;
-const val = input.value.toLowerCase().trim();
-if (val.length > 0) {
-state.selected = val;
-DOM.btnAction.classList.add('active');
-} else {
-DOM.btnAction.classList.remove('active');
-}
+  const input = document.getElementById('write-input');
+  if (!input) return;
+  const val = input.value.toLowerCase().trim();
+  if (val.length > 0) { state.selected = val; DOM.btnAction.classList.add('active'); }
+  else { DOM.btnAction.classList.remove('active'); }
 };
 
 const checkSpeechResult = (spokenText) => {
-const target = currentLessonData.questions[state.currentQ].text.toLowerCase();
-const targetWords = target.replace(/[^a-zA-Z0-9äöüß ]/g, "").split(" ");
-const spokenWords = spokenText.replace(/[^a-zA-Z0-9äöüß ]/g, "").split(" ");
-let matchCount = 0;
-targetWords.forEach(tw => { if (spokenWords.includes(tw)) matchCount++; });
-if (matchCount / targetWords.length >= 0.8 || spokenText.includes(target)) {
-state.selected = spokenText;
-DOM.btnAction.classList.add('active');
-if (spokenText === target) handleAction();
-} else {
-state.selected = spokenText;
-DOM.btnAction.classList.add('active');
-}
+  const target = currentLessonData.questions[state.currentQ].text;
+  state.selected = spokenText;
+  DOM.btnAction.classList.add('active');
+  if (isSpeechMatchDE(spokenText, target)) handleAction();
 };
 
 // --- FLOW CONTROL ---
@@ -886,11 +969,7 @@ if (q.type === 'choice' || q.type === 'audio') isCorrect = state.selected === q.
 else if (q.type === 'match') isCorrect = matchState.solved.length === q.pairs.length;
 else if (q.type === 'wordbank' || q.type === 'translate') isCorrect = JSON.stringify(state.answers) === JSON.stringify(q.correct);
 else if (q.type === 'speak') {
-const said = (state.selected || "").toLowerCase();
-const target = q.text.toLowerCase();
-const targetWords = target.split(" ");
-const allPresent = targetWords.every(w => said.includes(w));
-if (said === target || allPresent) isCorrect = true;
+isCorrect = isSpeechMatchDE(state.selected || '', q.text || '');
 }
 if (isCorrect) {
 playSound('correct');
