@@ -122,3 +122,5 @@ main { flex: 1; overflow-y: auto; display: flex; flex-direction: column; align-i
 @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 75, 75, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(255, 75, 75, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 75, 75, 0); } }
 @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
 .shake { animation: shake 0.3s; }
+.no-mic-btn { width: 100%; min-height: 56px; margin-top: 6px; padding: 14px; background: transparent; border: 2px solid var(--border-color); color: var(--text-main); border-radius: 12px; font-size: 1rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; touch-action: manipulation; }
+.no-mic-btn:active { background: rgba(255,255,255,0.1); }
