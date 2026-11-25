@@ -38,12 +38,22 @@ function playSound(type) {
 }
 
 function speak(t) {
+ let deVoice = null;
+function loadVoices() {
+  if (!('speechSynthesis' in window)) return;
+  const v = speechSynthesis.getVoices();
+  deVoice = v.find(x => x.lang === 'de-DE') || v.find(x => x.lang && x.lang.startsWith('de')) || null;
+}
+if ('speechSynthesis' in window) { loadVoices(); speechSynthesis.onvoiceschanged = loadVoices; }
+
+function speak(t) {
   if (!('speechSynthesis' in window)) return;
   try {
     window.speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(t);
     u.lang = 'de-DE';
+    if (deVoice) u.voice = deVoice;
     u.rate = 0.9;
-    window.speechSynthesis.speak(u);
+    setTimeout(() => window.speechSynthesis.speak(u), 50);   // pausa necesaria en iOS tras cancel()
   } catch (e) {}
 }
