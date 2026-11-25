@@ -54,7 +54,7 @@ const renderQ = () => {
         <button class="listen-again-btn" onclick="speak('${q.text}')"><span>🔊</span> Escuchar de nuevo</button>
         <button class="speak-btn" id="mic-btn" onclick="triggerSpeech()">🎤 Toca para hablar</button>
         <div class="mic-feedback" id="mic-result"></div>
-        <button class="write-mode-btn" onclick="switchToTyping()">No puedo usar el micrófono</button>
+        <button class="no-mic-btn" onclick="switchToTyping()">⌨️ No puedo usar el micrófono</button>
       </div>`;
     setTimeout(() => speak(q.text), 300);
   }
