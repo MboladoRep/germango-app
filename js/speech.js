@@ -97,8 +97,7 @@ const switchToTyping = () => {
   try { if (recognition) recognition.abort(); } catch (e) {}
   container.innerHTML = `
     <input type="text" class="text-input-fallback" id="write-input" placeholder="Escribe aquí..." autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" oninput="checkTypingResult()">
-    <button class="write-mode-btn" style="margin-top:10px; color:var(--secondary-blue);" onclick="speak(currentLessonData.questions[state.currentQ].text)">🔊 Repetir audio</button>
-  `;
+<button class="no-mic-btn" onclick="speak(currentLessonData.questions[state.currentQ].text)">🔊 Repetir audio</button>  `;
   document.getElementById('write-input').focus();
 };
 
