@@ -1,0 +1,41 @@
+export const GAME_MARKUP = String.raw`<header>
+  <button class="logo" type="button" aria-label="Germango, volver al mapa" onclick="showScreen('screen-map')"><span aria-hidden="true">🦉</span> GERMANGO</button>
+  <nav class="stats" aria-label="Progreso y recursos">
+    <button class="stat-box buyable" type="button" aria-label="Abrir tienda de vidas" onclick="openShop()"><span aria-hidden="true">❤️</span><span id="s-hearts">5</span></button>
+    <div class="stat-box" role="status"><span aria-hidden="true">💎</span><span id="s-gems">500</span><span class="sr-only">gemas</span></div>
+    <div class="stat-box" role="status"><span aria-hidden="true">🔥</span><span id="s-streak">0</span><span class="sr-only">lecciones de racha</span></div>
+  </nav>
+</header>
+<main id="app">
+  <section id="screen-map" class="screen active" aria-label="Ruta de aprendizaje"><div class="map-wrapper" id="map-container"><div class="loader" role="status" aria-label="Cargando curso"></div></div></section>
+  <div id="screen-lesson" class="screen">
+    <div class="progress-bar" id="progress-bar" role="progressbar" aria-label="Progreso de la lección" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
+    <div class="lesson-content" id="lesson-content" role="region" aria-label="Ejercicio de alemán" aria-live="polite"></div>
+    <div class="footer-bar">
+      <div class="feedback-msg" id="feedback-msg" role="status" aria-live="polite"><span id="msg-text"></span><span id="msg-sub" style="font-size:0.8rem; margin-top:4px; opacity:0.8"></span></div>
+      <button class="btn-main" id="btn-action" type="button" disabled onclick="handleAction()">COMPROBAR</button>
+    </div>
+  </div>
+  <section id="screen-result" class="screen" style="justify-content: center; text-align: center;">
+    <div class="overlay-icon" aria-hidden="true">🎉</div>
+    <h1 tabindex="-1" style="font-size: 1.8rem; margin-bottom: 10px;">¡Lección completada!</h1>
+    <p id="result-reward" style="color: var(--text-dim); margin-bottom: 20px;"></p>
+    <button class="btn-main active" onclick="exitToMap()">VOLVER AL MAPA</button>
+  </section>
+  <div id="overlay-gameover" class="overlay" role="dialog" aria-modal="true" aria-labelledby="gameover-title">
+    <div class="overlay-icon">💔</div>
+    <h2 id="gameover-title" style="margin-bottom:10px; font-size:1.5rem">Lección fallida</h2>
+    <p style="color: var(--text-dim); margin-bottom: 20px; font-size:0.9rem">Te has quedado sin vidas.</p>
+    <button class="btn-main active" onclick="buyLivesRetry()">Comprar Vidas (50💎)</button>
+    <button class="btn-main" style="margin-top:10px; background:#ffffff; border-bottom-color:#dce6df; color:#1d2b22; pointer-events:auto; cursor:pointer;" onclick="exitToMap()">VOLVER</button>
+  </div>
+  <div id="overlay-shop" class="overlay" role="dialog" aria-modal="true" aria-labelledby="shop-title">
+    <h2 id="shop-title" style="margin-bottom:10px">Tienda</h2>
+    <button class="shop-item" type="button" onclick="shopPurchase('hearts')">
+      <div style="font-size: 2rem;">❤️</div>
+      <div style="font-weight:700; margin-top:10px;">Recargar Vidas</div>
+      <div style="color: #ffd66b; margin-top:5px;">50 💎</div>
+    </button>
+    <button class="btn-main" style="margin-top:24px; background:#ffffff; border-bottom-color:#dce6df; color:#1d2b22; pointer-events:auto; cursor:pointer;" onclick="closeShop()">Cerrar</button>
+  </div>
+</main>`

@@ -1,0 +1,3 @@
+// ===== ARRANQUE =====
+loadLocal();
+fetchCourseData();
