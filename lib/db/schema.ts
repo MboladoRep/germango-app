@@ -1,4 +1,4 @@
-import { boolean, integer, pgTable, text, timestamp } from "drizzle-orm/pg-core"
+import { boolean, index, integer, pgTable, text, timestamp } from "drizzle-orm/pg-core"
 
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
@@ -67,3 +67,13 @@ export const paymentRequests = pgTable("payment_requests", {
   reviewedAt: timestamp("reviewed_at", { withTimezone: true }),
   reviewedBy: text("reviewed_by"),
 })
+
+export const savedPhrases = pgTable("saved_phrases", {
+  id: text("id").primaryKey(),
+  userId: text("user_id").notNull(),
+  spanish: text("spanish").notNull(),
+  german: text("german").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+}, (table) => [
+  index("saved_phrases_user_created_at_idx").on(table.userId, table.createdAt.desc()),
+])

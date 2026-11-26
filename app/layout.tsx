@@ -3,8 +3,8 @@ import "./globals.css"
 import "./access.css"
 
 export const metadata: Metadata = {
-  title: "Germango — Aprende alemán",
-  description: "Aprende alemán con lecciones breves, vocabulario y una ruta de progreso gamificada.",
+  title: "Germango 9.6 — Aprende alemán",
+  description: "Aprende alemán con lecciones, tarjetas de práctica y un traductor español-alemán para guardar tus frases favoritas.",
 }
 
 export const viewport: Viewport = {
