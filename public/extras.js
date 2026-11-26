@@ -1,4 +1,4 @@
-/* Germango 9.6: repaso por tarjetas, traductor y frases personales para practicar. */
+/* Germango 9.6.2: mazos completos, frases cortas y traductor. */
 (function () {
   /* 1) Al volver al mapa, centrar la lección actual */
   const goCurrent = () => requestAnimationFrame(() => {
@@ -27,6 +27,19 @@
 
   /* 3) Repaso y traductor */
   const LABELS = { greetings: 'Saludos', family: 'Familia', food: 'Comida', animals: 'Animales', numbers: 'Números', time: 'Tiempo', colors: 'Colores', verbs: 'Verbos', body: 'Cuerpo', house: 'Casa', weather: 'Clima', transport: 'Transporte', professions: 'Profesiones' };
+  const SHORT_PHRASES = [
+    { es: 'No entiendo.', de: 'Ich verstehe nicht.' },
+    { es: '¿Puede ayudarme?', de: 'Können Sie mir helfen?' },
+    { es: 'Por favor, más despacio.', de: 'Bitte langsamer.' },
+    { es: '¿Cuánto cuesta?', de: 'Wie viel kostet das?' },
+    { es: '¿Dónde está el baño?', de: 'Wo ist die Toilette?' },
+    { es: 'Quisiera agua, por favor.', de: 'Ich hätte gern Wasser, bitte.' },
+    { es: 'Estoy aprendiendo alemán.', de: 'Ich lerne Deutsch.' },
+    { es: '¿Habla español?', de: 'Sprechen Sie Spanisch?' },
+    { es: 'Muchas gracias.', de: 'Vielen Dank.' },
+    { es: 'Hasta luego.', de: 'Bis später.' },
+    { es: 'No hay problema.', de: 'Kein Problem.' },
+  ];
   const esc = value => String(value).replace(/[&<>"']/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[character]));
   const norm = value => value.toLowerCase().replace(/[.,!?¿¡]/g, '').replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue').replace(/ß/g, 'ss').replace(/\s+/g, ' ').trim();
   const DONE_KEY = 'germango_cards_done';
@@ -43,7 +56,7 @@
   translatorScreen.className = 'screen screen-translator';
   translatorScreen.innerHTML = `<div class="translator-shell">
     <header class="translator-heading">
-      <div><div class="translator-kicker">GERMANGO 9.6 · TRADUCTOR</div><h2 id="translator-title" tabindex="-1">Español a alemán</h2><p>Traduce una frase y guárdala para repasarla cuando quieras.</p><p class="translator-note">Las frases se procesan mediante MyMemory; el servicio gratuito tiene un límite diario (actualmente 5.000 caracteres). Evita incluir datos personales.</p></div>
+      <div><div class="translator-kicker">GERMANGO 9.6.2 · TRADUCTOR</div><h2 id="translator-title" tabindex="-1">Español a alemán</h2><p>Traduce una frase y guárdala para repasarla cuando quieras.</p><p class="translator-note">Las frases se procesan mediante MyMemory; el servicio gratuito tiene un límite diario (actualmente 5.000 caracteres). Evita incluir datos personales.</p></div>
       <button class="translator-back" id="translator-back" type="button">Volver al mapa</button>
     </header>
     <section class="translator-panel" aria-label="Traducir una frase">
@@ -278,12 +291,17 @@
     if (!topics) return;
     const keys = Object.keys(VOCAB);
     const builtInTopics = keys.map(key => `<button type="button" class="opt-btn" data-k="${key}">${LABELS[key] || key}</button>`).join('');
+    const shortPhrasesTopic = `<button type="button" class="opt-btn" data-k="short-phrases">Frases cortas (${SHORT_PHRASES.length})</button>`;
     const savedTopic = savedPhrases.length ? `<button type="button" class="opt-btn" data-k="saved">Mis frases (${savedPhrases.length})</button>` : '';
-    topics.innerHTML = builtInTopics + savedTopic;
+    topics.innerHTML = builtInTopics + shortPhrasesTopic + savedTopic;
     topics.querySelectorAll('[data-k]').forEach(button => {
       button.onclick = () => {
         if (button.dataset.k === 'saved') {
           if (savedPhrases.length) start({ pool: savedPhrases.map(phrase => ({ es: phrase.spanish, de: phrase.german })) });
+          return;
+        }
+        if (button.dataset.k === 'short-phrases') {
+          start({ pool: SHORT_PHRASES });
           return;
         }
         start({ pool: VOCAB[button.dataset.k] });
@@ -293,7 +311,7 @@
 
   function picker() {
     showScreen('screen-cards');
-    cardsScreen.innerHTML = `<h2 tabindex="-1" style="text-align:center;margin-bottom:6px">Tarjetas de alemán</h2><p style="text-align:center;color:var(--text-dim);margin-bottom:15px">Elige un tema para practicar</p><div class="options-grid" id="card-topics"></div><div class="cards-picker-actions"><button class="translator-secondary" id="cards-to-map" type="button">Volver al mapa</button><button class="translator-secondary" id="cards-to-translator" type="button">Abrir traductor</button></div>`;
+    cardsScreen.innerHTML = `<h2 tabindex="-1" style="text-align:center;margin-bottom:6px">Tarjetas de alemán</h2><p style="text-align:center;color:var(--text-dim);margin-bottom:15px">Elige un tema. Practicarás todas sus tarjetas y los errores volverán a aparecer.</p><div class="options-grid" id="card-topics"></div><div class="cards-picker-actions"><button class="translator-secondary" id="cards-to-map" type="button">Volver al mapa</button><button class="translator-secondary" id="cards-to-translator" type="button">Abrir traductor</button></div>`;
     renderCardTopics();
     cardsScreen.querySelector('h2')?.focus();
     cardsScreen.querySelector('#cards-to-map').onclick = () => showScreen('screen-map');
@@ -343,7 +361,7 @@
 
   function start(source) {
     stopActiveRecognition();
-    deck = getRandom(source.pool, Math.min(8, source.pool.length)).map(item => ({ es: item.es, de: item.de, emoji: item.emoji || '' }));
+    deck = getRandom(source.pool, source.pool.length).map(item => ({ es: item.es, de: item.de, emoji: item.emoji || '' }));
     showScreen('screen-cards');
     render(source);
   }
@@ -395,10 +413,25 @@
       checkButton.disabled = false;
       document.getElementById('fc-top').classList.add(lastOk ? 'fc-ok' : 'fc-bad');
       feedback.className = 'feedback-msg show ' + (lastOk ? 'correct' : 'wrong');
-      feedback.innerHTML = `<span>${lastOk ? '¡Excelente!' : 'Incorrecto'}</span><span style="font-size:.8rem;opacity:.8">${esc(card.de)}</span>`;
+      const resultText = document.createElement('span');
+      resultText.textContent = lastOk ? '¡Excelente!' : 'Incorrecto';
+      const correctAnswer = document.createElement('span');
+      correctAnswer.lang = 'de';
+      correctAnswer.style.cssText = 'font-size:.8rem;opacity:.8';
+      correctAnswer.textContent = card.de;
+      feedback.replaceChildren(resultText, correctAnswer);
+      if (!lastOk) {
+        const replayButton = document.createElement('button');
+        replayButton.type = 'button';
+        replayButton.className = 'listen-again-btn';
+        replayButton.setAttribute('aria-label', `Escuchar en alemán: ${card.de}`);
+        replayButton.textContent = 'Escuchar alemán otra vez';
+        replayButton.onclick = () => speak(card.de);
+        feedback.appendChild(replayButton);
+      }
       micFeedback.textContent = '';
       playSound(lastOk ? 'correct' : 'wrong');
-      if (lastOk) speak(card.de);
+      speak(card.de);
       checkButton.textContent = 'CONTINUAR';
       checkButton.className = 'btn-main ' + (lastOk ? 'continue' : 'retry');
     };

@@ -9,16 +9,16 @@ import { GAME_MARKUP } from "@/components/game-markup"
 const HEARTBEAT_MS = 10_000
 const PAYPAL_LINK = "https://paypal.me/MiguelBoladoesa"
 const LEGACY_SCRIPTS = [
-  "/js/data/vocab.js?v=9.6",
-  "/js/data/course.js?v=9.6",
-  "/js/state.js?v=9.6",
-  "/js/audio.js?v=9.6",
-  "/js/questions.js?v=9.6",
-  "/js/ui.js?v=9.6",
-  "/js/speech.js?v=9.6",
-  "/js/lesson.js?v=9.6",
-  "/js/main.js?v=9.6",
-  "/extras.js?v=9.6",
+  "/js/data/vocab.js?v=9.6.2",
+  "/js/data/course.js?v=9.6.2",
+  "/js/state.js?v=9.6.2",
+  "/js/audio.js?v=9.6.2",
+  "/js/questions.js?v=9.6.2",
+  "/js/ui.js?v=9.6.2",
+  "/js/speech.js?v=9.6.2",
+  "/js/lesson.js?v=9.6.2",
+  "/js/main.js?v=9.6.2",
+  "/extras.js?v=9.6.2",
 ]
 
 type AccessSnapshot = {
